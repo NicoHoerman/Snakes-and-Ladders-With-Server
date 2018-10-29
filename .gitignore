@@ -1,0 +1,12 @@
+*.props
+*.nupkg
+*.p7s
+*.txt
+*.targets
+*.CopyComplete
+*.md
+*.TXT
+*/[Bb]in/*
+*/[Oo]bj/*
+packages/
+.vs/
