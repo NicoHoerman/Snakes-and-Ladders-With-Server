@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCP_Connection", "TCP_Connection\TCP_Connection.csproj", "{DC0CF6C2-AAD7-4B1A-A686-817D9DA01097}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCP_Connection", "TCP_Connection\TCP_Connection.csproj", "{DC0CF6C2-AAD7-4B1A-A686-817D9DA01097}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TCP", "TCP", "{505732CC-920C-4B6E-B0F5-E002E5BAC1B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClient", "..\..\source\repos\TcpTestProgramm\TcpTestProgramm\TestClient.csproj", "{085A5F94-2B38-4452-8535-30FA6678CEE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerTest", "..\..\source\repos\TcpTestProgramm\ServerTest\ServerTest.csproj", "{2F2ABFF8-3904-416D-83D7-3500971F7C1B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +21,22 @@ Global
 		{DC0CF6C2-AAD7-4B1A-A686-817D9DA01097}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC0CF6C2-AAD7-4B1A-A686-817D9DA01097}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC0CF6C2-AAD7-4B1A-A686-817D9DA01097}.Release|Any CPU.Build.0 = Release|Any CPU
+		{085A5F94-2B38-4452-8535-30FA6678CEE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{085A5F94-2B38-4452-8535-30FA6678CEE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{085A5F94-2B38-4452-8535-30FA6678CEE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{085A5F94-2B38-4452-8535-30FA6678CEE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F2ABFF8-3904-416D-83D7-3500971F7C1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F2ABFF8-3904-416D-83D7-3500971F7C1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F2ABFF8-3904-416D-83D7-3500971F7C1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F2ABFF8-3904-416D-83D7-3500971F7C1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{DC0CF6C2-AAD7-4B1A-A686-817D9DA01097} = {505732CC-920C-4B6E-B0F5-E002E5BAC1B9}
+		{085A5F94-2B38-4452-8535-30FA6678CEE1} = {505732CC-920C-4B6E-B0F5-E002E5BAC1B9}
+		{2F2ABFF8-3904-416D-83D7-3500971F7C1B} = {505732CC-920C-4B6E-B0F5-E002E5BAC1B9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {50A8ACE0-213D-4342-BDFD-C73AC19A3769}
