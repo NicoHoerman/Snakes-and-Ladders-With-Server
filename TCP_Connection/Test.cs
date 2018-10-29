@@ -2,7 +2,7 @@
 
 namespace TCP_Connection
 {
-    public class Class1
+    public class Test
     {
     }
 }
