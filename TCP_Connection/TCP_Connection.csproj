@@ -4,8 +4,4 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="C:\Users\HNI\Documents\TCP\tcp_repository\Test.cs" Link="Test.cs" />
-  </ItemGroup>
-
 </Project>
