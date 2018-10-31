@@ -12,7 +12,6 @@ namespace TcpTestProgramm
     {
         IPAddress ipAddress;
         UdpClient client;
-        byte[] RequestData = Encoding.ASCII.GetBytes("Hey was geht? ");
         IPEndPoint ServerEp = new IPEndPoint(IPAddress.Any, 0);
 
         public Udp_Client()
@@ -27,6 +26,7 @@ namespace TcpTestProgramm
 
         public void PROT_JOIN()
         {
+            byte[] RequestData = Encoding.ASCII.GetBytes("Request to join lobby");
             client.EnableBroadcast = true;
             client.Send(RequestData, RequestData.Length, new IPEndPoint(IPAddress.Broadcast,8080));
 
