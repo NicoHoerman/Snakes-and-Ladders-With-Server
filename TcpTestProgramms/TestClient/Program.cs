@@ -19,11 +19,11 @@ namespace TestClient
              IPAddress myadress = IPAddress.Parse("172.22.22.153");
             */
 
-            Udp_Client client = new Udp_Client();
+            //Udp_Client client = new Udp_Client();
+            TCP_Client client = new TCP_Client();
 
-
-            Console.WriteLine("Hallo ");
-            Console.WriteLine("Suche nach Servern");
+            Console.WriteLine("Test JSON packages ");
+            //Console.WriteLine("Suche nach Servern");
 
 
             client.PROT_JOIN();

@@ -12,9 +12,7 @@ namespace ServerTest
     class Program
     {
 
-         public static List<IPAddress> Blacklist = new List<IPAddress>();
-         public static List<IPAddress> Whitelist = new List<IPAddress>();
-
+         
         static void Main(string[] args)
         {
               
@@ -27,9 +25,7 @@ namespace ServerTest
             byte[] ResponseData;
 
             var Server = new UdpClient(PORT_NO);
-           // Whitelist.Add(myadress);
-            Whitelist.Add(leonsadress);
-            //Blacklist.Add(myaddress);
+          
                 
 
             while (true)
@@ -39,20 +35,9 @@ namespace ServerTest
                 var ClientRequest = Encoding.ASCII.GetString(ClientRequestData);
 
                 Console.WriteLine("Recived:  {0} from:  {1}, sending response", ClientRequest, ClientEp.Address.ToString());
-                if (Blacklist.Contains(ClientEp.Address))
-                {
-                    ResponseData = Encoding.ASCII.GetBytes("no");
-                }
-                else if (Whitelist.Contains(ClientEp.Address))
-                {
-                    ResponseData = Encoding.ASCII.GetBytes("yes");
-                }
-                else
-                {
-                    Console.WriteLine("Recived:  {0} from:  {1}, sending respo", ClientRequest, ClientEp.Address.ToString());
-                    Whitelist.Add(ClientEp.Address);
-                    ResponseData = Encoding.ASCII.GetBytes("yes you got added to the whitelist");
-                }
+               
+                ResponseData = Encoding.ASCII.GetBytes("yes");
+               
 
                 Server.Send(ResponseData, ResponseData.Length, ClientEp);
                 Console.ReadKey();
