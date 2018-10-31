@@ -35,7 +35,6 @@ namespace TcpTestProgramm
             var ServerResponse = Encoding.ASCII.GetString(ServerResponseData);
             Console.WriteLine("Recived:  {0} from : {1}", ServerResponse, ServerEp.Address.ToString());
 
-            client.Connect(ServerEp);
             
             client.Close();
         }
