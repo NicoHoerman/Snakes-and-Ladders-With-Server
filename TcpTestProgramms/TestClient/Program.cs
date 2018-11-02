@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,28 +9,28 @@ using TcpTestProgramm;
 
 namespace TestClient
 {
+
+
     class Program
     {
+        
+
+        private PROT_ROLLDICE rolldiceData;
+
+
         static void Main(string[] args)
         {
-
-            /* IPAddress leonsadress = IPAddress.Parse("172.22.22.184");
-             IPAddress myadress = IPAddress.Parse("172.22.22.153");
-            */
-
-            //Udp_Client client = new Udp_Client();
-            TCP_Client client = new TCP_Client();
-
-            Console.WriteLine("Test JSON packages ");
-            //Console.WriteLine("Suche nach Servern");
-
-
-            client.PROT_JOIN();
-
-            
-            Console.ReadLine();
-          
-
+            var game = new Game();
+            game.Run();
         }
     }
 }
+
+/* IPAddress leonsadress = IPAddress.Parse("172.22.22.184");
+ IPAddress myadress = IPAddress.Parse("172.22.22.153");
+*/
+
+//TCP_Client client = new TCP_Client();
+
+//Console.WriteLine("Suche nach Servern");
+
