@@ -13,11 +13,6 @@ namespace TestClient
 
     class Program
     {
-        
-
-        private PROT_ROLLDICE rolldiceData;
-
-
         static void Main(string[] args)
         {
             var game = new Game();
