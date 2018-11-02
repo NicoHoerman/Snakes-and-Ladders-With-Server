@@ -34,3 +34,14 @@ TcpTestProgramms/ServerTest/obj/Debug/ServerTest.exe
 TcpTestProgramms/ServerTest/obj/Debug/ServerTest.csprojAssemblyReference.cache
 TcpTestProgramms/ServerTest/bin/Debug/ServerTest.exe.config
 TcpTestProgramms/ServerTest/bin/Debug/ServerTest.exe
+*.force
+*.config
+*.xml
+*.json
+TcpTestProgramms/TCP_Server/obj/Debug/TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs
+TcpTestProgramms/TCP_Client/obj/Debug/netcoreapp2.1/TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs
+TcpTestProgramms/TCP_Client/obj/Debug/netcoreapp2.1/TCP_Client.AssemblyInfo.cs
+TcpTestProgramms/TCP_Server/obj/Debug/TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs
+TcpTestProgramms/TCP_Client/obj/Debug/netcoreapp2.1/TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs
+TcpTestProgramms/TCP_Server/obj/Debug/TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs
+TcpTestProgramms/TCP_Client/obj/Debug/netcoreapp2.1/TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs
