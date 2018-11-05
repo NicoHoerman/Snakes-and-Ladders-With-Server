@@ -140,9 +140,9 @@ namespace TCP_Model
                     //Byte Array mit in der Größe des Payloads
                     var bytesToRead = new byte[sizeOfPayload];
                     //wird aus dem MemoryStream rausgelesen
-                    var bytesRead = _localBuffer.Read(bytesToRead, 0, sizeOfPayload);
+                    _localBuffer.Read(bytesToRead, 0, sizeOfPayload);
                     //aus byte mach String
-                    package.Payload = Encoding.ASCII.GetString(bytesToRead, 0, bytesRead);
+                    package.Payload = Encoding.ASCII.GetString(bytesToRead, 0, bytesToRead.Length);
 
                     lock(_lock)
                         //fertiges package wird an die Queue gehängt
