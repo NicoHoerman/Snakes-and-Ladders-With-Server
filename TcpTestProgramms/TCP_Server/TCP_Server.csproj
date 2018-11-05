@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AD7F7771-BA30-44DB-A9C0-4D3541ED0B53}</ProjectGuid>
+    <ProjectGuid>{53B6AAF6-DD82-4B35-9823-794ECEB90AB0}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>TcpTestProgramm</RootNamespace>
-    <AssemblyName>TcpTestProgramm</AssemblyName>
+    <RootNamespace>TCP_Server</RootNamespace>
+    <AssemblyName>TCP_Server</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -46,23 +46,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataPackage.cs" />
-    <Compile Include="DummyCommunication.cs" />
-    <Compile Include="Game.cs" />
-    <Compile Include="ICommunication.cs" />
-    <Compile Include="IProtocol.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PROTOCOLS\PROT_HELP.cs" />
-    <Compile Include="PROTOCOLS\PROT_ROLLDICE.cs" />
-    <Compile Include="PROTOCOLS\PROT_UPDATE.cs" />
-    <Compile Include="TcpCommunication.cs" />
-    <Compile Include="TCP_Client.cs" />
-    <Compile Include="Udp_Client.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TCP-Model\TCP_Model.csproj">
+      <Project>{34EDD763-C18A-49A1-8ECB-4F452F345FBE}</Project>
+      <Name>TCP_Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
