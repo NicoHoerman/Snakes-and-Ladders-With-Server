@@ -74,7 +74,7 @@ namespace TCP_Model
 
         public void Run()
         {
-            Console.WriteLine("Listening... ");
+            
 
             CheckForUpdates();
 

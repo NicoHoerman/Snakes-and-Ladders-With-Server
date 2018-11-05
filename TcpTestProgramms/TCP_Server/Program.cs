@@ -1,4 +1,5 @@
-﻿using TCP_Model;
+﻿using System;
+using TCP_Model;
 
 namespace TCP_Server
 {
@@ -7,6 +8,7 @@ namespace TCP_Server
     
         static void Main(string[] args)
         {
+            Console.WriteLine("Listening... ");
             var server = new Server();
             server.Run();
         }
