@@ -23,7 +23,6 @@ namespace TCP_Model
         private string updateInfo = string.Empty;
 
         private Dictionary<ProtocolAction, Action<ICommunication, DataPackage>> _protocolActions;
-        private Dictionary<string, Action<string>> _inputActions;
 
         private List<ICommunication> _communications;
         private TcpListener _listener;
@@ -75,29 +74,11 @@ namespace TCP_Model
 
         public void Run()
         {
-            /*var backgroundworker = new BackgroundWorker();
-
-            backgroundworker.DoWork += (obj, ea) => CheckForUpdates();
-            backgroundworker.RunWorkerAsync();
-            */
             Console.WriteLine("Listening... ");
 
             CheckForUpdates();
 
         }
-
-      /*private void ParseAndExecuteCommand(string input)
-        {
-            if (_inputActions.TryGetValue(input, out var action) == false)
-            {
-                Console.WriteLine($"Invalid command: {input}");
-                return;
-            }
-
-            action(input);
-        }
-      */
-        
 
         #region Protocol actions
 
