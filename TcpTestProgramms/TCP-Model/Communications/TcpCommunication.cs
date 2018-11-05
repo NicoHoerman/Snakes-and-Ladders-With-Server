@@ -46,7 +46,9 @@ namespace TCP_Model
 
             _lock = new object();
             _backgroundWorker = new BackgroundWorker();
+            //Eine Ereignis Warteschlange 
             _backgroundWorker.DoWork += (_, __) => CheckForUpdates();
+            //fängt an die Aufgaben abzuarbeiten
             _backgroundWorker.RunWorkerAsync();
         }
 
@@ -62,6 +64,7 @@ namespace TCP_Model
         {
             lock (_lock)
             {
+                //nimm des erste package au sder liste und return es 
                 var element = _packageQueue.First();
                 _packageQueue.RemoveAt(0);
                 return element;
@@ -89,6 +92,8 @@ namespace TCP_Model
         {
             while (true)
             {
+                // prüft ob daten auf dem NetworkStream sind 
+                //nicht sicher ob des schon so funktioniert wie es soll
                 if (_nwStream.DataAvailable)
                 {
                     ReadDataToBuffer();
@@ -121,17 +126,26 @@ namespace TCP_Model
                 //ProtocolAction ist ein Enum weil wir ja eigentlich Strings wollten des ist aber kacke 
                 //des wegen ein Enum mit int und Sprechenden Namen
                 package.Header = (ProtocolAction)reader.ReadInt32();
-                // wenn size z.B. 100 <= MeomryStream Size ist z.B.
+                // wenn size z.B. 100 <= MeomryStream Size ist z.B. 101
+                // enthält der Stream ja ein Paket
                 if (package.Size <= _localBuffer.Length )
                 {
+                    // da wir genau wissen das 8 bit size und header sind legen wir die Position auf danach
                     _localBuffer.Position = 2 * sizeof(Int32);
 
+                    //absolut keine Ahnung hat was mit den Daten zu tun er hatte beim ausprobieren 
+                    //glaub 4 Zeichen zu wenig und des war der fix 
                     var sizeOfPayload = package.Size - 2 * sizeof(Int32);
+
+                    //Byte Array mit in der Größe des Payloads
                     var bytesToRead = new byte[sizeOfPayload];
+                    //wird aus dem MemoryStream rausgelesen
                     var bytesRead = _localBuffer.Read(bytesToRead, 0, sizeOfPayload);
+                    //aus byte mach String
                     package.Payload = Encoding.ASCII.GetString(bytesToRead, 0, bytesRead);
 
                     lock(_lock)
+                        //fertiges package wird an die Queue gehängt
                         _packageQueue.Add(package);
                 }
             }

@@ -21,6 +21,8 @@ namespace TCP_Model
         {
             _communication = communication;
 
+            //wen ein Paket ankommt hat es im header einen int der eine ProtocolAction ist 
+            // ist work in Progress wie die heißen und welche Zahl ist nur zum Testen
             _protocolActions = new Dictionary<ProtocolAction, Action<DataPackage>>
             {
                 { ProtocolAction.RollDice, OnRollDiceAction },
@@ -28,6 +30,7 @@ namespace TCP_Model
             
 
             };
+            //sind für den Client. Bei dem input ... mach ...
             _inputActions = new Dictionary<string, Action<string>>
             {
                 { "/help", OnInputHelpAction },
@@ -58,9 +61,10 @@ namespace TCP_Model
 
         private void ExecuteDataActionFor(DataPackage data)
         {
+            //weißt dem packet die richtige funktion zu
             if (_protocolActions.TryGetValue(data.Header, out var protocolAction) == false)
                 throw new InvalidOperationException("Invalid communication");
-
+            //führt die bekommene methode mit dem datapackage aus
             protocolAction(data);
         }
 
@@ -84,17 +88,20 @@ namespace TCP_Model
 
         private void ParseAndExecuteCommand(string input)
         {
+            //weißt dem input die richtige action zu
             if (_inputActions.TryGetValue(input, out var action) == false)
             {
                 Console.WriteLine($"Invalid command: {input}");
                 return;
             }
 
+            //führt die action mit dem input aus 
             action(input);
         }
 
         #region Input actions
 
+        //onInputHelp ertell ein DatenPacket und schick es ab
         private void OnInputHelpAction(string obj)
         {
             var dataPackage = new DataPackage
@@ -131,12 +138,14 @@ namespace TCP_Model
 
         #region Protocol actions
 
+        //macht kein sinn braucht der Server nicht der Client
         private void OnRollDiceAction(DataPackage data)
         {
             var protocol = CreateProtocol<PROT_ROLLDICE>(data);
             Console.WriteLine(protocol.Client_IP);
         }
 
+        //wenn du ein Packet erhaltest mit dem Header update dann erstell ein PROT_UPDATE und DoSomething
         private void OnUpdateAction(DataPackage data)
         {
             var protocol = CreateProtocol<PROT_UPDATE>(data);
@@ -147,8 +156,10 @@ namespace TCP_Model
 
         #region Static helper functions
 
+        //erstellt Protokolle
         private static T CreateProtocol<T>(DataPackage data) where T : IProtocol
         {
+            //macht aus einem Objekt String ein wieder das urpsrüngliche Objekt Protokoll
             return JsonConvert.DeserializeObject<T>(data.Payload);
         }
 
