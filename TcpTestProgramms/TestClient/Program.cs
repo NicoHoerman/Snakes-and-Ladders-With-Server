@@ -14,20 +14,22 @@ namespace TestClient
     {
         static void Main(string[] args)
         {
+            IPEndPoint localEp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8080);
 
-            IPAddress adress = IPAddress.Parse("127.0.0.1");
+            var Client = new UdpClient(localEp);
+            var RequestData = Encoding.ASCII.GetBytes("SomeRequestData");
+            var ServerEp = new IPEndPoint(IPAddress.Any, 0);
 
-            IPEndPoint endPoint = new IPEndPoint(adress, 8080);
+            Client.EnableBroadcast = true;
+            Client.Send(RequestData, RequestData.Length, new IPEndPoint(IPAddress.Broadcast, 8080));
 
-            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            var ServerResponseData = Client.Receive(ref ServerEp);
+            var ServerResponse = Encoding.ASCII.GetString(ServerResponseData);
+            Console.WriteLine("Recived {0} from {1}", ServerResponse, ServerEp.Address.ToString());
+            Console.Read();
 
-            socket.Connect(endPoint);
+            Client.Close(); 
 
-            byte[] content = System.Text.Encoding.ASCII.GetBytes("Hello World");
-
-            //socket.Send(content, SocketFlags.Broadcast);
-
-            Console.ReadLine();
 
         }
     }
