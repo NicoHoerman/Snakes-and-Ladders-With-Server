@@ -11,6 +11,6 @@ namespace TCP_Model
         public string Updated_Board;
         public string Updated_DiceInformation;
         public string Updated_TurnInformation;
-        public bool Game_Finished;
+        
     }
 }

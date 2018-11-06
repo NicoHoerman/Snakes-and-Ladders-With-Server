@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using TCP_Model.PROTOCOLS.Server;
 
 namespace TCP_Model
 {
@@ -28,6 +29,7 @@ namespace TCP_Model
             _protocolActions = new Dictionary<ProtocolAction, Action<ICommunication, DataPackage>>
             {
                 { ProtocolAction.RollDice, OnRollDiceAction },
+                { ProtocolAction.GetHelp, OnGetHelpAction }
             };
 
             _listener = new TcpListener(IPAddress.Parse(SERVER_IP), 8080);
@@ -78,7 +80,8 @@ namespace TCP_Model
 
         private void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
-            var protocol = CreateProtocol<PROT_ROLLDICE>(data);
+            //var protocol = CreateProtocol<PROT_ROLLDICE>(data);
+            
             var dataPackage = new DataPackage
             {
 
@@ -86,11 +89,31 @@ namespace TCP_Model
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                 {
                     Updated_Board = "Test: XD",
-                    Updated_DiceInformation = "Test : 1",
-                    Updated_TurnInformation = "",
-                    Game_Finished = true
+                    Updated_DiceInformation = "Your rolled a 4",
+                    Updated_TurnInformation = "Its Player 1's turn",                  
                 })
             };
+            dataPackage.Size = dataPackage.ToByteArray().Length;
+
+            communication.Send(dataPackage);
+        }
+
+        private void OnGetHelpAction(ICommunication communication, DataPackage data)
+        {
+
+            var clientId = CreateProtocol<PROT_HELP>(data);
+
+            var dataPackage = new DataPackage
+            {
+                Header = ProtocolAction.HelpText,
+                Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
+                {
+                    help_text = $"Here is your help Player {clientId.Client_ID}.\n " +
+                    $"Commands:{Environment.NewLine}/rolldice{Environment.NewLine}/closegame"
+                })
+            };
+            dataPackage.Size = dataPackage.ToByteArray().Length;
+
             communication.Send(dataPackage);
         }
         #endregion

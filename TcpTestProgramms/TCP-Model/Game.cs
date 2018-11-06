@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Threading;
+using TCP_Model.PROTOCOLS.Server;
 
 namespace TCP_Model
 {
@@ -25,7 +26,7 @@ namespace TCP_Model
             // ist work in Progress wie die heißen und welche Zahl ist nur zum Testen
             _protocolActions = new Dictionary<ProtocolAction, Action<DataPackage>>
             {
-                { ProtocolAction.RollDice, OnRollDiceAction },
+                { ProtocolAction.HelpText, OnHelpTextAction },
                 { ProtocolAction.UpdateView, OnUpdateAction}
             
 
@@ -34,14 +35,14 @@ namespace TCP_Model
             _inputActions = new Dictionary<string, Action<string>>
             {
                 { "/help", OnInputHelpAction },
-                {"/rolldice",OnInputRollDiceAction }
+                { "/rolldice", OnInputRollDiceAction }
             };
         }
 
         public Game()
-            :this(new TcpCommunication())
-        {
-        }
+            : this(new TcpCommunication())
+        { }
+        
 
 
         private void CheckForUpdates()
@@ -104,14 +105,20 @@ namespace TCP_Model
         //onInputHelp ertell ein DatenPacket und schick es ab
         private void OnInputHelpAction(string obj)
         {
+
             var dataPackage = new DataPackage
             {
+                
                 Header = ProtocolAction.GetHelp, //"Client_wants_to_get_help",
                 Payload = JsonConvert.SerializeObject(new PROT_HELP
                 {
-                    Client_IP = "127.0.0.1"
+
+                    Client_ID = 1 //Player_ID = actual implementation: smth like this(CurrentPawn.playerId)
+
                 })
+                
             };
+            dataPackage.Size = dataPackage.ToByteArray().Length;
 
             _communication.Send(dataPackage);
         }
@@ -123,10 +130,11 @@ namespace TCP_Model
                 Header = ProtocolAction.RollDice, //"Client_wants_to_rolldice",
                 Payload = JsonConvert.SerializeObject(new PROT_ROLLDICE
                 {
-                    Client_IP = "127.0.0.1",
-                    Its_the_clients_turn = true
+                    Client_ID = 2 //Player_ID = actual implementation: smth like this(CurrentPawn.playerId)
+
                 })
             };
+            dataPackage.Size = dataPackage.ToByteArray().Length;
 
             _communication.Send(dataPackage);
         }
@@ -139,17 +147,19 @@ namespace TCP_Model
         #region Protocol actions
 
         //macht kein sinn braucht der Server nicht der Client
-        private void OnRollDiceAction(DataPackage data)
+        private void OnHelpTextAction(DataPackage data)
         {
-            var protocol = CreateProtocol<PROT_ROLLDICE>(data);
-            Console.WriteLine(protocol.Client_IP);
+            var helpText = CreateProtocol<PROT_HELPTEXT>(data);
+
+            Console.Write("Received help text: " + helpText.help_text);
         }
 
         //wenn du ein Packet erhaltest mit dem Header update dann erstell ein PROT_UPDATE und DoSomething
         private void OnUpdateAction(DataPackage data)
         {
-            var protocol = CreateProtocol<PROT_UPDATE>(data);
-            Console.WriteLine("Update bekommen " + protocol.Updated_Board);
+            var updatedView = CreateProtocol<PROT_UPDATE>(data);
+
+            Console.WriteLine("Received update: " + updatedView);
         }
         #endregion
 

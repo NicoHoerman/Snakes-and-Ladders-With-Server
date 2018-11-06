@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace TCP_Model
 {
-    public class PROT_ROLLDICE: IProtocol
+    public class PROT_ROLLDICE : IProtocol
     {
-        public string Client_IP;
-        public bool Its_the_clients_turn;
+        public int Client_ID;
+        
     }
 }

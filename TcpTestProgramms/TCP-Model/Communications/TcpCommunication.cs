@@ -40,8 +40,9 @@ namespace TCP_Model
         {
             _client = client;
             _nwStream = _client.GetStream();
-
+            
             _localBuffer = new MemoryStream();
+
             _packageQueue = new List<DataPackage>();
 
             _lock = new object();
@@ -158,10 +159,10 @@ namespace TCP_Model
 
             //die Größe der Daten
             var bytesToRead = new byte[_client.ReceiveBufferSize];
-            //empfangen der Daten
+            //empfangen der Daten           
             var bytesRead = _nwStream.Read(bytesToRead, 0, _client.ReceiveBufferSize);
-            //immer am Anfang anfagen Willst ja "Hallo" und "allo"
-            _localBuffer.Seek(0, SeekOrigin.End);
+            //immer am Anfang anfagen Willst ja "Hallo" und nicht "allo"
+            _localBuffer.Seek(0, SeekOrigin.End);  
             //schreibt die Daten in ein MemoryStream unsere warteschlange so zu sagen
             _localBuffer.Write(bytesToRead, 0, bytesRead);
         }
