@@ -113,7 +113,7 @@ namespace TCP_Model
                 Payload = JsonConvert.SerializeObject(new PROT_HELP
                 {
 
-                    Client_ID = 1 //Player_ID = actual implementation: smth like this(CurrentPawn.playerId)
+                    Client_ID = 5 //actual implementation: smth like this Player_ID = CurrentPawn.playerId;
 
                 })
                 
@@ -159,7 +159,8 @@ namespace TCP_Model
         {
             var updatedView = CreateProtocol<PROT_UPDATE>(data);
 
-            Console.WriteLine("Received update: " + updatedView);
+            Console.WriteLine("Received update: " + updatedView.Updated_Board+"\n"+updatedView.Updated_DiceInformation
+                +"\n"+updatedView.Updated_TurnInformation);
         }
         #endregion
 

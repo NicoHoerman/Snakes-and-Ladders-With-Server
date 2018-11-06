@@ -89,7 +89,7 @@ namespace TCP_Model
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                 {
                     Updated_Board = "Test: XD",
-                    Updated_DiceInformation = "Your rolled a 4",
+                    Updated_DiceInformation = "You rolled a 4",
                     Updated_TurnInformation = "Its Player 1's turn",                  
                 })
             };

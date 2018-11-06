@@ -103,6 +103,7 @@ namespace TCP_Model
                 else
                     //wichtig sonst ript dein PC
                     Thread.Sleep(1);
+               
             }
 
         }
@@ -118,8 +119,11 @@ namespace TCP_Model
                 return;
 
             _localBuffer.Seek(0, SeekOrigin.Begin);
-            using (var reader = new BinaryReader(_localBuffer))
+
+            using (var reader = new BinaryReader(_localBuffer)) 
             {
+                
+
                 var package = new DataPackage();
                 //schreibt die size in unser package 
                 package.Size = reader.ReadInt32();
@@ -150,6 +154,7 @@ namespace TCP_Model
                         _packageQueue.Add(package);
                 }
             }
+            
         }
 
         private void ReadDataToBuffer()
@@ -160,11 +165,13 @@ namespace TCP_Model
             //die Größe der Daten
             var bytesToRead = new byte[_client.ReceiveBufferSize];
             //empfangen der Daten           
-            var bytesRead = _nwStream.Read(bytesToRead, 0, _client.ReceiveBufferSize);
+            _nwStream.Read(bytesToRead, 0, _client.ReceiveBufferSize);
             //immer am Anfang anfagen Willst ja "Hallo" und nicht "allo"
+            _localBuffer = new MemoryStream();
+
             _localBuffer.Seek(0, SeekOrigin.End);  
             //schreibt die Daten in ein MemoryStream unsere warteschlange so zu sagen
-            _localBuffer.Write(bytesToRead, 0, bytesRead);
+            _localBuffer.Write(bytesToRead, 0, bytesToRead.Length);
         }
     }
 }
