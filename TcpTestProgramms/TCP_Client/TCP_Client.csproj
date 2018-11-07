@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TCP-Model\TCP_Model.csproj" />
+    <ProjectReference Include="..\TCP_Server\TCP_Server.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,22 +4,26 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Threading;
 using TCP_Model.PROTOCOLS.Server;
+using EelsAndEscalators.ClassicEandE;
+using EelsAndEscalators.Contracts;
+using EelsAndEscalators;
 
 namespace TCP_Model
 {
 
-    public class Game
+    public class Client
     {
         public bool isRunning;
         private string updateInfo = string.Empty;
-        public int i;
+        private int i;
         private Dictionary<ProtocolAction, Action<DataPackage>> _protocolActions;
         private Dictionary<string, Action<string>> _inputActions;
-
+        private readonly IGame _game;
         private ICommunication _communication;
 
-        public Game(ICommunication communication)
+        public Client(ICommunication communication, IGame game)
         {
+            _game = game;
             _communication = communication;
 
             //wen ein Paket ankommt hat es im header einen int der eine ProtocolAction ist 
@@ -43,8 +47,8 @@ namespace TCP_Model
             };
         }
 
-        public Game()
-            : this(new TcpCommunication())
+        public Client()
+            : this(new TcpCommunication(), new Game())
         { }
         
 
@@ -149,7 +153,7 @@ namespace TCP_Model
                 Header = ProtocolAction.Connect,
                 Payload = JsonConvert.SerializeObject(new PROT_ROLLDICE
                 {
-                    client_id = 9
+                    client_id = 3
 
                 })
             };
@@ -206,7 +210,9 @@ namespace TCP_Model
                 Console.WriteLine(accept.message);
             }
             else Console.WriteLine("Error: You are already connected.");
-            
+
+            _game.Init();
+
             i++;
 
         }

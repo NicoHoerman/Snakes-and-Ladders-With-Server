@@ -119,7 +119,7 @@ namespace TCP_Model
                 }
                 catch
                 {
-                    Console.WriteLine("You are no longer connected to the server.");
+                    return;
                 }
                                                   
             }
