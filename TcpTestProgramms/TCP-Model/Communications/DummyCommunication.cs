@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Sockets;
+using TCP_Model.Contracts;
 
 
 namespace TCP_Model.Communications

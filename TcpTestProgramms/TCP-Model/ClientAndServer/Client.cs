@@ -6,7 +6,10 @@ using System.Threading;
 using TCP_Model.PROTOCOLS.Server;
 using TCP_Model.ClassicEandE;
 using TCP_Model.EandEContracts;
-using TCP_Model;
+using TCP_Model.Contracts;
+using TCP_Model.Communications;
+using TCP_Model.GameAndLogic;
+using TCP_Model.PROTOCOLS.Client;
 
 namespace TCP_Model.ClientAndServer
 {

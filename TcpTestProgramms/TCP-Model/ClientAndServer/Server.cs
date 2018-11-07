@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading;
 using TCP_Model.PROTOCOLS.Client;
 using TCP_Model.PROTOCOLS.Server;
+using TCP_Model.Contracts;
+using TCP_Model.Communications;
 
 namespace TCP_Model.ClientAndServer
 {

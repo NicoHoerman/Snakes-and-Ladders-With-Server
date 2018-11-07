@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using TCP_Model.Contracts;
 
 /// <summary>
 /// Wir haben eine TcpCommunication eine klasse die die Verbindung zwischen Server und client regelt 
