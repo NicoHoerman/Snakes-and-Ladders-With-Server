@@ -4,7 +4,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Linq;
 
-namespace EelsAndEscalators
+namespace TCP_Model.XML_Config
 {
     public class ConfigurationProvider : IConfigurationProvider
     {

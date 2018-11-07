@@ -9,7 +9,7 @@ using System.Threading;
 using TCP_Model.PROTOCOLS.Client;
 using TCP_Model.PROTOCOLS.Server;
 
-namespace TCP_Model
+namespace TCP_Model.ClientAndServer
 {
 
     public class Server

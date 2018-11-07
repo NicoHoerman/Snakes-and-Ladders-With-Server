@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 
 
-namespace TCP_Model
+namespace TCP_Model.Communications
 {
 
     public class DummyCommunication : ICommunication

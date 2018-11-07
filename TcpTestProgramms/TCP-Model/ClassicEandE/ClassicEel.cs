@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using EelsAndEscalators.Contracts;
+using TCP_Model.EandEContracts;
 
-namespace EelsAndEscalators.ClassicEandE
+namespace TCP_Model.ClassicEandE
 {
     public class ClassicEel : IEntity
     {

@@ -6,11 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="XML Config\Configurations.xml" />
+    <None Remove="XML_Config\Configurations.xml" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="XML Config\Configurations.xml">
+    <Content Include="XML_Config\Configurations.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

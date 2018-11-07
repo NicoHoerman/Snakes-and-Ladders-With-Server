@@ -4,11 +4,11 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Threading;
 using TCP_Model.PROTOCOLS.Server;
-using EelsAndEscalators.ClassicEandE;
-using EelsAndEscalators.Contracts;
-using EelsAndEscalators;
+using TCP_Model.ClassicEandE;
+using TCP_Model.EandEContracts;
+using TCP_Model;
 
-namespace TCP_Model
+namespace TCP_Model.ClientAndServer
 {
 
     public class Client

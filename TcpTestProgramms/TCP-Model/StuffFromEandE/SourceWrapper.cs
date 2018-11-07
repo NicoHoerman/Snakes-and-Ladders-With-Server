@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using EelsAndEscalators.Contracts;
+using TCP_Model.EandEContracts;
 
-namespace EelsAndEscalators
+namespace TCP_Model.StuffFromEandE
 {
     public class SourceWrapper : ISourceWrapper
     {

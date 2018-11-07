@@ -1,11 +1,12 @@
-﻿using System;
+﻿using TCP_Model.EandEContracts;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using TCP_Model;
 
 
 
-namespace EelsAndEscalators
+namespace TCP_Model.GameAndLogic
 {
     public class Game : IGame
     {

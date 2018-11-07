@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
-namespace EelsAndEscalators
+namespace TCP_Model.GameAndLogic
 {
 
     public class Logic

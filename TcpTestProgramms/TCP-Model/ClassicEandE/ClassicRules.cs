@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
 
-using EelsAndEscalators.Contracts;
+using TCP_Model.EandEContracts;
 
-namespace EelsAndEscalators.ClassicEandE
+namespace TCP_Model.ClassicEandE
 {
 
     public class ClassicRules : IRules

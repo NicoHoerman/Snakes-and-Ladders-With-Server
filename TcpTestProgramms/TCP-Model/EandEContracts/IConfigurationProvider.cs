@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 
-namespace EelsAndEscalators
+namespace TCP_Model.EandEContracts
 {
 
     public interface IConfigurationProvider

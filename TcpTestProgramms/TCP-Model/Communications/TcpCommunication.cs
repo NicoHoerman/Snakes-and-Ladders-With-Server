@@ -13,7 +13,7 @@ using System.Threading;
 /// Wir haben eine TcpCommunication eine klasse die die Verbindung zwischen Server und client regelt 
 /// 
 /// </summary>
-namespace TCP_Model
+namespace TCP_Model.Communications
 {
     public class TcpCommunication : ICommunication
     {

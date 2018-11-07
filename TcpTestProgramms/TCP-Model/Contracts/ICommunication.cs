@@ -2,7 +2,7 @@
 using System;
 using System.Net.Sockets;
 
-namespace TCP_Model
+namespace TCP_Model.Contracts
 {
     public interface ICommunication
     {

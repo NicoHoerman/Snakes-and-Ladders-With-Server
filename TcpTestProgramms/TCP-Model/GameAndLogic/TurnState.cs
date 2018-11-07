@@ -1,4 +1,4 @@
-﻿namespace EelsAndEscalators
+﻿namespace TCP_Model.GameAndLogic
 {
 
     public enum TurnState

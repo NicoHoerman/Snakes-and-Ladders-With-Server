@@ -1,7 +1,7 @@
 ﻿using System.Xml.Linq;
 
 
-namespace EelsAndEscalators.Contracts
+namespace TCP_Model.EandEContracts
 {
 
     public interface IRules

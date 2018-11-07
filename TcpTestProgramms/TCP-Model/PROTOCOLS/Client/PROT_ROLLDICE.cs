@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TCP_Model
+namespace TCP_Model.PROTOCOLS.Client
 {
     public class PROT_ROLLDICE : IProtocol
     {

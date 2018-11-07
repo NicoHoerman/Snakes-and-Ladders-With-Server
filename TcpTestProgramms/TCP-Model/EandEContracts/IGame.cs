@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace EelsAndEscalators.Contracts
+namespace TCP_Model.EandEContracts
 {
     public interface IGame
     {

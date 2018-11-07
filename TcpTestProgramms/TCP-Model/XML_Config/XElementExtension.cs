@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace EelsAndEscalators.ClassicEandE
+namespace TCP_Model.XML_Config
 {
     public static class XElementExtension
     {

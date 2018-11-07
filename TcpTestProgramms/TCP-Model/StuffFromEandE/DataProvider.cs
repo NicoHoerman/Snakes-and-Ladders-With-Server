@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EelsAndEscalators
+namespace TCP_Model.StuffFromEandE
 {
     public class DataProvider
     {
