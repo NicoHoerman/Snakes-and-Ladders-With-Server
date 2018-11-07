@@ -8,6 +8,6 @@ namespace TCP_Model
 {
     public class PROT_HELP: IProtocol
     {
-        public int Client_ID;
+        public int client_id;
     }
 }

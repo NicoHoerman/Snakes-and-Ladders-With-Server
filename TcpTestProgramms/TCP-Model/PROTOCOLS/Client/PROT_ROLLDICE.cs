@@ -9,7 +9,7 @@ namespace TCP_Model
 {
     public class PROT_ROLLDICE : IProtocol
     {
-        public int Client_ID;
+        public int client_id;
         
     }
 }

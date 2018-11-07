@@ -8,9 +8,9 @@ namespace TCP_Model
 {
     public class PROT_UPDATE : IProtocol
     {
-        public string Updated_Board;
-        public string Updated_DiceInformation;
-        public string Updated_TurnInformation;
+        public string updated_board;
+        public string updated_dice_information;
+        public string updated_turn_information;
         
     }
 }

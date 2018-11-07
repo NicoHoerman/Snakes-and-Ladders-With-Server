@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using TCP_Model.PROTOCOLS.Client;
 using TCP_Model.PROTOCOLS.Server;
 
 namespace TCP_Model
@@ -21,7 +22,9 @@ namespace TCP_Model
 
         private List<ICommunication> _communications;
         private TcpListener _listener;
-        
+
+        int x;
+
         public Server()
         {
             _communications = new List<ICommunication>();
@@ -29,7 +32,8 @@ namespace TCP_Model
             _protocolActions = new Dictionary<ProtocolAction, Action<ICommunication, DataPackage>>
             {
                 { ProtocolAction.RollDice, OnRollDiceAction },
-                { ProtocolAction.GetHelp, OnGetHelpAction }
+                { ProtocolAction.GetHelp, OnGetHelpAction },
+                { ProtocolAction.Connect, OnConnectAction}
             };
 
             _listener = new TcpListener(IPAddress.Parse(SERVER_IP), 8080);
@@ -43,15 +47,39 @@ namespace TCP_Model
         {
             while (true)
             {
+                
+
                 var communicated = false;
+
                 _communications.ForEach(communication =>
                 {
+                    if (communicated == false && x == 0)
+                    {
+                        x++;
+                        
+                        var dataPackage = new DataPackage
+                        {
+                            Header = ProtocolAction.Broadcast,
+                            Payload = JsonConvert.SerializeObject(new PROT_BROADCAST
+                            {
+                                server_ip = "172.22.22.184",
+                                server_name = "Eels and Escalators Server_1",
+                                player_slot_info = "[0/4] Players"
+                            })
+                            
+                        };
+                        dataPackage.Size = dataPackage.ToByteArray().Length;
+
+                        communication.Send(dataPackage);
+                    }
+
                     if (communication.IsDataAvailable())
                     {
                         var data = communication.Receive();
                         ExecuteDataActionFor(communication, data);
                         communicated = true;
                     }
+
                 });
 
                 if (!communicated)
@@ -88,9 +116,9 @@ namespace TCP_Model
                 Header = ProtocolAction.UpdateView,
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                 {
-                    Updated_Board = "Test: XD",
-                    Updated_DiceInformation = "You rolled a 4",
-                    Updated_TurnInformation = "Its Player 1's turn",                  
+                    updated_board = "Test: XD",
+                    updated_dice_information = "You rolled a 4",
+                    updated_turn_information = "Its Player 1's turn",                  
                 })
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;
@@ -108,16 +136,58 @@ namespace TCP_Model
                 Header = ProtocolAction.HelpText,
                 Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
                 {
-                    help_text = $"Here is your help Player {clientId.Client_ID}.\n " +
-                    $"Commands:{Environment.NewLine}/rolldice{Environment.NewLine}/closegame"
+                    text = $"Here is your help Player {clientId.client_id}.\n " +
+                    $"Commands:\n/rolldice\n/closegame\n"
                 })
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;
 
             communication.Send(dataPackage);
         }
+
+        private void OnConnectAction(ICommunication communication, DataPackage data)
+        {
+           
+            var clientId = CreateProtocol<PROT_CONNECT>(data);
+
+            var dataPackage = new DataPackage
+            {
+                Header = ProtocolAction.Accept,
+                Payload = JsonConvert.SerializeObject(new PROT_ACCEPT
+                {
+                    message = "Congratulations! Your client has been accepted."
+                    + "\nGet ready to play a fun round of Eels and Escalators!"
+                    + $"\nYou have  been assigned player number {clientId.client_id}."
+                })
+            };
+            dataPackage.Size = dataPackage.ToByteArray().Length;
+
+            if (clientId.client_id >= 4) //just some non-sense logic to test client declining
+                DeclineClient(communication, data, clientId);
+
+            else communication.Send(dataPackage);
+        }
         #endregion
 
+        private void DeclineClient(ICommunication communication, DataPackage data, PROT_CONNECT clientId)
+        {
+            
+            var dataPackage = new DataPackage
+            {
+                Header = ProtocolAction.Decline,
+                Payload = JsonConvert.SerializeObject(new PROT_DECLINE
+                {
+                    message = $"Your connection was declined because the Client ID({clientId.client_id}) is on our Blacklist."
+                    
+                })
+            };
+            dataPackage.Size = dataPackage.ToByteArray().Length;
+
+            communication.Send(dataPackage);
+
+            communication._client.Close();
+
+        }
 
         #region Static helper functions
 

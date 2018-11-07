@@ -18,7 +18,7 @@ namespace TCP_Model
     public class TcpCommunication : ICommunication
     {
         // Wir arbeiten mit TcpClient und NetworkStream
-        private TcpClient _client;
+        public TcpClient _client { get; set; }
         private NetworkStream _nwStream;
 
         //Der Memory und die Liste ist um DatenPakete richtig zu empfangen
@@ -38,10 +38,11 @@ namespace TCP_Model
 
         public TcpCommunication(TcpClient client)
         {
+
             _client = client;
             _nwStream = _client.GetStream();
-            
-            _localBuffer = new MemoryStream();
+           
+            //_localBuffer = new MemoryStream();
 
             _packageQueue = new List<DataPackage>();
 
@@ -82,10 +83,20 @@ namespace TCP_Model
         //Sendet Datenpackete
         public void Send(DataPackage data)
         {
-            _nwStream = _client.GetStream();
-            var bytesToSend = data.ToByteArray();
-            Console.WriteLine($"Sending : Header: {data.Header}, Size: {data.Size}, Payload: {data.Payload}");
-            _nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+            try
+            {
+                _nwStream = _client.GetStream();
+                var bytesToSend = data.ToByteArray();
+                Console.WriteLine($"Sending : Header: {data.Header}, Size: {data.Size}, Payload: {data.Payload}");
+
+               _nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+            }
+                      
+            catch
+            {
+                Console.WriteLine("You are no longer connected to the server.");
+            }
+                                              
         }
 
         //läuft die ganze Zeit im Hintergrund
@@ -95,15 +106,22 @@ namespace TCP_Model
             {
                 // prüft ob daten auf dem NetworkStream sind 
                 //nicht sicher ob des schon so funktioniert wie es soll
-                if (_nwStream.DataAvailable)
+                try
                 {
-                    ReadDataToBuffer();
-                    CheckForNewPackages();
+                    if (_nwStream.DataAvailable)
+                    {
+                        ReadDataToBuffer();
+                        CheckForNewPackages();
+                    }
+                    else
+                        //wichtig sonst ript dein PC
+                        Thread.Sleep(1);
                 }
-                else
-                    //wichtig sonst ript dein PC
-                    Thread.Sleep(1);
-               
+                catch
+                {
+                    Console.WriteLine("You are no longer connected to the server.");
+                }
+                                                  
             }
 
         }
@@ -166,12 +184,22 @@ namespace TCP_Model
             var bytesToRead = new byte[_client.ReceiveBufferSize];
             //empfangen der Daten           
             _nwStream.Read(bytesToRead, 0, _client.ReceiveBufferSize);
-            //immer am Anfang anfagen Willst ja "Hallo" und nicht "allo"
+            
+            //fix of following problem: A player couldn't execute 2 or more commands 
+            //because the TcpConnection tried to use the same MemoryStream. 
+            //But every MemoryStream that was used will be disposed of, 
+            //because of the  "using" statement in the "CheckForNewPackages" Method. 
+            //using is the same as a try block followed by a finally block with "my_memory_stream.Dispose();" in it.
             _localBuffer = new MemoryStream();
-
+            //immer am Anfang anfagen Willst ja "Hallo" und nicht "allo"
             _localBuffer.Seek(0, SeekOrigin.End);  
             //schreibt die Daten in ein MemoryStream unsere warteschlange so zu sagen
             _localBuffer.Write(bytesToRead, 0, bytesToRead.Length);
         }
+
+        /*public void Dispose()
+        {
+            ((IDisposable)_nwStream).Dispose();
+        }*/
     }
 }

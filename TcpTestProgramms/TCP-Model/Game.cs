@@ -10,9 +10,9 @@ namespace TCP_Model
 
     public class Game
     {
-
+        public bool isRunning;
         private string updateInfo = string.Empty;
-
+        public int i;
         private Dictionary<ProtocolAction, Action<DataPackage>> _protocolActions;
         private Dictionary<string, Action<string>> _inputActions;
 
@@ -27,15 +27,19 @@ namespace TCP_Model
             _protocolActions = new Dictionary<ProtocolAction, Action<DataPackage>>
             {
                 { ProtocolAction.HelpText, OnHelpTextAction },
-                { ProtocolAction.UpdateView, OnUpdateAction}
+                { ProtocolAction.UpdateView, OnUpdateAction},
+                { ProtocolAction.Broadcast, OnBroadcastAction },
+                { ProtocolAction.Accept, OnAcceptAction },
+                { ProtocolAction.Decline, OnDeclineAction }
             
-
             };
             //sind für den Client. Bei dem input ... mach ...
             _inputActions = new Dictionary<string, Action<string>>
             {
                 { "/help", OnInputHelpAction },
-                { "/rolldice", OnInputRollDiceAction }
+                { "/rolldice", OnInputRollDiceAction },
+                { "/connect", OnInputConnectAction },
+                { "/closegame", OnCloseGameAction }
             };
         }
 
@@ -75,10 +79,8 @@ namespace TCP_Model
 
             backgroundworker.DoWork += (obj, ea) => CheckForUpdates();
             backgroundworker.RunWorkerAsync();
-
-            Console.WriteLine("Test JSON packages ");
-
-            var isRunning = true;
+           
+            isRunning = true;
             while (isRunning)
             {
                 var input = Console.ReadLine();
@@ -113,7 +115,7 @@ namespace TCP_Model
                 Payload = JsonConvert.SerializeObject(new PROT_HELP
                 {
 
-                    Client_ID = 5 //actual implementation: smth like this Player_ID = CurrentPawn.playerId;
+                    client_id = 5 //actual implementation: smth like this Player_ID = CurrentPawn.playerId;
 
                 })
                 
@@ -130,13 +132,35 @@ namespace TCP_Model
                 Header = ProtocolAction.RollDice, //"Client_wants_to_rolldice",
                 Payload = JsonConvert.SerializeObject(new PROT_ROLLDICE
                 {
-                    Client_ID = 2 //Player_ID = actual implementation: smth like this(CurrentPawn.playerId)
+                    client_id = 2 //Player_ID = actual implementation: smth like this(CurrentPawn.playerId)
 
                 })
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;
 
             _communication.Send(dataPackage);
+        }
+
+        private void OnInputConnectAction(string obj)
+        {
+                       
+            var dataPackage = new DataPackage
+            {
+                Header = ProtocolAction.Connect,
+                Payload = JsonConvert.SerializeObject(new PROT_ROLLDICE
+                {
+                    client_id = 9
+
+                })
+            };
+            dataPackage.Size = dataPackage.ToByteArray().Length;
+
+            _communication.Send(dataPackage);
+        }
+
+        private void OnCloseGameAction(string obj)
+        {
+            isRunning = false;
         }
 
 
@@ -146,12 +170,12 @@ namespace TCP_Model
 
         #region Protocol actions
 
-        //macht kein sinn braucht der Server nicht der Client
+        
         private void OnHelpTextAction(DataPackage data)
         {
             var helpText = CreateProtocol<PROT_HELPTEXT>(data);
 
-            Console.Write("Received help text: " + helpText.help_text);
+            Console.Write("Received help text: " + helpText.text);
         }
 
         //wenn du ein Packet erhaltest mit dem Header update dann erstell ein PROT_UPDATE und DoSomething
@@ -159,8 +183,40 @@ namespace TCP_Model
         {
             var updatedView = CreateProtocol<PROT_UPDATE>(data);
 
-            Console.WriteLine("Received update: " + updatedView.Updated_Board+"\n"+updatedView.Updated_DiceInformation
-                +"\n"+updatedView.Updated_TurnInformation);
+            Console.WriteLine("Received update: " + updatedView.updated_board+"\n"+updatedView.updated_dice_information
+                +"\n"+updatedView.updated_turn_information);
+        }
+
+        private void OnBroadcastAction(DataPackage data)
+        {
+            var broadcast = CreateProtocol<PROT_BROADCAST>(data);
+
+            Console.WriteLine("Server detected!\nServer name: " + broadcast.server_name + 
+                "\nServer IP: " + broadcast.server_ip + "\nPlayer slots: " + 
+                broadcast.player_slot_info+"\nIf you want to connect, type in /connect.");
+        }
+
+        private void OnAcceptAction(DataPackage data)
+        {
+
+            if (i == 0)
+            {
+                var accept = CreateProtocol<PROT_ACCEPT>(data);
+
+                Console.WriteLine(accept.message);
+            }
+            else Console.WriteLine("Error: You are already connected.");
+            
+            i++;
+
+        }
+
+        private void OnDeclineAction(DataPackage data)
+        {
+            var decline = CreateProtocol<PROT_DECLINE>(data);
+
+            Console.WriteLine(decline.message);
+            
         }
         #endregion
 
