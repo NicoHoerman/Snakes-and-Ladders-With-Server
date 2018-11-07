@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml.Linq;
 
 using TCP_Model.EandEContracts;
+using TCP_Model.XML_Config;
 
 namespace TCP_Model.ClassicEandE
 {

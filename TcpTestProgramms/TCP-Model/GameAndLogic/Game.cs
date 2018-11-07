@@ -3,8 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using TCP_Model;
-
-
+using TCP_Model.States;
 
 namespace TCP_Model.GameAndLogic
 {
