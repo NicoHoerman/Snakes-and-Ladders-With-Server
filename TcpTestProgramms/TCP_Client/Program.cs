@@ -7,8 +7,11 @@ namespace TCP_Client
     {
         static void Main(string[] args)
         {
-            var game = new Client();
-            game.Run();
+            var listener = new Receiver();
+            listener.StartListening();
+
+            var client = new Client();
+            client.Run();
         }
     }
 }

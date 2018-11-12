@@ -43,7 +43,7 @@ namespace TCP_Model.ClientAndServer
 
             _listener = new TcpListener(IPAddress.Parse(SERVER_IP), 8080);
             _listener.Start();
-
+            
             _communications.Add(new TcpCommunication(_listener.AcceptTcpClient()));
         }
 

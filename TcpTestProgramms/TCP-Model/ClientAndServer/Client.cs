@@ -90,6 +90,7 @@ namespace TCP_Model.ClientAndServer
             isRunning = true;
             while (isRunning)
             {
+                //show every lobby udp broadcasts
                 var input = Console.ReadLine();
                 ParseAndExecuteCommand(input);
             }
@@ -154,7 +155,7 @@ namespace TCP_Model.ClientAndServer
             var dataPackage = new DataPackage
             {
                 Header = ProtocolAction.Connect,
-                Payload = JsonConvert.SerializeObject(new PROT_ROLLDICE
+                Payload = JsonConvert.SerializeObject(new PROT_CONNECT
                 {
                     client_id = 3
 

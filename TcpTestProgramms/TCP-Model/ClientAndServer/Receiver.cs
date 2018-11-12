@@ -8,16 +8,24 @@ namespace TCP_Model.ClientAndServer
 {
     public class Receiver
     {
-        private readonly UdpClient udp = new UdpClient(8080);
-        private void StartListening()
+        private UdpClient udp;
+
+        public Receiver()
+        {
+            udp = new UdpClient(8080);
+        }
+
+        public void StartListening()
         {
             udp.BeginReceive(Receive, new object());
         }
+
         private void Receive(IAsyncResult ar)
         {
             IPEndPoint ip = new IPEndPoint(IPAddress.Any, 8080);
             byte[] bytes = udp.EndReceive(ar, ref ip);
             string message = Encoding.ASCII.GetString(bytes);
+            //get Package 
             StartListening();
         }
     }
