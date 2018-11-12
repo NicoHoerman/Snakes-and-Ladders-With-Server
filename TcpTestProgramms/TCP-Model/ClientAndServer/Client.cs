@@ -185,7 +185,6 @@ namespace TCP_Model.ClientAndServer
             Console.Write("Received help text: " + helpText.text);
         }
 
-        //wenn du ein Packet erhaltest mit dem Header update dann erstell ein PROT_UPDATE und DoSomething
         private void OnUpdateAction(DataPackage data)
         {
             var updatedView = CreateProtocol<PROT_UPDATE>(data);
@@ -242,25 +241,4 @@ namespace TCP_Model.ClientAndServer
         #endregion
     }
 }
-
-/* IPAddress leonsadress = IPAddress.Parse("172.22.22.184");
- IPAddress myadress = IPAddress.Parse("172.22.22.153");
-*/
-
-//TCP_Client client = new TCP_Client();
-
-//Console.WriteLine("Suche nach Servern");
-
-//case "/rolldice":
-//    var rolldiceData = new PROT_ROLLDICE
-//    {
-//        Client_IP = "127.0.0.1",
-//        Its_the_clients_turn = true,
-//    };
-
-//    dataPackage.Header = "Client_wants_to_rolldice";
-//    dataPackage.Payload = JsonConvert.SerializeObject(rolldiceData);
-
-//    _communication.Send(dataPackage);
-//    break;
 

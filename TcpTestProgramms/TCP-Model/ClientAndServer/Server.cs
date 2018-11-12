@@ -19,13 +19,13 @@ namespace TCP_Model.ClientAndServer
         private const string SERVER_IP = "127.0.0.1";
 
         private string updateInfo = string.Empty;
+        private int x;
 
         private Dictionary<ProtocolAction, Action<ICommunication, DataPackage>> _protocolActions;
 
         private List<ICommunication> _communications;
         private TcpListener _listener;
 
-        int x;
 
         public Server()
         {
@@ -100,10 +100,7 @@ namespace TCP_Model.ClientAndServer
 
         public void Run()
         {
-            
-
             CheckForUpdates();
-
         }
 
         #region Protocol actions
