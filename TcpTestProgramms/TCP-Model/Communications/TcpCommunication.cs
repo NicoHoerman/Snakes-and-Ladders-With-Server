@@ -25,7 +25,7 @@ namespace TCP_Model
         private MemoryStream _localBuffer;
         private List<DataPackage> _packageQueue;
 
-        //Das Lock ist ein Scloss um beim Multithreading keine Probleme zu bekommen
+        //Das Lock ist ein Schloss um beim Multithreading keine Probleme zu bekommen
         // wenn ein codeabschnitt von einem Treahd bearbeitet wird darf kein anderer drauf zugreifen
         private readonly object _lock;
         // Der Backgroundworker macht das genau das was im Namen steht
@@ -110,17 +110,17 @@ namespace TCP_Model
         private void CheckForNewPackages()
         {
             //unser Data package besteht aus einem Header einem Payload und einer Size 
-            //Size ist und soll ein Int32 nicht vereinfachen weil es müssen 4 bit sein
-            //die Zeile schaut ob der MeomryStream schon 8bit groß ist das wäre dann die Size und der Header
+            //Size ist und soll ein Int32 nicht vereinfachen weil es müssen 4 byte sein
+            //die Zeile schaut ob der MeomryStream schon 8byte groß ist das wäre dann die Size und der Header
 
             if (_localBuffer.Length < 2 * sizeof(Int32))
-                return;
+                return;//beendet die methode 
 
             _localBuffer.Seek(0, SeekOrigin.Begin);
             using (var reader = new BinaryReader(_localBuffer))
             {
                 var package = new DataPackage();
-                //schreibt die size in unser package 
+                //schreibt die size in unser neues package 
                 package.Size = reader.ReadInt32();
                 //schreibt den Header in unser package 
                 //ProtocolAction ist ein Enum weil wir ja eigentlich Strings wollten des ist aber kacke 
@@ -133,8 +133,7 @@ namespace TCP_Model
                     // da wir genau wissen das 8 bit size und header sind legen wir die Position auf danach
                     _localBuffer.Position = 2 * sizeof(Int32);
 
-                    //absolut keine Ahnung hat was mit den Daten zu tun er hatte beim ausprobieren 
-                    //glaub 4 Zeichen zu wenig und des war der fix 
+                    //er zieht einfach die 8byte ab
                     var sizeOfPayload = package.Size - 2 * sizeof(Int32);
 
                     //Byte Array mit in der Größe des Payloads
@@ -160,7 +159,7 @@ namespace TCP_Model
             var bytesToRead = new byte[_client.ReceiveBufferSize];
             //empfangen der Daten
             var bytesRead = _nwStream.Read(bytesToRead, 0, _client.ReceiveBufferSize);
-            //immer am Anfang anfagen Willst ja "Hallo" und "allo"
+            //immer am Anfang anfagen Willst ja "Hallo" und nicht "allo"
             _localBuffer.Seek(0, SeekOrigin.End);
             //schreibt die Daten in ein MemoryStream unsere warteschlange so zu sagen
             _localBuffer.Write(bytesToRead, 0, bytesRead);
