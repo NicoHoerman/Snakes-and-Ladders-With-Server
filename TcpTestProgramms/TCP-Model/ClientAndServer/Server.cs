@@ -58,33 +58,12 @@ namespace TCP_Model.ClientAndServer
 
                 _communications.ForEach(communication =>
                 {
-                    if (communicated == false && _x == 0)
-                    {
-                        _x++;
-                        
-                        var dataPackage = new DataPackage
-                        {
-                            Header = ProtocolAction.Broadcast,
-                            Payload = JsonConvert.SerializeObject(new PROT_BROADCAST
-                            {
-                                server_ip = "172.22.22.184",
-                                server_name = "Eels and Escalators Server_1",
-                                player_slot_info = "[0/4] Players"
-                            })
-                            
-                        };
-                        dataPackage.Size = dataPackage.ToByteArray().Length;
-
-                        communication.Send(dataPackage);
-                    }
-
                     if (communication.IsDataAvailable())
                     {
                         var data = communication.Receive();
                         ExecuteDataActionFor(communication, data);
                         communicated = true;
                     }
-
                 });
 
                 if (!communicated)
