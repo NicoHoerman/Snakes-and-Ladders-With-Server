@@ -12,7 +12,7 @@ namespace TCP_Model.ClientAndServer
 
         public Receiver()
         {
-            udp = new UdpClient(8080);
+            udp = new UdpClient(7070);
         }
 
         public void StartListening()
@@ -20,11 +20,14 @@ namespace TCP_Model.ClientAndServer
             udp.BeginReceive(Receive, new object());
         }
 
-        private void Receive(IAsyncResult ar)
+        public void Receive(IAsyncResult ar)
         {
-            IPEndPoint ip = new IPEndPoint(IPAddress.Any, 8080);
+            IPEndPoint ip = new IPEndPoint(IPAddress.Any, 7070);
             byte[] bytes = udp.EndReceive(ar, ref ip);
+
+
             string message = Encoding.ASCII.GetString(bytes);
+            Console.WriteLine(message);
             //get Package 
             StartListening();
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using TCP_Model;
 using TCP_Model.ClientAndServer;
 
@@ -11,7 +12,12 @@ namespace TCP_Server
         {
             Console.WriteLine("Broadcasting...");
             var udpserver = new UdpBroadcast();
-            udpserver.Broadcast();
+            
+
+            var backgroundworker = new BackgroundWorker();
+
+            backgroundworker.DoWork += (obj, ea) => udpserver.Broadcast();
+            backgroundworker.RunWorkerAsync();
 
 
 

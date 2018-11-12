@@ -34,7 +34,7 @@ namespace TCP_Model.Communications
 
 
         public TcpCommunication()
-            : this(new TcpClient("127.0.0.1", 8080))
+            : this(new TcpClient())
         { }
 
         public TcpCommunication(TcpClient client)

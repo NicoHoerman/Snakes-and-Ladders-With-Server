@@ -17,7 +17,7 @@ namespace TCP_Model.ClientAndServer
 
         public UdpBroadcast()
         {
-            udpServer = new UdpClient(8080);
+            udpServer = new UdpClient();
             SetBroadcastMsg();
         }
 
@@ -26,10 +26,9 @@ namespace TCP_Model.ClientAndServer
             isBroadcasting = true;
             while (isBroadcasting)
             {
-                UdpClient client = new UdpClient();
-                IPEndPoint ip = new IPEndPoint(IPAddress.Broadcast, 8080);
-                client.Send(_ServerInfo, _ServerInfo.Length, ip);
-                client.Close();
+                IPEndPoint ip = new IPEndPoint(IPAddress.Broadcast, 7070);
+                udpServer.Send(_ServerInfo, _ServerInfo.Length, ip);
+                //udpServer.Close();
             }
         }
 

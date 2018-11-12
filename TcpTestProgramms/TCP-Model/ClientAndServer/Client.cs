@@ -23,11 +23,13 @@ namespace TCP_Model.ClientAndServer
         private Dictionary<string, Action<string>> _inputActions;
         private readonly IGame _game;
         private ICommunication _communication;
+        private Receiver _udplistener;
 
         public Client(ICommunication communication, IGame game)
         {
             _game = game;
             _communication = communication;
+            _udplistener = new Receiver();
 
             //wen ein Paket ankommt hat es im header einen int der eine ProtocolAction ist 
             // ist work in Progress wie die heißen und welche Zahl ist nur zum Testen
@@ -86,11 +88,14 @@ namespace TCP_Model.ClientAndServer
 
             backgroundworker.DoWork += (obj, ea) => CheckForUpdates();
             backgroundworker.RunWorkerAsync();
+
+            var backgroundworker2 = new BackgroundWorker();
+            backgroundworker2.DoWork += (obj, ea) => _udplistener.StartListening();
+            backgroundworker2.RunWorkerAsync();
            
             isRunning = true;
             while (isRunning)
             {
-                //show every lobby udp broadcasts
                 var input = Console.ReadLine();
                 ParseAndExecuteCommand(input);
             }

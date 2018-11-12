@@ -30,6 +30,7 @@ namespace TCP_Model.ClientAndServer
         private TcpListener _listener;
 
 
+
         public Server()
         {
             _communications = new List<ICommunication>();
@@ -43,7 +44,7 @@ namespace TCP_Model.ClientAndServer
 
             _listener = new TcpListener(IPAddress.Parse(SERVER_IP), 8080);
             _listener.Start();
-            
+            _listener.Stop();
             _communications.Add(new TcpCommunication(_listener.AcceptTcpClient()));
         }
 
@@ -82,6 +83,8 @@ namespace TCP_Model.ClientAndServer
 
         public void Run()
         {
+
+
             CheckForUpdates();
         }
 
