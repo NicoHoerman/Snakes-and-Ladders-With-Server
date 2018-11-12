@@ -89,7 +89,6 @@ namespace TCP_Model.ClientAndServer
 
         private void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
-            //var protocol = CreateProtocol<PROT_ROLLDICE>(data);
             
             var dataPackage = new DataPackage
             {
