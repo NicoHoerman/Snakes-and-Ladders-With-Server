@@ -3,45 +3,57 @@ using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Threading;
+using TCP_Model.PROTOCOLS.Server;
+using TCP_Model.ClassicEandE;
+using TCP_Model.EandEContracts;
+using TCP_Model.Contracts;
+using TCP_Model.Communications;
+using TCP_Model.GameAndLogic;
+using TCP_Model.PROTOCOLS.Client;
 
-namespace TCP_Model
+namespace TCP_Model.ClientAndServer
 {
 
-    public class Game
+    public class Client
     {
-
+        public bool isRunning;
         private string updateInfo = string.Empty;
-
+        private int i;
         private Dictionary<ProtocolAction, Action<DataPackage>> _protocolActions;
         private Dictionary<string, Action<string>> _inputActions;
-
+        private readonly IGame _game;
         private ICommunication _communication;
 
-        public Game(ICommunication communication)
+        public Client(ICommunication communication, IGame game)
         {
+            _game = game;
             _communication = communication;
 
             //wen ein Paket ankommt hat es im header einen int der eine ProtocolAction ist 
             // ist work in Progress wie die heißen und welche Zahl ist nur zum Testen
             _protocolActions = new Dictionary<ProtocolAction, Action<DataPackage>>
             {
-                { ProtocolAction.RollDice, OnRollDiceAction },
-                { ProtocolAction.UpdateView, OnUpdateAction}
+                { ProtocolAction.HelpText, OnHelpTextAction },
+                { ProtocolAction.UpdateView, OnUpdateAction},
+                { ProtocolAction.Broadcast, OnBroadcastAction },
+                { ProtocolAction.Accept, OnAcceptAction },
+                { ProtocolAction.Decline, OnDeclineAction }
             
-
             };
             //sind für den Client. Bei dem input ... mach ...
             _inputActions = new Dictionary<string, Action<string>>
             {
                 { "/help", OnInputHelpAction },
-                {"/rolldice",OnInputRollDiceAction }
+                { "/rolldice", OnInputRollDiceAction },
+                { "/connect", OnInputConnectAction },
+                { "/closegame", OnCloseGameAction }
             };
         }
 
-        public Game()
-            :this(new TcpCommunication())
-        {
-        }
+        public Client()
+            : this(new TcpCommunication(), new Game())
+        { }
+        
 
 
         private void CheckForUpdates()
@@ -74,10 +86,8 @@ namespace TCP_Model
 
             backgroundworker.DoWork += (obj, ea) => CheckForUpdates();
             backgroundworker.RunWorkerAsync();
-
-            Console.WriteLine("Test JSON packages ");
-
-            var isRunning = true;
+           
+            isRunning = true;
             while (isRunning)
             {
                 var input = Console.ReadLine();
@@ -104,14 +114,20 @@ namespace TCP_Model
         //onInputHelp ertell ein DatenPacket und schick es ab
         private void OnInputHelpAction(string obj)
         {
+
             var dataPackage = new DataPackage
             {
+                
                 Header = ProtocolAction.GetHelp, //"Client_wants_to_get_help",
                 Payload = JsonConvert.SerializeObject(new PROT_HELP
                 {
-                    Client_IP = "127.0.0.1"
+
+                    client_id = 5 //actual implementation: smth like this Player_ID = CurrentPawn.playerId;
+
                 })
+                
             };
+            dataPackage.Size = dataPackage.ToByteArray().Length;
 
             _communication.Send(dataPackage);
         }
@@ -123,12 +139,35 @@ namespace TCP_Model
                 Header = ProtocolAction.RollDice, //"Client_wants_to_rolldice",
                 Payload = JsonConvert.SerializeObject(new PROT_ROLLDICE
                 {
-                    Client_IP = "127.0.0.1",
-                    Its_the_clients_turn = true
+                    client_id = 2 //Player_ID = actual implementation: smth like this(CurrentPawn.playerId)
+
                 })
             };
+            dataPackage.Size = dataPackage.ToByteArray().Length;
 
             _communication.Send(dataPackage);
+        }
+
+        private void OnInputConnectAction(string obj)
+        {
+                       
+            var dataPackage = new DataPackage
+            {
+                Header = ProtocolAction.Connect,
+                Payload = JsonConvert.SerializeObject(new PROT_ROLLDICE
+                {
+                    client_id = 3
+
+                })
+            };
+            dataPackage.Size = dataPackage.ToByteArray().Length;
+
+            _communication.Send(dataPackage);
+        }
+
+        private void OnCloseGameAction(string obj)
+        {
+            isRunning = false;
         }
 
 
@@ -138,18 +177,54 @@ namespace TCP_Model
 
         #region Protocol actions
 
-        //macht kein sinn braucht der Server nicht der Client
-        private void OnRollDiceAction(DataPackage data)
+        
+        private void OnHelpTextAction(DataPackage data)
         {
-            var protocol = CreateProtocol<PROT_ROLLDICE>(data);
-            Console.WriteLine(protocol.Client_IP);
+            var helpText = CreateProtocol<PROT_HELPTEXT>(data);
+
+            Console.Write("Received help text: " + helpText.text);
         }
 
-        //wenn du ein Packet erhaltest mit dem Header update dann erstell ein PROT_UPDATE und DoSomething
         private void OnUpdateAction(DataPackage data)
         {
-            var protocol = CreateProtocol<PROT_UPDATE>(data);
-            Console.WriteLine("Update bekommen " + protocol.Updated_Board);
+            var updatedView = CreateProtocol<PROT_UPDATE>(data);
+
+            Console.WriteLine("Received update: " + updatedView.updated_board+"\n"+updatedView.updated_dice_information
+                +"\n"+updatedView.updated_turn_information);
+        }
+
+        private void OnBroadcastAction(DataPackage data)
+        {
+            var broadcast = CreateProtocol<PROT_BROADCAST>(data);
+
+            Console.WriteLine("Server detected!\nServer name: " + broadcast.server_name + 
+                "\nServer IP: " + broadcast.server_ip + "\nPlayer slots: " + 
+                broadcast.player_slot_info+"\nIf you want to connect, type in /connect.");
+        }
+
+        private void OnAcceptAction(DataPackage data)
+        {
+
+            if (i == 0)
+            {
+                var accept = CreateProtocol<PROT_ACCEPT>(data);
+
+                Console.WriteLine(accept.message);
+            }
+            else Console.WriteLine("Error: You are already connected.");
+
+            _game.Init();
+
+            i++;
+
+        }
+
+        private void OnDeclineAction(DataPackage data)
+        {
+            var decline = CreateProtocol<PROT_DECLINE>(data);
+
+            Console.WriteLine(decline.message);
+            
         }
         #endregion
 
@@ -166,25 +241,4 @@ namespace TCP_Model
         #endregion
     }
 }
-
-/* IPAddress leonsadress = IPAddress.Parse("172.22.22.184");
- IPAddress myadress = IPAddress.Parse("172.22.22.153");
-*/
-
-//TCP_Client client = new TCP_Client();
-
-//Console.WriteLine("Suche nach Servern");
-
-//case "/rolldice":
-//    var rolldiceData = new PROT_ROLLDICE
-//    {
-//        Client_IP = "127.0.0.1",
-//        Its_the_clients_turn = true,
-//    };
-
-//    dataPackage.Header = "Client_wants_to_rolldice";
-//    dataPackage.Payload = JsonConvert.SerializeObject(rolldiceData);
-
-//    _communication.Send(dataPackage);
-//    break;
 

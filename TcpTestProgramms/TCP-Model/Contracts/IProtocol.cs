@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TCP_Model
+namespace TCP_Model.Contracts
 {
     public interface IProtocol
     {

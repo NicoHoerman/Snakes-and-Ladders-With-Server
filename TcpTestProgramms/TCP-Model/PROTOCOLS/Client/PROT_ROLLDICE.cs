@@ -4,12 +4,13 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using TCP_Model.Contracts;
 
-namespace TCP_Model
+namespace TCP_Model.PROTOCOLS.Client
 {
-    public class PROT_ROLLDICE: IProtocol
+    public class PROT_ROLLDICE : IProtocol
     {
-        public string Client_IP;
-        public bool Its_the_clients_turn;
+        public int client_id;
+        
     }
 }

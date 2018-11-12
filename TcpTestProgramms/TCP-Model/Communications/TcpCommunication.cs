@@ -8,24 +8,25 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using TCP_Model.Contracts;
 
 /// <summary>
 /// Wir haben eine TcpCommunication eine klasse die die Verbindung zwischen Server und client regelt 
 /// 
 /// </summary>
-namespace TCP_Model
+namespace TCP_Model.Communications
 {
     public class TcpCommunication : ICommunication
     {
         // Wir arbeiten mit TcpClient und NetworkStream
-        private TcpClient _client;
+        public TcpClient _client { get; set; }
         private NetworkStream _nwStream;
 
         //Der Memory und die Liste ist um DatenPakete richtig zu empfangen
         private MemoryStream _localBuffer;
         private List<DataPackage> _packageQueue;
 
-        //Das Lock ist ein Schloss um beim Multithreading keine Probleme zu bekommen
+        //Das Lock ist ein Scloss um beim Multithreading keine Probleme zu bekommen
         // wenn ein codeabschnitt von einem Treahd bearbeitet wird darf kein anderer drauf zugreifen
         private readonly object _lock;
         // Der Backgroundworker macht das genau das was im Namen steht
@@ -38,10 +39,12 @@ namespace TCP_Model
 
         public TcpCommunication(TcpClient client)
         {
+
             _client = client;
             _nwStream = _client.GetStream();
+           
+            //_localBuffer = new MemoryStream();
 
-            _localBuffer = new MemoryStream();
             _packageQueue = new List<DataPackage>();
 
             _lock = new object();
@@ -81,10 +84,20 @@ namespace TCP_Model
         //Sendet Datenpackete
         public void Send(DataPackage data)
         {
-            _nwStream = _client.GetStream();
-            var bytesToSend = data.ToByteArray();
-            Console.WriteLine($"Sending : Header: {data.Header}, Size: {data.Size}, Payload: {data.Payload}");
-            _nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+            try
+            {
+                _nwStream = _client.GetStream();
+                var bytesToSend = data.ToByteArray();
+                Console.WriteLine($"Sending : Header: {data.Header}, Size: {data.Size}, Payload: {data.Payload}");
+
+               _nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+            }
+                      
+            catch
+            {
+                Console.WriteLine("You are no longer connected to the server.");
+            }
+                                              
         }
 
         //läuft die ganze Zeit im Hintergrund
@@ -94,14 +107,22 @@ namespace TCP_Model
             {
                 // prüft ob daten auf dem NetworkStream sind 
                 //nicht sicher ob des schon so funktioniert wie es soll
-                if (_nwStream.DataAvailable)
+                try
                 {
-                    ReadDataToBuffer();
-                    CheckForNewPackages();
+                    if (_nwStream.DataAvailable)
+                    {
+                        ReadDataToBuffer();
+                        CheckForNewPackages();
+                    }
+                    else
+                        //wichtig sonst ript dein PC
+                        Thread.Sleep(1);
                 }
-                else
-                    //wichtig sonst ript dein PC
-                    Thread.Sleep(1);
+                catch
+                {
+                    return;
+                }
+                                                  
             }
 
         }
@@ -110,17 +131,20 @@ namespace TCP_Model
         private void CheckForNewPackages()
         {
             //unser Data package besteht aus einem Header einem Payload und einer Size 
-            //Size ist und soll ein Int32 nicht vereinfachen weil es müssen 4 byte sein
-            //die Zeile schaut ob der MeomryStream schon 8byte groß ist das wäre dann die Size und der Header
+            //Size ist und soll ein Int32 nicht vereinfachen weil es müssen 4 bit sein
+            //die Zeile schaut ob der MeomryStream schon 8bit groß ist das wäre dann die Size und der Header
 
             if (_localBuffer.Length < 2 * sizeof(Int32))
-                return;//beendet die methode 
+                return;
 
             _localBuffer.Seek(0, SeekOrigin.Begin);
-            using (var reader = new BinaryReader(_localBuffer))
+
+            using (var reader = new BinaryReader(_localBuffer)) 
             {
+                
+
                 var package = new DataPackage();
-                //schreibt die size in unser neues package 
+                //schreibt die size in unser package 
                 package.Size = reader.ReadInt32();
                 //schreibt den Header in unser package 
                 //ProtocolAction ist ein Enum weil wir ja eigentlich Strings wollten des ist aber kacke 
@@ -133,21 +157,23 @@ namespace TCP_Model
                     // da wir genau wissen das 8 bit size und header sind legen wir die Position auf danach
                     _localBuffer.Position = 2 * sizeof(Int32);
 
-                    //er zieht einfach die 8byte ab
+                    //absolut keine Ahnung hat was mit den Daten zu tun er hatte beim ausprobieren 
+                    //glaub 4 Zeichen zu wenig und des war der fix 
                     var sizeOfPayload = package.Size - 2 * sizeof(Int32);
 
                     //Byte Array mit in der Größe des Payloads
                     var bytesToRead = new byte[sizeOfPayload];
                     //wird aus dem MemoryStream rausgelesen
-                    var bytesRead = _localBuffer.Read(bytesToRead, 0, sizeOfPayload);
+                    _localBuffer.Read(bytesToRead, 0, sizeOfPayload);
                     //aus byte mach String
-                    package.Payload = Encoding.ASCII.GetString(bytesToRead, 0, bytesRead);
+                    package.Payload = Encoding.ASCII.GetString(bytesToRead, 0, bytesToRead.Length);
 
                     lock(_lock)
                         //fertiges package wird an die Queue gehängt
                         _packageQueue.Add(package);
                 }
             }
+            
         }
 
         private void ReadDataToBuffer()
@@ -157,12 +183,24 @@ namespace TCP_Model
 
             //die Größe der Daten
             var bytesToRead = new byte[_client.ReceiveBufferSize];
-            //empfangen der Daten
-            var bytesRead = _nwStream.Read(bytesToRead, 0, _client.ReceiveBufferSize);
+            //empfangen der Daten           
+            _nwStream.Read(bytesToRead, 0, _client.ReceiveBufferSize);
+            
+            //fix of following problem: A player couldn't execute 2 or more commands 
+            //because the TcpConnection tried to use the same MemoryStream. 
+            //But every MemoryStream that was used will be disposed of, 
+            //because of the  "using" statement in the "CheckForNewPackages" Method. 
+            //using is the same as a try block followed by a finally block with "my_memory_stream.Dispose();" in it.
+            _localBuffer = new MemoryStream();
             //immer am Anfang anfagen Willst ja "Hallo" und nicht "allo"
-            _localBuffer.Seek(0, SeekOrigin.End);
+            _localBuffer.Seek(0, SeekOrigin.End);  
             //schreibt die Daten in ein MemoryStream unsere warteschlange so zu sagen
-            _localBuffer.Write(bytesToRead, 0, bytesRead);
+            _localBuffer.Write(bytesToRead, 0, bytesToRead.Length);
         }
+
+        /*public void Dispose()
+        {
+            ((IDisposable)_nwStream).Dispose();
+        }*/
     }
 }

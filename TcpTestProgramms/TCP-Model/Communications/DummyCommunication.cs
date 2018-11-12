@@ -1,12 +1,16 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Net.Sockets;
+using TCP_Model.Contracts;
 
 
-namespace TCP_Model
+namespace TCP_Model.Communications
 {
 
     public class DummyCommunication : ICommunication
     {
+
+        public TcpClient _client { get; set; }
+
         public bool IsDataAvailable()
         {
             return false;
@@ -25,6 +29,11 @@ namespace TCP_Model
         public void Send(DataPackage data)
         {
             Console.WriteLine($"{data.Header}: {data.Payload}");
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using TCP_Model;
+using TCP_Model.ClientAndServer;
 
 namespace TCP_Client
 {
@@ -6,7 +7,7 @@ namespace TCP_Client
     {
         static void Main(string[] args)
         {
-            var game = new Game();
+            var game = new Client();
             game.Run();
         }
     }
