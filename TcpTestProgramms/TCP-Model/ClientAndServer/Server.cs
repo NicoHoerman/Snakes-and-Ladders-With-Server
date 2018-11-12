@@ -18,8 +18,11 @@ namespace TCP_Model.ClientAndServer
     {
         private const string SERVER_IP = "127.0.0.1";
 
-        private string updateInfo = string.Empty;
-        private int x;
+        private string _updateInfo = string.Empty;
+        private int _x;
+
+        private List<IPAddress> _WhiteList = new List<IPAddress>();
+        private List<IPAddress> _Blacklist = new List<IPAddress>();
 
         private Dictionary<ProtocolAction, Action<ICommunication, DataPackage>> _protocolActions;
 
@@ -55,9 +58,9 @@ namespace TCP_Model.ClientAndServer
 
                 _communications.ForEach(communication =>
                 {
-                    if (communicated == false && x == 0)
+                    if (communicated == false && _x == 0)
                     {
-                        x++;
+                        _x++;
                         
                         var dataPackage = new DataPackage
                         {

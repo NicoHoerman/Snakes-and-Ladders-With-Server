@@ -9,6 +9,11 @@ namespace TCP_Server
     
         static void Main(string[] args)
         {
+            Console.WriteLine("Broadcasting...");
+            var broadcast = new UdpBroadcast();
+
+
+
             Console.WriteLine("Listening... ");
             var server = new Server();
             server.Run();
