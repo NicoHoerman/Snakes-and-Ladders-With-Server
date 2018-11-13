@@ -19,7 +19,7 @@ namespace TCP_Model.ClientAndServer
         public UdpBroadcast()
         {
             udpServer = new UdpClient();
-            SetBroadcastMsg();
+            //SetBroadcastMsg();
         }
 
         public void Broadcast()
@@ -27,23 +27,27 @@ namespace TCP_Model.ClientAndServer
             isBroadcasting = true;
             while (isBroadcasting)
             {
+                SetBroadcastMsg();
                 IPEndPoint ip = new IPEndPoint(IPAddress.Parse("172.22.22.153"), 7070);
                 udpServer.Send(_ServerInfo, _ServerInfo.Length, ip);
                 //udpServer.Close();
-                Thread.Sleep(10000);
+                Thread.Sleep(5000);
             }
         }
 
         public void SetBroadcastMsg()
         {
-
+            Random random = new Random();
             DataPackage dataPackage = new DataPackage
             {
                 Header = ProtocolAction.Broadcast,
                 Payload = JsonConvert.SerializeObject(new PROT_BROADCAST
                 {
-                    _Server_ip = "172.22.22.184",
-                    _Server_name = "Eels and Escalators Server_1"
+                    _Server_ip = "172.22.22.153",
+                    _Server_name = "Eels and Escalators Server_1",
+                    _CurrentPlayerCount = random.Next(0,4),
+                    _MaxPlayerCount = 4
+                    
                 })
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;

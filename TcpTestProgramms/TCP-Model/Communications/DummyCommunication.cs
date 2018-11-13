@@ -35,5 +35,10 @@ namespace TCP_Model.Communications
         {
             throw new NotImplementedException();
         }
+
+        public void AddPackage(DataPackage dataPackage)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -10,6 +10,10 @@ using TCP_Model.Contracts;
 using TCP_Model.Communications;
 using TCP_Model.GameAndLogic;
 using TCP_Model.PROTOCOLS.Client;
+using System.Text;
+using System.Net;
+using System.Timers;
+using System.Diagnostics;
 
 namespace TCP_Model.ClientAndServer
 {
@@ -20,9 +24,12 @@ namespace TCP_Model.ClientAndServer
         private string updateInfo = string.Empty;
         private int i;
         private int someInt;
+        private bool isConnected = false;
+        private System.Timers.Timer timer;
 
         private Dictionary<ProtocolAction, Action<DataPackage>> _protocolActions;
         private Dictionary<string, Action<string>> _inputActions;
+        private Dictionary<int, PROT_BROADCAST> _serverDictionary;
         private Receiver _udplistener;
 
         private readonly IGame _game;
@@ -33,6 +40,7 @@ namespace TCP_Model.ClientAndServer
             _game = game;
             _communication = communication;
             _udplistener = new Receiver();
+            _serverDictionary = new Dictionary<int, PROT_BROADCAST>();
 
             _protocolActions = new Dictionary<ProtocolAction, Action<DataPackage>>
             {
@@ -48,9 +56,9 @@ namespace TCP_Model.ClientAndServer
             {
                 { "/help", OnInputHelpAction },
                 { "/rolldice", OnInputRollDiceAction },
-                { "/connect", OnInputConnectAction },
                 { "/closegame", OnCloseGameAction },
-                {$"/{someInt}" ,OnIntAction }
+                {$"/{someInt}" ,OnIntAction },
+                {"/search", OnSearchAction }
             };
         }
 
@@ -91,9 +99,8 @@ namespace TCP_Model.ClientAndServer
             backgroundworker.DoWork += (obj, ea) => CheckForUpdates();
             backgroundworker.RunWorkerAsync();
 
-            var backgroundworker2 = new BackgroundWorker();
-            backgroundworker2.DoWork += (obj, ea) => _udplistener.StartListening();
-            backgroundworker2.RunWorkerAsync();
+            Console.WriteLine("Type Search for Servers");
+
            
             isRunning = true;
             while (isRunning)
@@ -106,23 +113,21 @@ namespace TCP_Model.ClientAndServer
 
         private void ParseAndExecuteCommand(string input)
         {
-            //weißt dem input die richtige action zu
             if (_inputActions.TryGetValue(input, out var action) == false)
             {
                 Console.WriteLine($"Invalid command: {input}");
                 return;
             }
 
-            //führt die action mit dem input aus 
             action(input);
         }
 
         #region Input actions
 
-        //onInputHelp ertell ein DatenPacket und schick es ab
         private void OnInputHelpAction(string obj)
         {
-
+            if (!isConnected)
+                return;
             var dataPackage = new DataPackage
             {
                 
@@ -142,6 +147,9 @@ namespace TCP_Model.ClientAndServer
 
         private void OnInputRollDiceAction(string obj)
         {
+            if (!isConnected)
+                return;
+
             var dataPackage = new DataPackage
             {
                 Header = ProtocolAction.RollDice, //"Client_wants_to_rolldice",
@@ -155,35 +163,47 @@ namespace TCP_Model.ClientAndServer
 
             _communication.Send(dataPackage);
         }
-
-        private void OnInputConnectAction(string obj)
-        {
-                       
-            var dataPackage = new DataPackage
-            {
-                Header = ProtocolAction.Connect,
-                Payload = JsonConvert.SerializeObject(new PROT_CONNECT
-                {
-                    _Client_id = 3
-
-                })
-            };
-            dataPackage.Size = dataPackage.ToByteArray().Length;
-
-            _communication.Send(dataPackage);
-        }
+        
+        public PROT_BROADCAST GetServer(int key) => _serverDictionary[key];
 
         private void OnIntAction(string obj)
         {
-            throw new NotImplementedException();
+            if (isConnected)
+                return;
+
+            int chosenServerId = Int32.Parse(obj);
+            if(_serverDictionary.Count >= chosenServerId)
+            {
+                PROT_BROADCAST current = GetServer(chosenServerId);
+                _communication._client.Connect(IPAddress.Parse(current._Server_ip),8080);
+                isConnected = true;
+            }
+            
+        }
+
+        private void OnSearchAction(string obj)
+        {
+            if (isConnected)
+                return;
+
+
+            _udplistener.StartListening();
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            while(stopwatch.ElapsedMilliseconds < 10000)
+            {
+                if (_udplistener.data != null)
+                    _communication.AddPackage(_udplistener.data);
+            }
+            stopwatch.Stop();
+            _udplistener.StopListening();
         }
 
         private void OnCloseGameAction(string obj)
         {
             isRunning = false;
         }
-
-
 
         #endregion
 
@@ -206,13 +226,35 @@ namespace TCP_Model.ClientAndServer
                 +"\n"+updatedView._Updated_turn_information);
         }
 
+        private string[] _Servernames = new string[100];
+        private int[] _MaxPlayerCount = new int[100];
+        private int[] _CurrentPlayerCount = new int[100];
+        private int keyIndex = 1;
+        
+
         private void OnBroadcastAction(DataPackage data)
         {
             var broadcast = CreateProtocol<PROT_BROADCAST>(data);
+            _serverDictionary.Add(keyIndex, broadcast);
+            
+            _Servernames[keyIndex] = broadcast._Server_name;
+            _MaxPlayerCount[keyIndex] = broadcast._MaxPlayerCount;
+            _CurrentPlayerCount[keyIndex] = broadcast._CurrentPlayerCount;
 
-            Console.WriteLine("Server detected!\nServer name: " + broadcast._Server_name + 
-                "\nServer IP: " + broadcast._Server_ip + "\nPlayer slots: " + 
-                "\nIf you want to connect, type in /connect.");
+            Console.WriteLine(string.Format("{0,10} {1,10}\n\n", "Server", "Player"));
+
+            var outputFormat = new StringBuilder();
+
+            for (int index = 0; index < _serverDictionary.Count; index++)
+                outputFormat.Append(string.Format("{0,20} [{1,2}/{2,2}]\n", _Servernames[index],
+                    _CurrentPlayerCount[index], _MaxPlayerCount[index]));
+
+            Console.WriteLine(outputFormat);
+        //      Server  Player  
+        //
+        //      XD      [0/4]
+        //      LuL     [1/2]
+            keyIndex++;
         }
 
         private void OnAcceptAction(DataPackage data)

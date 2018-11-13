@@ -28,14 +28,14 @@ namespace TCP_Model.Communications
 
 
         public TcpCommunication()
-            : this(new TcpClient("172.22.22.153", 8080))
+            : this(new TcpClient())
         { }
 
         public TcpCommunication(TcpClient client)
         {
 
             _client = client;
-            _nwStream = _client.GetStream();
+            //_nwStream = _client.GetStream();
            
             //_localBuffer = new MemoryStream();
 
@@ -48,6 +48,14 @@ namespace TCP_Model.Communications
             //fängt an die Aufgaben abzuarbeiten
             _backgroundWorker.RunWorkerAsync();
         }
+
+        public void AddPackage(DataPackage dataPackage)
+        {
+            lock(_lock)
+            _packageQueue.Add(dataPackage);
+        }
+
+
 
         //schaut ob Pakete da sind
         public bool IsDataAvailable()
