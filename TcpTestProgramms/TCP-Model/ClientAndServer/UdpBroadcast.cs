@@ -27,7 +27,7 @@ namespace TCP_Model.ClientAndServer
             isBroadcasting = true;
             while (isBroadcasting)
             {
-                IPEndPoint ip = new IPEndPoint(IPAddress.Broadcast, 7070);
+                IPEndPoint ip = new IPEndPoint(IPAddress.Parse("172.22.22.153"), 7070);
                 udpServer.Send(_ServerInfo, _ServerInfo.Length, ip);
                 //udpServer.Close();
                 Thread.Sleep(10000);

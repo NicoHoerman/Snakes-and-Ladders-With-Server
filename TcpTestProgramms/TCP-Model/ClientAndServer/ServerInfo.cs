@@ -21,7 +21,10 @@ namespace TCP_Model.ClientAndServer
 
         public void PrintPlayerIP()
         {
-            Console.WriteLine(((IPEndPoint)_communications[0]._client.Client.RemoteEndPoint).Address.ToString());
+            for (int i = 0; i < _communications.Count; i++)
+            {
+                Console.WriteLine(((IPEndPoint)_communications[i]._client.Client.RemoteEndPoint).Address.ToString());
+            }
         }
     }
 }
