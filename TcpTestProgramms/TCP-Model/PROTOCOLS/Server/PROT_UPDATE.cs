@@ -9,9 +9,9 @@ namespace TCP_Model.PROTOCOLS.Server
 {
     public class PROT_UPDATE : IProtocol
     {
-        public string updated_board;
-        public string updated_dice_information;
-        public string updated_turn_information;
+        public string _Updated_board;
+        public string _Updated_dice_information;
+        public string _Updated_turn_information;
         
     }
 }

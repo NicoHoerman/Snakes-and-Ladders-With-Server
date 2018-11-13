@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using TCP_Model.PROTOCOLS.Server;
 
 namespace TCP_Model.ClientAndServer
@@ -29,6 +30,7 @@ namespace TCP_Model.ClientAndServer
                 IPEndPoint ip = new IPEndPoint(IPAddress.Broadcast, 7070);
                 udpServer.Send(_ServerInfo, _ServerInfo.Length, ip);
                 //udpServer.Close();
+                Thread.Sleep(10000);
             }
         }
 
@@ -40,10 +42,8 @@ namespace TCP_Model.ClientAndServer
                 Header = ProtocolAction.Broadcast,
                 Payload = JsonConvert.SerializeObject(new PROT_BROADCAST
                 {
-                    server_ip = "172.22.22.184",
-                    server_name = "Eels and Escalators Server_1",
-                    player_slot_info = "[0/4] Players"
-
+                    _Server_ip = "172.22.22.184",
+                    _Server_name = "Eels and Escalators Server_1"
                 })
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;

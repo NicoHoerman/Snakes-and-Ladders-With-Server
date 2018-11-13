@@ -17,7 +17,11 @@ namespace TCP_Model.ClientAndServer
         {
             _MaxPlayerCount = maxplayercount;
             _LobbyName = lobbyname;
-            ((IPEndPoint)_communications[0]._client.Client.RemoteEndPoint).Address.ToString();
+        }
+
+        public void PrintPlayerIP()
+        {
+            Console.WriteLine(((IPEndPoint)_communications[0]._client.Client.RemoteEndPoint).Address.ToString());
         }
     }
 }

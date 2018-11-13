@@ -16,13 +16,14 @@ namespace TCP_Model.ClientAndServer
 
     public class Server
     {
-        private const string SERVER_IP = "127.0.0.1";
+        private const string SERVER_IP = "172.22.22.153";
 
         private string _updateInfo = string.Empty;
         private int _x;
+        private static TcpClient _client;
 
-        //private List<IPAddress> _WhiteList = new List<IPAddress>();
-        //private List<IPAddress> _Blacklist = new List<IPAddress>();
+        private List<IPAddress> _WhiteList = new List<IPAddress>();
+        private List<IPAddress> _Blacklist = new List<IPAddress>();
 
         private Dictionary<ProtocolAction, Action<ICommunication, DataPackage>> _protocolActions;
 
@@ -40,12 +41,12 @@ namespace TCP_Model.ClientAndServer
             _protocolActions = new Dictionary<ProtocolAction, Action<ICommunication, DataPackage>>
             {
                 { ProtocolAction.RollDice, OnRollDiceAction },
-                { ProtocolAction.GetHelp, OnGetHelpAction },
-                { ProtocolAction.Connect, OnConnectAction}
+                { ProtocolAction.GetHelp, OnGetHelpAction }
+                //{ ProtocolAction.Connect, OnConnectAction}
             };
 
             _listener = new TcpListener(IPAddress.Parse(SERVER_IP), 8080);
-            DoBeginAcceptTcpClient(_listener);
+            CLientConnection(_listener);
         }
 
 
@@ -59,6 +60,7 @@ namespace TCP_Model.ClientAndServer
 
                 _serverInfo._communications.ForEach(communication =>
                 {
+
                     if (communication.IsDataAvailable())
                     {
                         var data = communication.Receive();
@@ -86,10 +88,21 @@ namespace TCP_Model.ClientAndServer
             CheckForUpdates();
         }
 
+        public void CLientConnection(TcpListener listener)
+        {
+            _listener.Start();
+
+            while (!isLobbyComplete())
+            {
+                DoBeginAcceptTcpClient(listener);
+                if (_client != null)
+                    AddCommunication(_client);
+               Thread.Sleep(1000);
+            }
+        }
+
         public static void DoBeginAcceptTcpClient(TcpListener listener)
         {
-            listener.Start();
-            Console.WriteLine("Waiting for a connection...");
 
             listener.BeginAcceptTcpClient(
                 new AsyncCallback(DoAcceptTcpClientCallback),
@@ -103,18 +116,30 @@ namespace TCP_Model.ClientAndServer
             TcpListener listener = (TcpListener)ar.AsyncState;
 
             TcpClient client = listener.EndAcceptTcpClient(ar);
-            _serverInfo._communications.Add(
-            new TcpCommunication(client));
-
+            _client = client;
+            
             Console.WriteLine("Client connected completed");
             tcpClientConnected.Set();
         }
 
-        public void isLobbyComplete()
+        public bool isLobbyComplete()
         {
             if (_serverInfo._communications.Count == _serverInfo._MaxPlayerCount)
+            {
                 _listener.Stop();
+                return true;
+            }
+            else
+                return false;
         }
+
+        public void AddCommunication(TcpClient client)
+        {
+            _serverInfo._communications.Add(
+                new TcpCommunication(client));
+            _serverInfo.PrintPlayerIP();
+            _client = null;
+        } 
 
         #region Protocol actions
 
@@ -127,9 +152,9 @@ namespace TCP_Model.ClientAndServer
                 Header = ProtocolAction.UpdateView,
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                 {
-                    updated_board = "Test: XD",
-                    updated_dice_information = "You rolled a 4",
-                    updated_turn_information = "Its Player 1's turn",                  
+                    _Updated_board = "Test: XD",
+                    _Updated_dice_information = "You rolled a 4",
+                    _Updated_turn_information = "Its Player 1's turn",                  
                 })
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;
@@ -147,7 +172,7 @@ namespace TCP_Model.ClientAndServer
                 Header = ProtocolAction.HelpText,
                 Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
                 {
-                    text = $"Here is your help Player {clientId.client_id}.\n " +
+                    _Text = $"Here is your help Player {clientId._Client_id}.\n " +
                     $"Commands:\n/rolldice\n/closegame\n"
                 })
             };
@@ -156,30 +181,19 @@ namespace TCP_Model.ClientAndServer
             communication.Send(dataPackage);
         }
 
-        private void OnConnectAction(ICommunication communication, DataPackage data)
+        /*private void OnConnectAction(ICommunication communication, DataPackage data)
         {
-           
             var clientId = CreateProtocol<PROT_CONNECT>(data);
 
-            var dataPackage = new DataPackage
-            {
-                Header = ProtocolAction.Accept,
-                Payload = JsonConvert.SerializeObject(new PROT_ACCEPT
-                {
-                    message = "Congratulations! Your client has been accepted."
-                    + "\nGet ready to play a fun round of Eels and Escalators!"
-                    + $"\nYou have  been assigned player number {clientId.client_id}."
-                })
-            };
-            dataPackage.Size = dataPackage.ToByteArray().Length;
+            if (_WhiteList.Contains(communication._clientId))
+                AcceptClient(communication, data, clientId);
 
-            if (clientId.client_id >= 4) //just some non-sense logic to test client declining
+            else if (_Blacklist.Contains(communication._clientIP))
                 DeclineClient(communication, data, clientId);
-
-            else communication.Send(dataPackage);
-        }
+        }*/
         #endregion
 
+        #region Accept and Decline
         private void DeclineClient(ICommunication communication, DataPackage data, PROT_CONNECT clientId)
         {
             
@@ -188,7 +202,7 @@ namespace TCP_Model.ClientAndServer
                 Header = ProtocolAction.Decline,
                 Payload = JsonConvert.SerializeObject(new PROT_DECLINE
                 {
-                    message = $"Your connection was declined because the Client ID({clientId.client_id}) is on our Blacklist."
+                    _Message = $"Your connection was declined because the Client ID({clientId._Client_id}) is on our Blacklist."
                     
                 })
             };
@@ -199,6 +213,25 @@ namespace TCP_Model.ClientAndServer
             communication._client.Close();
 
         }
+
+        private void AcceptClient(ICommunication communication, DataPackage data, PROT_CONNECT clientId)
+        {
+
+            var dataPackage = new DataPackage
+            {
+                Header = ProtocolAction.Accept,
+                Payload = JsonConvert.SerializeObject(new PROT_ACCEPT
+                {
+                    _Message = "Congratulations! Your client has been accepted."
+                    + "\nGet ready to play a fun round of Eels and Escalators!"
+                    + $"\nYou have  been assigned player number {clientId._Client_id}."
+                })
+            };
+            dataPackage.Size = dataPackage.ToByteArray().Length;
+
+            communication.Send(dataPackage);
+        }
+        #endregion
 
         #region Static helper functions
 

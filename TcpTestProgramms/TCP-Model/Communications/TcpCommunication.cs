@@ -12,29 +12,23 @@ using TCP_Model.Contracts;
 
 /// <summary>
 /// Wir haben eine TcpCommunication eine klasse die die Verbindung zwischen Server und client regelt 
-/// 
 /// </summary>
 namespace TCP_Model.Communications
 {
     public class TcpCommunication : ICommunication
     {
-        // Wir arbeiten mit TcpClient und NetworkStream
         public TcpClient _client { get; set; }
         private NetworkStream _nwStream;
 
-        //Der Memory und die Liste ist um DatenPakete richtig zu empfangen
         private MemoryStream _localBuffer;
         private List<DataPackage> _packageQueue;
 
-        //Das Lock ist ein Scloss um beim Multithreading keine Probleme zu bekommen
-        // wenn ein codeabschnitt von einem Treahd bearbeitet wird darf kein anderer drauf zugreifen
         private readonly object _lock;
-        // Der Backgroundworker macht das genau das was im Namen steht
         private BackgroundWorker _backgroundWorker;
 
 
         public TcpCommunication()
-            : this(new TcpClient())
+            : this(new TcpClient("172.22.22.153", 8080))
         { }
 
         public TcpCommunication(TcpClient client)

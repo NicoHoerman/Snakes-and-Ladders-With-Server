@@ -9,6 +9,6 @@ namespace TCP_Model.PROTOCOLS.Client
 {
     public class PROT_HELP: IProtocol
     {
-        public int client_id;
+        public int _Client_id;
     }
 }

@@ -7,6 +7,6 @@ namespace TCP_Model.PROTOCOLS.Server
 {
     class PROT_DECLINE : IProtocol
     {
-        public string message;
+        public string _Message;
     }
 }
