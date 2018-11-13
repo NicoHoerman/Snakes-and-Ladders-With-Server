@@ -21,19 +21,21 @@ namespace TCP_Model.ClientAndServer
         private string _updateInfo = string.Empty;
         private int _x;
 
-        private List<IPAddress> _WhiteList = new List<IPAddress>();
-        private List<IPAddress> _Blacklist = new List<IPAddress>();
+        //private List<IPAddress> _WhiteList = new List<IPAddress>();
+        //private List<IPAddress> _Blacklist = new List<IPAddress>();
 
         private Dictionary<ProtocolAction, Action<ICommunication, DataPackage>> _protocolActions;
 
-        private List<ICommunication> _communications;
+       
+        public static ManualResetEvent tcpClientConnected = new ManualResetEvent(false);
         private TcpListener _listener;
+        private ServerInfo _serverInfo;
 
 
-
-        public Server()
+        public Server(string lobbyname, int maxplayercount)
         {
-            _communications = new List<ICommunication>();
+            _serverInfo = new ServerInfo( lobbyname, maxplayercount);
+            _serverInfo._communications = new List<ICommunication>();
 
             _protocolActions = new Dictionary<ProtocolAction, Action<ICommunication, DataPackage>>
             {
@@ -43,9 +45,7 @@ namespace TCP_Model.ClientAndServer
             };
 
             _listener = new TcpListener(IPAddress.Parse(SERVER_IP), 8080);
-            _listener.Start();
-            _listener.Stop();
-            _communications.Add(new TcpCommunication(_listener.AcceptTcpClient()));
+            DoBeginAcceptTcpClient(_listener);
         }
 
 
@@ -57,7 +57,7 @@ namespace TCP_Model.ClientAndServer
 
                 var communicated = false;
 
-                _communications.ForEach(communication =>
+                _serverInfo._communications.ForEach(communication =>
                 {
                     if (communication.IsDataAvailable())
                     {
@@ -83,9 +83,37 @@ namespace TCP_Model.ClientAndServer
 
         public void Run()
         {
-
-
             CheckForUpdates();
+        }
+
+        public static void DoBeginAcceptTcpClient(TcpListener listener)
+        {
+            listener.Start();
+            Console.WriteLine("Waiting for a connection...");
+
+            listener.BeginAcceptTcpClient(
+                new AsyncCallback(DoAcceptTcpClientCallback),
+                listener);
+
+            tcpClientConnected.WaitOne();
+        }
+
+        public static void DoAcceptTcpClientCallback(IAsyncResult ar)
+        {
+            TcpListener listener = (TcpListener)ar.AsyncState;
+
+            TcpClient client = listener.EndAcceptTcpClient(ar);
+            _serverInfo._communications.Add(
+            new TcpCommunication(client));
+
+            Console.WriteLine("Client connected completed");
+            tcpClientConnected.Set();
+        }
+
+        public void isLobbyComplete()
+        {
+            if (_serverInfo._communications.Count == _serverInfo._MaxPlayerCount)
+                _listener.Stop();
         }
 
         #region Protocol actions
