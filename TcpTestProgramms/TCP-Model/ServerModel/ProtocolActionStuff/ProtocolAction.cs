@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TCP_Model.ServerModel;
 
 namespace EandE_ServerModel.ServerModel.ProtocolActionStuff
 {
@@ -12,6 +13,8 @@ namespace EandE_ServerModel.ServerModel.ProtocolActionStuff
     {
         public Dictionary<ProtocolActionEnum, Action<DataPackage>> _protocolActions;
         public Dictionary<int, PROT_BROADCAST> _serverDictionary;
+
+        private OutputWrapper outputWrapper;
 
         public ProtocolAction()
         {
@@ -26,6 +29,8 @@ namespace EandE_ServerModel.ServerModel.ProtocolActionStuff
                 { ProtocolActionEnum.Decline, OnDeclineAction }
             
             };
+
+            outputWrapper = new OutputWrapper();
         }
 
         public void ExecuteDataActionFor(DataPackage data)
@@ -72,7 +77,7 @@ namespace EandE_ServerModel.ServerModel.ProtocolActionStuff
             _MaxPlayerCount[keyIndex] = broadcast._MaxPlayerCount;
             _CurrentPlayerCount[keyIndex] = broadcast._CurrentPlayerCount;
 
-            Console.WriteLine(string.Format("{0,6}  {1,6}\n", "Player", "Server"));
+           
 
             var outputFormat = new StringBuilder();
 
@@ -80,7 +85,7 @@ namespace EandE_ServerModel.ServerModel.ProtocolActionStuff
                 outputFormat.Append(string.Format("[{0,1}/{1,1}]   {2,20}\n", _CurrentPlayerCount[index],
                     _MaxPlayerCount[index], _Servernames[index]));
 
-            Console.WriteLine(outputFormat);
+            outputWrapper.UpdatePreLobby(outputFormat);
             //      Server  Player  
             //
             //      XD      [0/4]

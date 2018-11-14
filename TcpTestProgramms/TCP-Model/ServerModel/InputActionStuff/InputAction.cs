@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 
 namespace TCP_Model.ServerModel.InputActionStuff
@@ -119,18 +120,18 @@ namespace TCP_Model.ServerModel.InputActionStuff
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            _Udplistener.StartListening();
+            _UdpListener.StartListening();
 
             while (stopwatch.ElapsedMilliseconds < 10000)
             {
-                if (_Udplistener._DataList.Count > 0)
+                if (_UdpListener._DataList.Count > 0)
                 {
-                    communication.AddPackage(_Udplistener._DataList.First());
-                    _Udplistener._DataList.RemoveAt(0);
+                    communication.AddPackage(_UdpListener._DataList.First());
+                    _UdpListener._DataList.RemoveAt(0);
                 }
             }
             stopwatch.Stop();
-            _Udplistener.StopListening();
+            _UdpListener.StopListening();
         }
 
         private void OnCloseGameAction(string obj,ICommunication communication)

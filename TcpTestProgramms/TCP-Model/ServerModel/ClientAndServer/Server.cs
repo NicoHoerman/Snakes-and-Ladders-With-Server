@@ -192,7 +192,7 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
         }*/
         #endregion
 
-        #region Accept and Decline
+       /* #region Accept and Decline
         private void DeclineClient(ICommunication communication, DataPackage data, PROT_CONNECT clientId)
         {
             
@@ -231,7 +231,7 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
             communication.Send(dataPackage);
         }
         #endregion
-
+        */
         #region Static helper functions
 
         private static T CreateProtocol<T>(DataPackage data) where T : IProtocol

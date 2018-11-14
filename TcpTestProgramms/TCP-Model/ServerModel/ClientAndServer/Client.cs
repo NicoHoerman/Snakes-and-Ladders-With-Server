@@ -5,6 +5,7 @@ using EandE_ServerModel.ServerModel.Contracts;
 using EandE_ServerModel.ServerModel.Communications;
 using EandE_ServerModel.ServerModel.ProtocolActionStuff;
 using TCP_Model.ServerModel.InputActionStuff;
+using TCP_Model.ServerModel;
 
 namespace EandE_ServerModel.ServerModel.ClientAndServer
 {
@@ -16,6 +17,7 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
         private ICommunication _communication;
         private ProtocolAction _ActionHanlder;
         private InputAction _InputHandler;
+        private OutputWrapper _OutputWrapper;
 
         //<Constructors>
         public Client(ICommunication communication)
@@ -23,6 +25,7 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
             _communication = communication;
             _ActionHanlder = new ProtocolAction();
             _InputHandler = new InputAction();
+            _OutputWrapper = new OutputWrapper();
         }
 
         public Client()
@@ -56,13 +59,9 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
             isRunning = true;
             while (isRunning)
             {
-                //Console.Clear();
+                _OutputWrapper.ShowSomething();
 
-                Console.WriteLine("Type /search for Servers");
-                Console.SetCursorPosition(0,1);
-                Console.WriteLine("Type an Command: ");
-                Console.SetCursorPosition(17,1);
-
+                
                 var input = Console.ReadLine();
                 _InputHandler.ParseAndExecuteCommand(input,_communication);
             }
