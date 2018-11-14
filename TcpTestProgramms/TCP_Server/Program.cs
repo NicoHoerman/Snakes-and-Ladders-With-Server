@@ -1,7 +1,6 @@
-﻿using System;
+﻿using EandE_ServerModel.ServerModel.ClientAndServer;
+using System;
 using System.ComponentModel;
-using TCP_Model;
-using TCP_Model.ClientAndServer;
 
 namespace TCP_Server
 {

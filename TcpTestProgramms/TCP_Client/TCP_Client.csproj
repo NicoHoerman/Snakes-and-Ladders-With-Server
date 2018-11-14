@@ -6,8 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TCP-Model\TCP_Model.csproj" />
-    <ProjectReference Include="..\TCP_Server\TCP_Server.csproj" />
+    <ProjectReference Include="..\TCP-Model\EandE_ServerModel.csproj" />
   </ItemGroup>
 
 </Project>

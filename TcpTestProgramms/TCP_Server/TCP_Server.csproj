@@ -54,9 +54,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TCP-Model\TCP_Model.csproj">
+    <ProjectReference Include="..\TCP-Model\EandE_ServerModel.csproj">
       <Project>{34EDD763-C18A-49A1-8ECB-4F452F345FBE}</Project>
-      <Name>TCP_Model</Name>
+      <Name>EandE_ServerModel</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,5 +1,4 @@
-﻿using TCP_Model;
-using TCP_Model.ClientAndServer;
+﻿using EandE_ServerModel.ServerModel.ClientAndServer;
 
 namespace TCP_Client
 {

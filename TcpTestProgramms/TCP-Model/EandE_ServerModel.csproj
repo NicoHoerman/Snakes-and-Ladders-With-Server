@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>TCP_Model</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="EandE\XML_Config\Configurations.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="EandE\XML_Config\Configurations.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+</Project>
