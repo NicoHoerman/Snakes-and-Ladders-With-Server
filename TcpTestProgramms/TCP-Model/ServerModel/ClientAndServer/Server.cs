@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using TCP_Model.ServerModel.ProtocolActionStuff;
 
 namespace EandE_ServerModel.ServerModel.ClientAndServer
 {
@@ -23,26 +24,19 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
 
         private List<IPAddress> _WhiteList = new List<IPAddress>();
         private List<IPAddress> _Blacklist = new List<IPAddress>();
-
-        private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
-
        
         public static ManualResetEvent tcpClientConnected = new ManualResetEvent(false);
         private TcpListener _listener;
         private ServerInfo _serverInfo;
+        private ServerActions _ActionsHandler;
 
 
         public Server(string lobbyname, int maxplayercount)
         {
+            _ActionsHandler = new ServerActions();
+
             _serverInfo = new ServerInfo( lobbyname, maxplayercount);
             _serverInfo._communications = new List<ICommunication>();
-
-            _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>
-            {
-                { ProtocolActionEnum.RollDice, OnRollDiceAction },
-                { ProtocolActionEnum.GetHelp, OnGetHelpAction }
-                //{ ProtocolAction.Connect, OnConnectAction}
-            };
 
             _listener = new TcpListener(IPAddress.Parse(SERVER_IP), 8080);
             CLientConnection(_listener);
@@ -53,17 +47,14 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
         {
             while (true)
             {
-                
-
                 var communicated = false;
 
                 _serverInfo._communications.ForEach(communication =>
                 {
-
                     if (communication.IsDataAvailable())
                     {
                         var data = communication.Receive();
-                        ExecuteDataActionFor(communication, data);
+                        _ActionsHandler.ExecuteDataActionFor(communication, data);
                         communicated = true;
                     }
                 });
@@ -72,14 +63,6 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
                     Thread.Sleep(1);
             }
 
-        }
-
-        private void ExecuteDataActionFor(ICommunication communication, DataPackage data)
-        {
-            if (_protocolActions.TryGetValue(data.Header, out var protocolAction) == false)
-                throw new InvalidOperationException("Invalid communication");
-
-            protocolAction(communication, data);
         }
 
         public void Run()
@@ -140,58 +123,6 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
             _client = null;
         } 
 
-        #region Protocol actions
-
-        private void OnRollDiceAction(ICommunication communication, DataPackage data)
-        {
-            
-            var dataPackage = new DataPackage
-            {
-
-                Header = ProtocolActionEnum.UpdateView,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                {
-                    _Updated_board = "Test: XD",
-                    _Updated_dice_information = "You rolled a 4",
-                    _Updated_turn_information = "Its Player 1's turn",                  
-                })
-            };
-            dataPackage.Size = dataPackage.ToByteArray().Length;
-
-            communication.Send(dataPackage);
-        }
-
-        private void OnGetHelpAction(ICommunication communication, DataPackage data)
-        {
-
-            var clientId = CreateProtocol<PROT_HELPTEXT>(data);
-
-            var dataPackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.HelpText,
-                Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
-                {
-                    _Text = $"Here is your help Player {clientId._Text}.\n " +
-                    $"Commands:\n/rolldice\n/closegame\n"
-                })
-            };
-            dataPackage.Size = dataPackage.ToByteArray().Length;
-
-            communication.Send(dataPackage);
-        }
-
-        /*private void OnConnectAction(ICommunication communication, DataPackage data)
-        {
-            var clientId = CreateProtocol<PROT_CONNECT>(data);
-
-            if (_WhiteList.Contains(communication._clientId))
-                AcceptClient(communication, data, clientId);
-
-            else if (_Blacklist.Contains(communication._clientIP))
-                DeclineClient(communication, data, clientId);
-        }*/
-        #endregion
-
        /* #region Accept and Decline
         private void DeclineClient(ICommunication communication, DataPackage data, PROT_CONNECT clientId)
         {
@@ -232,13 +163,6 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
         }
         #endregion
         */
-        #region Static helper functions
-
-        private static T CreateProtocol<T>(DataPackage data) where T : IProtocol
-        {
-            return JsonConvert.DeserializeObject<T>(data.Payload);
-        }
-
-        #endregion
+       
     }
 }

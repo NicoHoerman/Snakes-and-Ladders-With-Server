@@ -17,7 +17,11 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
         public bool isRunning;
         private string _requiredString = string.Empty;
 
-        private Dictionary<string, string> _requiredStringForInput = new Dictionary<string, string>();
+
+        private string _serverTable = string.Empty;
+        private string _afterConnectMsg = string.Empty; 
+
+
 
         private ICommunication _communication;
         private ProtocolAction _ActionHanlder;
@@ -32,11 +36,7 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
             _InputHandler = new InputAction();
             _OutputWrapper = new OutputWrapper();
 
-            _requiredStringForInput = new Dictionary<string, string>()
-            {
-                { "/search",_ActionHanlder._serverTable}
-                
-            };
+            
         }
 
         public Client()
@@ -44,7 +44,6 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
         { }
         
         //<Methods>
-        private string GetString(string key) => _requiredStringForInput[key];
 
         private void CheckForUpdates()
         {
@@ -73,7 +72,10 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
             while (isRunning)
             {
 
-                _OutputWrapper.Updateview(input,_requiredString);
+                _OutputWrapper.Updateview(input,_afterConnectMsg,_serverTable);
+                _serverTable = string.Empty;
+                _afterConnectMsg = string.Empty;
+
 
                 Console.SetCursorPosition(17, 0);
                  input = Console.ReadLine();

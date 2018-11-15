@@ -40,7 +40,7 @@ namespace TCP_Model.ServerModel
 
 
 
-        public void Updateview(string input, string requiredstring)
+        public void Updateview(string input, string afterConectMsg,string servertable)
         {
             Clear();
             FirstLine();
@@ -78,6 +78,7 @@ namespace TCP_Model.ServerModel
         {
             string tableHeader = string.Format("{2,3} {0,6}  {1,6}\n", "Player", "Server","Key");
             _Memory = serverTable;
+
 
             WriteOutput(0,3, tableHeader,ConsoleColor.Blue);
             WriteOutput(0, 4, serverTable, ConsoleColor.Blue);

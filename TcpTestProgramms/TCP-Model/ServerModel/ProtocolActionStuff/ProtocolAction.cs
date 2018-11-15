@@ -12,16 +12,13 @@ namespace EandE_ServerModel.ServerModel.ProtocolActionStuff
     public class ProtocolAction
     {
         public Dictionary<ProtocolActionEnum, Action<DataPackage>> _protocolActions;
-        public Dictionary<int, PROT_BROADCAST> _serverDictionary;
+        public Dictionary<int, PROT_BROADCAST> _serverDictionary = new Dictionary<int, PROT_BROADCAST>();
 
         private OutputWrapper outputWrapper;
         public string _serverTable =string.Empty; 
 
-
         public ProtocolAction()
         {
-            _serverDictionary = new Dictionary<int, PROT_BROADCAST>();
-
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage>>
             {
                 { ProtocolActionEnum.HelpText, OnHelpTextAction},

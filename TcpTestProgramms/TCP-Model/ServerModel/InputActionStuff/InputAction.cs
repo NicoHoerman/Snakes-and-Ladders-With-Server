@@ -23,6 +23,7 @@ namespace TCP_Model.ServerModel.InputActionStuff
         public Dictionary<string, Action<string,ICommunication>> _inputActions;
 
         private ProtocolAction _ActionHanlder;
+        OutputWrapper _OutputWrapper;  
 
         private Receiver _UdpListener;
 
@@ -30,6 +31,7 @@ namespace TCP_Model.ServerModel.InputActionStuff
         {
 
             _ActionHanlder = new ProtocolAction();
+            _OutputWrapper = new OutputWrapper();
 
             _inputActions = new Dictionary<string, Action<string,ICommunication>>
             {
@@ -37,12 +39,15 @@ namespace TCP_Model.ServerModel.InputActionStuff
                 { "/rolldice", OnInputRollDiceAction },
                 { "/closegame", OnCloseGameAction },
                 {"/someInt" ,OnIntAction },
-                {"/search", OnSearchAction }
+                {"/search", OnSearchAction },
+                {"/startgame", OnStartGameAction }
             };
 
             _UdpListener = new Receiver();
 
         }
+
+       
 
         public void ParseAndExecuteCommand(string input,ICommunication communication)
         {
@@ -66,7 +71,11 @@ namespace TCP_Model.ServerModel.InputActionStuff
         private void OnInputHelpAction(string obj,ICommunication communication)
         {
             if (!isConnected)
+            {
+                _OutputWrapper.WriteOutput(0, 2, "Invalid Command", ConsoleColor.Red);
                 return;
+            }
+
             var dataPackage = new DataPackage
             {
 
@@ -87,7 +96,10 @@ namespace TCP_Model.ServerModel.InputActionStuff
         private void OnInputRollDiceAction(string obj,ICommunication communication)
         {
             if (!isConnected)
+            {
+                _OutputWrapper.WriteOutput(0, 2, "Invalid Command", ConsoleColor.Red);
                 return;
+            }
 
             var dataPackage = new DataPackage
             {
@@ -106,8 +118,10 @@ namespace TCP_Model.ServerModel.InputActionStuff
         private void OnIntAction(string obj,ICommunication communication)
         {
             if (isConnected)
+            {
+                _OutputWrapper.WriteOutput(0,2,"Invalid Command",ConsoleColor.Red);
                 return;
-
+            }
             int chosenServerId = Int32.Parse(obj);
             if (_ActionHanlder._serverDictionary.Count >= chosenServerId)
             {
@@ -126,9 +140,14 @@ namespace TCP_Model.ServerModel.InputActionStuff
         private void OnSearchAction(string obj,ICommunication communication)
         {
             if (isConnected)
+            {
+                _OutputWrapper.WriteOutput(0, 2, "Invalid Command", ConsoleColor.Red);
                 return;
+            }
 
-
+            _OutputWrapper.WriteOutput(0, 1, "Searching...", ConsoleColor.DarkGray);                                                                                   
+            if (isConnected)
+                return;
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -151,6 +170,10 @@ namespace TCP_Model.ServerModel.InputActionStuff
             throw new NotImplementedException();
         }
 
+        private void OnStartGameAction(string arg1, ICommunication arg2)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
 
