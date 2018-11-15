@@ -27,7 +27,7 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
             while (isBroadcasting)
             {
                 SetBroadcastMsg();
-                IPEndPoint ip = new IPEndPoint(IPAddress.Parse("172.22.22.153"), 7070);
+                IPEndPoint ip = new IPEndPoint(IPAddress.Parse("172.22.21.132"), 7070);
                 udpServer.Send(_ServerInfo, _ServerInfo.Length, ip);
                 //udpServer.Close();
                 Thread.Sleep(5000);
@@ -42,7 +42,7 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
                 Header = ProtocolActionEnum.Broadcast,
                 Payload = JsonConvert.SerializeObject(new PROT_BROADCAST
                 {
-                    _Server_ip = "172.22.22.153",
+                    _Server_ip = "172.22.21.132",
                     _Server_name = "Eels and Escalators Server_1",
                     _CurrentPlayerCount = random.Next(0,4),
                     _MaxPlayerCount = 4

@@ -17,10 +17,8 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
         public bool isRunning;
         private string _requiredString = string.Empty;
 
-
-        private string _serverTable = string.Empty;
-        private string _afterConnectMsg = string.Empty; 
-
+        public string _serverTable = string.Empty;
+        public string _afterConnectMsg = string.Empty;
 
 
         private ICommunication _communication;
@@ -33,16 +31,16 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
         {
             _communication = communication;
             _ActionHanlder = new ProtocolAction();
-            _InputHandler = new InputAction();
+            _InputHandler = new InputAction(_ActionHanlder);
             _OutputWrapper = new OutputWrapper();
 
-            
+
         }
 
         public Client()
             : this(new TcpCommunication())
         { }
-        
+
         //<Methods>
 
         private void CheckForUpdates()
@@ -72,43 +70,24 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
             while (isRunning)
             {
 
-                _OutputWrapper.Updateview(input,_afterConnectMsg,_serverTable);
+                _OutputWrapper.Updateview(input, _afterConnectMsg, _serverTable);
                 _serverTable = string.Empty;
                 _afterConnectMsg = string.Empty;
 
 
                 Console.SetCursorPosition(17, 0);
-                 input = Console.ReadLine();
-                _InputHandler.ParseAndExecuteCommand(input,_communication);
-                ChooseString(input);
+                input = Console.ReadLine();
+                _InputHandler.ParseAndExecuteCommand(input, _communication);
+                SetParameters();
+                
             }
-
         }
 
-        private void ChooseString(string _input)
+        private void SetParameters()
         {
-
-            if (_input == "/search")
-                _requiredString = _ActionHanlder._serverTable;
-            else if (_input.All(char.IsDigit))
-                _requiredString = _InputHandler.isRightInt;
-            else
-                _requiredString = string.Empty;
-
-
-
-            //try
-            //{
-            //    requiredString = GetString(_input);
-            //}
-            //catch(Exception e)
-            //{
-            //    //log
-            //    requiredString = string.Empty;
-            //}
-
+            _afterConnectMsg = _InputHandler._afterConnectMsg;
+            _serverTable = _ActionHanlder._serverTable;
         }
-
     }
 }
 

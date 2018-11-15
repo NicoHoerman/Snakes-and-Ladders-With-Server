@@ -16,7 +16,7 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
 
     public class Server
     {
-        private const string SERVER_IP = "172.22.22.153";
+        private const string SERVER_IP = "172.22.21.132";
 
         private string _updateInfo = string.Empty;
         private int _x;

@@ -18,7 +18,7 @@ namespace TCP_Model.ServerModel.InputActionStuff
         private int someInt;
         private bool isConnected = false;
         private System.Timers.Timer timer;
-        public string isRightInt = string.Empty;
+        public string _afterConnectMsg = string.Empty;
 
         public Dictionary<string, Action<string,ICommunication>> _inputActions;
 
@@ -27,10 +27,10 @@ namespace TCP_Model.ServerModel.InputActionStuff
 
         private Receiver _UdpListener;
 
-        public InputAction()
+        public InputAction(ProtocolAction protocolAction)
         {
 
-            _ActionHanlder = new ProtocolAction();
+            _ActionHanlder = protocolAction;
             _OutputWrapper = new OutputWrapper();
 
             _inputActions = new Dictionary<string, Action<string,ICommunication>>
@@ -125,14 +125,14 @@ namespace TCP_Model.ServerModel.InputActionStuff
             int chosenServerId = Int32.Parse(obj);
             if (_ActionHanlder._serverDictionary.Count >= chosenServerId)
             {
-                PROT_BROADCAST current = _ActionHanlder.GetServer(chosenServerId);
+                PROT_BROADCAST current = _ActionHanlder.GetServer(chosenServerId-1);
                 communication._client.Connect(IPAddress.Parse(current._Server_ip), 8080);
-                isRightInt = $"Server {chosenServerId} chosen";
+                _afterConnectMsg = $"Server {chosenServerId} chosen";
                 isConnected = true;
             }
             else
             {
-                isRightInt = "no Server with this indentifier";
+                _afterConnectMsg = "no Server with this indentifier";
             }
 
         }

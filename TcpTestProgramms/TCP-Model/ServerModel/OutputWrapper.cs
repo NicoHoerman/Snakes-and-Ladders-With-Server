@@ -9,6 +9,7 @@ namespace TCP_Model.ServerModel
     {
 
         private string _Memory = string.Empty;
+       
 
 
         public void Clear()
@@ -45,25 +46,10 @@ namespace TCP_Model.ServerModel
             Clear();
             FirstLine();
 
-            if (input == string.Empty)
-                return;
-
-            if (input.All(char.IsDigit))
-                input = "int";
-
-
-            switch (input)
-            {
-                case "/search":
-                    UpdatePreLobby(requiredstring);
-                    break;
-                case "int":
-                    OnServerSelection(requiredstring);
-                    break;
-                default:
-                    ErrorMsg(input);
-                    break;
-            }
+            if (servertable.Length !=0)
+                UpdatePreLobby(servertable);
+            if (afterConectMsg.Length != 0)
+                OnServerSelection(afterConectMsg);
             
         }
 
@@ -80,8 +66,19 @@ namespace TCP_Model.ServerModel
             _Memory = serverTable;
 
 
-            WriteOutput(0,3, tableHeader,ConsoleColor.Blue);
-            WriteOutput(0, 4, serverTable, ConsoleColor.Blue);
+            WriteOutput(0,4, tableHeader,ConsoleColor.Blue);
+            WriteOutput(0, 5, serverTable, ConsoleColor.Blue);
+        }
+
+        private void OnServerSelection(string msg)
+        {
+            string message = msg;
+            string tableHeader = string.Format("{2,3} {0,6}  {1,6}\n", "Player", "Server", "Key");
+
+            WriteOutput(0, 1, message, ConsoleColor.DarkBlue);
+
+            WriteOutput(0, 4, tableHeader, ConsoleColor.Blue);
+            WriteOutput(0, 5, _Memory, ConsoleColor.Blue);
         }
 
         private void ErrorMsg(string input)
@@ -92,17 +89,6 @@ namespace TCP_Model.ServerModel
             WriteOutput(0, 15, lastinput, ConsoleColor.DarkRed);
             WriteOutput(0, 16, error, ConsoleColor.Red);
 
-        }
-
-        private void OnServerSelection(string msg)
-        {
-            string message = msg;
-            string tableHeader = string.Format("{2,3} {0,6}  {1,6}\n", "Player", "Server", "Key");
-
-            WriteOutput(0, 3, message, ConsoleColor.DarkBlue);
-
-            WriteOutput(0, 4, tableHeader, ConsoleColor.Blue);
-            WriteOutput(0, 5, _Memory, ConsoleColor.Blue);
         }
     }
 }
