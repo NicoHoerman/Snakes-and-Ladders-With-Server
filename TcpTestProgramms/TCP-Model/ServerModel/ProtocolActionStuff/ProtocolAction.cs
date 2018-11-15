@@ -15,6 +15,8 @@ namespace EandE_ServerModel.ServerModel.ProtocolActionStuff
         public Dictionary<int, PROT_BROADCAST> _serverDictionary;
 
         private OutputWrapper outputWrapper;
+        public string _serverTable =string.Empty; 
+
 
         public ProtocolAction()
         {
@@ -62,6 +64,7 @@ namespace EandE_ServerModel.ServerModel.ProtocolActionStuff
                 + "\n" + updatedView._Updated_turn_information);
         }
 
+        private List<string> _ServerIps = new List<string>(); 
         private string[] _Servernames = new string[100];
         private int[] _MaxPlayerCount = new int[100];
         private int[] _CurrentPlayerCount = new int[100];
@@ -71,26 +74,37 @@ namespace EandE_ServerModel.ServerModel.ProtocolActionStuff
         private void OnBroadcastAction(DataPackage data)
         {
             var broadcast = CreateProtocol<PROT_BROADCAST>(data);
-            _serverDictionary.Add(keyIndex, broadcast);
 
-            _Servernames[keyIndex] = broadcast._Server_name;
-            _MaxPlayerCount[keyIndex] = broadcast._MaxPlayerCount;
-            _CurrentPlayerCount[keyIndex] = broadcast._CurrentPlayerCount;
+            if (_ServerIps.Contains(broadcast._Server_ip))
+            {
+                var servernumber = _ServerIps.IndexOf(broadcast._Server_ip);
+                _Servernames[servernumber] = broadcast._Server_name;
+                _MaxPlayerCount[servernumber] = broadcast._MaxPlayerCount;
+                _CurrentPlayerCount[servernumber] = broadcast._CurrentPlayerCount;
+            }
+            else
+            {
+                _ServerIps.Add(broadcast._Server_ip);
 
-           
+                _serverDictionary.Add(keyIndex, broadcast);
+
+                _Servernames[keyIndex] = broadcast._Server_name;
+                _MaxPlayerCount[keyIndex] = broadcast._MaxPlayerCount;
+                _CurrentPlayerCount[keyIndex] = broadcast._CurrentPlayerCount;
+            }
 
             var outputFormat = new StringBuilder();
 
             for (int index = 0; index < _serverDictionary.Count; index++)
-                outputFormat.Append(string.Format("[{0,1}/{1,1}]   {2,20}\n", _CurrentPlayerCount[index],
-                    _MaxPlayerCount[index], _Servernames[index]));
+                outputFormat.Append(string.Format("{3,2}  [{0,1}/{1,1}]   {2,20}\n", _CurrentPlayerCount[index],
+                    _MaxPlayerCount[index], _Servernames[index],(index+1)));
 
-            outputWrapper.UpdatePreLobby(outputFormat);
+            _serverTable = outputFormat.ToString();
+            keyIndex++;
             //      Server  Player  
             //
             //      XD      [0/4]
             //      LuL     [1/2]
-            keyIndex++;
         }
 
         private void OnAcceptAction(DataPackage data)

@@ -18,6 +18,7 @@ namespace TCP_Model.ServerModel.InputActionStuff
         private int someInt;
         private bool isConnected = false;
         private System.Timers.Timer timer;
+        public string isRightInt = string.Empty;
 
         public Dictionary<string, Action<string,ICommunication>> _inputActions;
 
@@ -35,7 +36,7 @@ namespace TCP_Model.ServerModel.InputActionStuff
                 { "/help", OnInputHelpAction },
                 { "/rolldice", OnInputRollDiceAction },
                 { "/closegame", OnCloseGameAction },
-                {$"/{someInt}" ,OnIntAction },
+                {"/someInt" ,OnIntAction },
                 {"/search", OnSearchAction }
             };
 
@@ -45,13 +46,19 @@ namespace TCP_Model.ServerModel.InputActionStuff
 
         public void ParseAndExecuteCommand(string input,ICommunication communication)
         {
+            string receivedInput = input;
+            if (input.All(char.IsDigit))
+            {
+                input = "/someInt";
+            }
+
             if (_inputActions.TryGetValue(input, out var action) == false)
             {
-                Console.WriteLine($"Invalid command: {input}");
+                //log
                 return;
             }
 
-            action(input,communication);
+            action(receivedInput,communication);
         }
 
         #region Input actions
@@ -106,7 +113,12 @@ namespace TCP_Model.ServerModel.InputActionStuff
             {
                 PROT_BROADCAST current = _ActionHanlder.GetServer(chosenServerId);
                 communication._client.Connect(IPAddress.Parse(current._Server_ip), 8080);
+                isRightInt = $"Server {chosenServerId} chosen";
                 isConnected = true;
+            }
+            else
+            {
+                isRightInt = "no Server with this indentifier";
             }
 
         }

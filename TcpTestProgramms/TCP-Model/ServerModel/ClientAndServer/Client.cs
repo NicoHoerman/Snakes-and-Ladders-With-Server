@@ -6,6 +6,8 @@ using EandE_ServerModel.ServerModel.Communications;
 using EandE_ServerModel.ServerModel.ProtocolActionStuff;
 using TCP_Model.ServerModel.InputActionStuff;
 using TCP_Model.ServerModel;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EandE_ServerModel.ServerModel.ClientAndServer
 {
@@ -13,7 +15,10 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
     public class Client
     {
         public bool isRunning;
-        
+        private string _requiredString = string.Empty;
+
+        private Dictionary<string, string> _requiredStringForInput = new Dictionary<string, string>();
+
         private ICommunication _communication;
         private ProtocolAction _ActionHanlder;
         private InputAction _InputHandler;
@@ -26,6 +31,12 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
             _ActionHanlder = new ProtocolAction();
             _InputHandler = new InputAction();
             _OutputWrapper = new OutputWrapper();
+
+            _requiredStringForInput = new Dictionary<string, string>()
+            {
+                { "/search",_ActionHanlder._serverTable}
+                
+            };
         }
 
         public Client()
@@ -33,6 +44,7 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
         { }
         
         //<Methods>
+        private string GetString(string key) => _requiredStringForInput[key];
 
         private void CheckForUpdates()
         {
@@ -55,16 +67,43 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
             backgroundworker.DoWork += (obj, ea) => CheckForUpdates();
             backgroundworker.RunWorkerAsync();
 
-
+            string input = string.Empty;
             isRunning = true;
+
             while (isRunning)
             {
-                _OutputWrapper.ShowSomething();
 
-                
-                var input = Console.ReadLine();
+                _OutputWrapper.Updateview(input,_requiredString);
+
+                Console.SetCursorPosition(17, 0);
+                 input = Console.ReadLine();
                 _InputHandler.ParseAndExecuteCommand(input,_communication);
+                ChooseString(input);
             }
+
+        }
+
+        private void ChooseString(string _input)
+        {
+
+            if (_input == "/search")
+                _requiredString = _ActionHanlder._serverTable;
+            else if (_input.All(char.IsDigit))
+                _requiredString = _InputHandler.isRightInt;
+            else
+                _requiredString = string.Empty;
+
+
+
+            //try
+            //{
+            //    requiredString = GetString(_input);
+            //}
+            //catch(Exception e)
+            //{
+            //    //log
+            //    requiredString = string.Empty;
+            //}
 
         }
 
