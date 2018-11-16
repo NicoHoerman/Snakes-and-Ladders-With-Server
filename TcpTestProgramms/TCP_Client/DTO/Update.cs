@@ -7,5 +7,6 @@ namespace TCP_Client.DTO
         public string _Updated_board;
         public string _Updated_dice_information;
         public string _Updated_turn_information;
+        public string _Updated_View;
     }
 }

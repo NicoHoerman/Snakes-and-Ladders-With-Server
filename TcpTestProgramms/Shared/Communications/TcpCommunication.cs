@@ -43,7 +43,7 @@ namespace Shared.Communications
             _lock = new object();
             _backgroundWorker = new BackgroundWorker();
             //Eine Ereignis Warteschlange 
-            _backgroundWorker.DoWork += (_, __) => CheckForUpdates();
+            _backgroundWorker.DoWork += (_, __) => CheckNWStreamUpdates();
             //fängt an die Aufgaben abzuarbeiten
             _backgroundWorker.RunWorkerAsync();
         }
@@ -102,7 +102,7 @@ namespace Shared.Communications
         }
 
         //läuft die ganze Zeit im Hintergrund
-        private void CheckForUpdates()
+        private void CheckNWStreamUpdates()
         {
             while (true)
             {
@@ -123,9 +123,7 @@ namespace Shared.Communications
                 {
                     return;
                 }
-                                                  
             }
-
         }
 
         //jetzt wirds komplieziert

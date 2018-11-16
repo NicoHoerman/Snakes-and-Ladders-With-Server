@@ -7,6 +7,7 @@ namespace Shared.Enums
         RollDice = 102,
         StartGame = 103,
         CloseGame = 104,
+        OnConnection =105,
         Broadcast = 201,
         Decline = 202,
         Accept = 203,

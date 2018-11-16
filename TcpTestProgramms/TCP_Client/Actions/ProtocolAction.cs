@@ -16,7 +16,8 @@ namespace TCP_Client.Actions
         public Dictionary<int, BroadcastDTO> _serverDictionary = new Dictionary<int, BroadcastDTO>();
 
         private OutputWrapper outputWrapper;
-        public string _serverTable =string.Empty; 
+        public string _serverTable =string.Empty;
+        public string _UpdatedView = string.Empty;
 
         public ProtocolAction()
         {
@@ -57,9 +58,7 @@ namespace TCP_Client.Actions
         private void OnUpdateAction(DataPackage data)
         {
             var updatedView = MapProtocolToDto<UpdateDTO>(data);
-
-            Console.WriteLine("Received update: " + updatedView._Updated_board + "\n" + updatedView._Updated_dice_information
-                + "\n" + updatedView._Updated_turn_information);
+            _UpdatedView = updatedView._Updated_View;
         }
 
         private List<string> _ServerIps = new List<string>(); 
@@ -89,6 +88,7 @@ namespace TCP_Client.Actions
                 _Servernames[keyIndex] = broadcast._Server_name;
                 _MaxPlayerCount[keyIndex] = broadcast._MaxPlayerCount;
                 _CurrentPlayerCount[keyIndex] = broadcast._CurrentPlayerCount;
+                keyIndex++;
             }
 
             var outputFormat = new StringBuilder();
@@ -98,7 +98,6 @@ namespace TCP_Client.Actions
                     _MaxPlayerCount[index], _Servernames[index],(index+1)));
 
             _serverTable = outputFormat.ToString();
-            keyIndex++;
             //      Server  Player  
             //
             //      XD      [0/4]

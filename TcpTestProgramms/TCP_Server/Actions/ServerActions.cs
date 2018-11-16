@@ -12,7 +12,9 @@ namespace TCP_Server.Actions
     public class ServerActions
     {
         private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
-
+        private string servername = "testc Eels and Escalators";
+        private int currentplayer = 0;
+        private int maxplayer = 2;
 
         public ServerActions()
         {
@@ -21,7 +23,8 @@ namespace TCP_Server.Actions
                 { ProtocolActionEnum.RollDice,  OnRollDiceAction },
                 { ProtocolActionEnum.GetHelp,   OnGetHelpAction },
                 { ProtocolActionEnum.StartGame, OnStartGameAction },
-                { ProtocolActionEnum.CloseGame, OnCloseGameAction }
+                { ProtocolActionEnum.CloseGame, OnCloseGameAction },
+                { ProtocolActionEnum.OnConnection,OnConnectionAction }
             };
         }
 
@@ -34,6 +37,33 @@ namespace TCP_Server.Actions
         }
 
         #region Protocol actions
+        private void OnConnectionAction(ICommunication arg1, DataPackage arg2)
+        {
+            string returnMsg = string.Empty;
+            if(currentplayer < maxplayer)
+            {
+                currentplayer++;
+                returnMsg = "You are Conected to the Server and in the Lobby\n " +
+                            $"Lobby {servername} Player [{currentplayer}/{maxplayer}]";
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
+
+            var dataPackage = new DataPackage
+            {
+
+                Header = ProtocolActionEnum.UpdateView,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                {
+                    _Updated_View = returnMsg
+                })
+            };
+            dataPackage.Size = dataPackage.ToByteArray().Length;
+
+        }
+
         private void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
 

@@ -97,6 +97,7 @@ namespace TCP_Server
             _client = client;
             
             Console.WriteLine("Client connected completed");
+
             tcpClientConnected.Set();
         }
 

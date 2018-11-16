@@ -42,7 +42,8 @@ namespace Wrapper.Implementation
 
 
 
-        public void Updateview(string input, string afterConectMsg,string servertable,string errorMsg)
+        public void Updateview(string input, string afterConectMsg,string servertable,string errorMsg
+            ,string updatedView)
         {
             Clear();
             FirstLine();
@@ -53,6 +54,9 @@ namespace Wrapper.Implementation
                 UpdatePreLobby(servertable);
             if (afterConectMsg.Length != 0)
                 OnServerSelection(afterConectMsg);
+            if (updatedView.Length != 0)
+                ServerUpdate(updatedView);
+
             
         }
 
@@ -91,6 +95,12 @@ namespace Wrapper.Implementation
             WriteOutput(0, 15, lastinput, ConsoleColor.DarkRed);
             WriteOutput(0, 16, errorMsg, ConsoleColor.Red);
 
+        }
+
+        private void ServerUpdate(string updateview )
+        {
+            Clear();
+            WriteOutput(0, 3, updateview,ConsoleColor.White);
         }
     }
 }

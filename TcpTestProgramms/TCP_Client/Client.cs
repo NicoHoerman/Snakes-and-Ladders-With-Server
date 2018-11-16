@@ -17,6 +17,7 @@ namespace TCP_Client
         private string _serverTable = string.Empty;
         private string _afterConnectMsg = string.Empty;
         private string _errorMsg = string.Empty;
+        private string _UpdatedView = string.Empty;
 
 
         private ICommunication _communication;
@@ -41,7 +42,7 @@ namespace TCP_Client
 
         //<Methods>
 
-        private void CheckForUpdates()
+        private void CheckTCPUpdates()
         {
             while (true)
             {
@@ -59,7 +60,7 @@ namespace TCP_Client
         {
             var backgroundworker = new BackgroundWorker();
 
-            backgroundworker.DoWork += (obj, ea) => CheckForUpdates();
+            backgroundworker.DoWork += (obj, ea) => CheckTCPUpdates();
             backgroundworker.RunWorkerAsync();
 
             string input = string.Empty;
@@ -68,10 +69,11 @@ namespace TCP_Client
             while (isRunning)
             {
 
-                _OutputWrapper.Updateview(input, _afterConnectMsg, _serverTable,_errorMsg);
+                _OutputWrapper.Updateview(input, _afterConnectMsg, _serverTable,_errorMsg,_UpdatedView);
                 _serverTable = string.Empty;
                 _afterConnectMsg = string.Empty;
                 _errorMsg = string.Empty;
+                _UpdatedView = string.Empty;
 
 
                 Console.SetCursorPosition(17, 0);
@@ -87,6 +89,8 @@ namespace TCP_Client
             _afterConnectMsg = _InputHandler._afterConnectMsg;
             _serverTable = _ActionHanlder._serverTable;
             _errorMsg = _InputHandler._errorMsg;
+            _UpdatedView = _ActionHanlder._UpdatedView;
+
         }
     }
 }
