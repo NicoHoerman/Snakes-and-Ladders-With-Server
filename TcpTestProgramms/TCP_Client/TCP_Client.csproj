@@ -6,7 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TCP-Model\EandE_ServerModel.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+    <ProjectReference Include="..\Wrapper\Wrapper.csproj" />
   </ItemGroup>
 
 </Project>

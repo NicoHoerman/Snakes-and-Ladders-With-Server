@@ -1,16 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Threading;
-using EandE_ServerModel.ServerModel.Contracts;
-using EandE_ServerModel.ServerModel.Communications;
-using EandE_ServerModel.ServerModel.ProtocolActionStuff;
-using TCP_Model.ServerModel.InputActionStuff;
-using TCP_Model.ServerModel;
-using System.Collections.Generic;
-using System.Linq;
 using Wrapper.Implementation;
+using Shared.Contract;
+using TCP_Client.Actions;
+using Shared.Communications;
 
-namespace EandE_ServerModel.ServerModel.ClientAndServer
+namespace TCP_Client
 {
 
     public class Client

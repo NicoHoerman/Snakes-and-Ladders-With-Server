@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TCP_Model.ServerModel
+namespace Wrapper.Contracts
 {
     public interface IOutputWrapper
     {

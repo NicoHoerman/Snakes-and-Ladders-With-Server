@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Wrapper.Contracts;
 
-namespace TCP_Model.ServerModel
+namespace Wrapper.Implementation
 {
     public class OutputWrapper : IOutputWrapper
     {
@@ -41,11 +42,13 @@ namespace TCP_Model.ServerModel
 
 
 
-        public void Updateview(string input, string afterConectMsg,string servertable)
+        public void Updateview(string input, string afterConectMsg,string servertable,string errorMsg)
         {
             Clear();
             FirstLine();
 
+            if (errorMsg.Length != 0)
+                ErrorMsg(input,errorMsg);
             if (servertable.Length !=0)
                 UpdatePreLobby(servertable);
             if (afterConectMsg.Length != 0)
@@ -81,13 +84,12 @@ namespace TCP_Model.ServerModel
             WriteOutput(0, 5, _Memory, ConsoleColor.Blue);
         }
 
-        private void ErrorMsg(string input)
+        private void ErrorMsg(string input, string errorMsg)
         {
             string lastinput = "Last Input: " + input;
-            string error = "Error: " + "This command does not exist or isn't enabled at this time";
 
             WriteOutput(0, 15, lastinput, ConsoleColor.DarkRed);
-            WriteOutput(0, 16, error, ConsoleColor.Red);
+            WriteOutput(0, 16, errorMsg, ConsoleColor.Red);
 
         }
     }

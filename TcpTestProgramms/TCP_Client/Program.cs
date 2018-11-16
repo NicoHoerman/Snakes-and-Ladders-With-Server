@@ -1,5 +1,4 @@
-﻿using EandE_ServerModel.ServerModel.ClientAndServer;
-
+﻿
 namespace TCP_Client
 {
     class Program

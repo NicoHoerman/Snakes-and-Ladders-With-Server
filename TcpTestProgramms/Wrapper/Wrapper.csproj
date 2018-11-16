@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{53B6AAF6-DD82-4B35-9823-794ECEB90AB0}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>TCP_Server</RootNamespace>
-    <AssemblyName>TCP_Server</AssemblyName>
+    <ProjectGuid>{BB376CE1-3B8E-46AF-98D7-29B8FD060503}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Wrapper</RootNamespace>
+    <AssemblyName>Wrapper</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,9 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,31 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Contracts\IOutputWrapper.cs" />
+    <Compile Include="Implementation\OutputWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PROTOCOLS\PROT_ACCEPT.cs" />
-    <Compile Include="PROTOCOLS\PROT_BROADCAST.cs" />
-    <Compile Include="PROTOCOLS\PROT_DECLINE.cs" />
-    <Compile Include="PROTOCOLS\PROT_HELPTEXT.cs" />
-    <Compile Include="PROTOCOLS\PROT_UPDATE.cs" />
-    <Compile Include="Server.cs" />
-    <Compile Include="Actions\ServerActions.cs" />
-    <Compile Include="ServerInfo.cs" />
-    <Compile Include="UDP\UdpBroadcast.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Shared\Shared.csproj">
-      <Project>{756d09a9-dc55-4f94-b05b-c3756f55036f}</Project>
-      <Name>Shared</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Wrapper\Wrapper.csproj">
-      <Project>{bb376ce1-3b8e-46af-98d7-29b8fd060503}</Project>
-      <Name>Wrapper</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

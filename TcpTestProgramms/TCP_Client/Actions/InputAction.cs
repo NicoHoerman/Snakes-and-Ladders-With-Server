@@ -1,18 +1,18 @@
-﻿using EandE_ServerModel.ServerModel;
-using EandE_ServerModel.ServerModel.ClientAndServer;
-using EandE_ServerModel.ServerModel.Contracts;
-using EandE_ServerModel.ServerModel.ProtocolActionStuff;
-using EandE_ServerModel.ServerModel.PROTOCOLS.Client;
-using EandE_ServerModel.ServerModel.PROTOCOLS.Server;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using Shared.Communications;
+using Shared.Contract;
+using Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using TCP_Client.DTO;
+using TCP_Client.PROTOCOLS;
+using TCP_Client.UDP;
 using Wrapper.Implementation;
 
-namespace TCP_Model.ServerModel.InputActionStuff
+namespace TCP_Client.Actions
 {
     public class InputAction
     {
@@ -133,7 +133,7 @@ namespace TCP_Model.ServerModel.InputActionStuff
             int chosenServerId = Int32.Parse(obj);
             if (_ActionHanlder._serverDictionary.Count >= chosenServerId)
             {
-                PROT_BROADCAST current = _ActionHanlder.GetServer(chosenServerId-1);
+                BroadcastDTO current = _ActionHanlder.GetServer(chosenServerId-1);
                 communication._client.Connect(IPAddress.Parse(current._Server_ip), 8080);
                 _afterConnectMsg = $"Server {chosenServerId} chosen";
                 isConnected = true;

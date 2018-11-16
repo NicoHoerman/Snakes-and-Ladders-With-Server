@@ -1,19 +1,19 @@
-﻿
-using EandE_ServerModel.ServerModel.Contracts;
-using EandE_ServerModel.ServerModel.PROTOCOLS.Server;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using Shared.Communications;
+using Shared.Contracts;
+using Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TCP_Model.ServerModel;
+using TCP_Client.DTO;
 using Wrapper.Implementation;
 
-namespace EandE_ServerModel.ServerModel.ProtocolActionStuff
+namespace TCP_Client.Actions
 {
     public class ProtocolAction
     {
         public Dictionary<ProtocolActionEnum, Action<DataPackage>> _protocolActions;
-        public Dictionary<int, PROT_BROADCAST> _serverDictionary = new Dictionary<int, PROT_BROADCAST>();
+        public Dictionary<int, BroadcastDTO> _serverDictionary = new Dictionary<int, BroadcastDTO>();
 
         private OutputWrapper outputWrapper;
         public string _serverTable =string.Empty; 
@@ -42,21 +42,21 @@ namespace EandE_ServerModel.ServerModel.ProtocolActionStuff
             protocolAction(data);
         }
 
-        public PROT_BROADCAST GetServer(int key) => _serverDictionary[key];
+        public BroadcastDTO GetServer(int key) => _serverDictionary[key];
 
         #region Protocol actions
 
 
         private void OnHelpTextAction(DataPackage data)
         {
-            var helpText = CreateProtocol<PROT_HELPTEXT>(data);
+            var helpText = MapProtocolToDto<HelpTextDTO>(data);
 
             Console.Write("Received help text: " + helpText._Text);
         }
 
         private void OnUpdateAction(DataPackage data)
         {
-            var updatedView = CreateProtocol<PROT_UPDATE>(data);
+            var updatedView = MapProtocolToDto<UpdateDTO>(data);
 
             Console.WriteLine("Received update: " + updatedView._Updated_board + "\n" + updatedView._Updated_dice_information
                 + "\n" + updatedView._Updated_turn_information);
@@ -71,7 +71,7 @@ namespace EandE_ServerModel.ServerModel.ProtocolActionStuff
 
         private void OnBroadcastAction(DataPackage data)
         {
-            var broadcast = CreateProtocol<PROT_BROADCAST>(data);
+            var broadcast = MapProtocolToDto<BroadcastDTO>(data);
 
             if (_ServerIps.Contains(broadcast._Server_ip))
             {
@@ -107,27 +107,17 @@ namespace EandE_ServerModel.ServerModel.ProtocolActionStuff
 
         private void OnAcceptAction(DataPackage data)
         {
+            var accept = MapProtocolToDto<AcceptDTO>(data);
 
             throw new NotImplementedException();
-            /*
-            if (i == 0)
-            {
-                var accept = CreateProtocol<PROT_ACCEPT>(data);
-
-                Console.WriteLine(accept._Message);
-            }
-            else Console.WriteLine("Error: You are already connected.");
-
-            _game.Init();
-
-            i++;
-            */
+            
         }
 
         private void OnDeclineAction(DataPackage data)
         {
-            var decline = CreateProtocol<PROT_DECLINE>(data);
+            var decline = MapProtocolToDto<DeclineDTO>(data);
 
+            throw new NotImplementedException();
             Console.WriteLine(decline._Message);
 
         }
@@ -136,6 +126,12 @@ namespace EandE_ServerModel.ServerModel.ProtocolActionStuff
         #region Static helper functions
 
         private static T CreateProtocol<T>(DataPackage data) where T : IProtocol
+        {
+            //macht aus einem Objekt String ein wieder das urpsrüngliche Objekt Protokoll
+            return JsonConvert.DeserializeObject<T>(data.Payload);
+        }
+
+        public static T MapProtocolToDto<T>(DataPackage data) where T : IProtocol
         {
             //macht aus einem Objekt String ein wieder das urpsrüngliche Objekt Protokoll
             return JsonConvert.DeserializeObject<T>(data.Payload);
