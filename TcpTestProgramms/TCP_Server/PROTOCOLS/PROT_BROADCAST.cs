@@ -6,6 +6,7 @@ namespace TCP_Server.PROTOCOLS
     {
         public string _Server_name;
         public string _Server_ip;
+        public int _Server_Port; 
         public int _CurrentPlayerCount;
         public int _MaxPlayerCount;
     }

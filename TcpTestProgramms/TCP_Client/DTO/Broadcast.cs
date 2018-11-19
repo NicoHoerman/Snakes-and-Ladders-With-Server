@@ -9,6 +9,7 @@ namespace TCP_Client.DTO
     {
         public string _Server_name;
         public string _Server_ip;
+        public int _Server_Port;
         public int _CurrentPlayerCount;
         public int _MaxPlayerCount;
     }
