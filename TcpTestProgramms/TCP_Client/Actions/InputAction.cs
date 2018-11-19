@@ -21,20 +21,24 @@ namespace TCP_Client.Actions
         private bool Searched = false;
         private System.Timers.Timer timer;
 
-        public string _afterConnectMsg = string.Empty;
-        public string _errorMsg = string.Empty;
+        public string AfterConnectMsg { get; set; } = string.Empty;
 
         public Dictionary<string, Action<string,ICommunication>> _inputActions;
 
-        private ProtocolAction _ActionHanlder;
-        OutputWrapper _OutputWrapper;  
+        private ProtocolAction _ActionHandler;
+        private Dictionary<ClientView, IView> _views;
+        private readonly IErrorView _errorView;
+        private OutputWrapper _OutputWrapper;  
 
         private Receiver _UdpListener;
 
-        public InputAction(ProtocolAction protocolAction)
+        public InputAction(ProtocolAction protocolAction, Dictionary<ClientView, IView> views)
         {
 
-            _ActionHanlder = protocolAction;
+            _ActionHandler = protocolAction;
+            _views = views;
+            _errorView = views[ClientView.Error] as IErrorView; // Potential null exception error.
+
             _OutputWrapper = new OutputWrapper();
 
             _inputActions = new Dictionary<string, Action<string,ICommunication>>
@@ -58,7 +62,7 @@ namespace TCP_Client.Actions
             string receivedInput = input;
             if(input == "/someInt")
             {
-                _errorMsg = "Error: " + "This command does not exist or isn't enabled at this time";
+                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
             if (input.All(char.IsDigit))
@@ -69,7 +73,7 @@ namespace TCP_Client.Actions
             if (_inputActions.TryGetValue(input, out var action) == false)
             {
                 //log
-                _errorMsg = "Error: " + "This command does not exist or isn't enabled at this time";
+                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
 
@@ -78,11 +82,11 @@ namespace TCP_Client.Actions
 
         #region Input actions
 
-        private void OnInputHelpAction(string obj,ICommunication communication)
+        private void OnInputHelpAction(string input, ICommunication communication)
         {
             if (!isConnected)
             {
-                _errorMsg = "Error: " + "This command does not exist or isn't enabled at this time";
+                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
 
@@ -101,11 +105,11 @@ namespace TCP_Client.Actions
             communication.Send(dataPackage);
         }
 
-        private void OnInputRollDiceAction(string obj,ICommunication communication)
+        private void OnInputRollDiceAction(string input, ICommunication communication)
         {
             if (!isConnected)
             {
-                _errorMsg = "Error: " + "This command does not exist or isn't enabled at this time";
+                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
 
@@ -122,20 +126,20 @@ namespace TCP_Client.Actions
             communication.Send(dataPackage);
         }
 
-        private void OnIntAction(string obj,ICommunication communication)
+        private void OnIntAction(string input, ICommunication communication)
         {
 
             if (isConnected | !Searched)
             {
-                _errorMsg = "Error: " + "This command does not exist or isn't enabled at this time";
+                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
-            int chosenServerId = Int32.Parse(obj);
-            if (_ActionHanlder._serverDictionary.Count >= chosenServerId)
+            int chosenServerId = Int32.Parse(input);
+            if (_ActionHandler._serverDictionary.Count >= chosenServerId)
             {
-                BroadcastDTO current = _ActionHanlder.GetServer(chosenServerId-1);
-                communication._client.Connect(IPAddress.Parse(current._Server_ip), 8080);
-                _afterConnectMsg = $"Server {chosenServerId} chosen";
+                BroadcastDTO current = _ActionHandler.GetServer(chosenServerId-1);
+                communication._client.Connect(IPAddress.Parse(current._Server_ip), current._Server_Port);
+                AfterConnectMsg = $"Server {chosenServerId} chosen";
                 isConnected = true;
                 communication.SetNWStream();
                 var dataPackage = new DataPackage
@@ -152,16 +156,16 @@ namespace TCP_Client.Actions
             }
             else
             {
-                _afterConnectMsg = "no Server with this indentifier";
+                AfterConnectMsg = "no Server with this indentifier";
             }
 
         }
 
-        private void OnSearchAction(string obj,ICommunication communication)
+        private void OnSearchAction(string input, ICommunication communication)
         {
             if (isConnected)
             {
-                _errorMsg = "Error: " + "This command does not exist or isn't enabled at this time";
+                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
 

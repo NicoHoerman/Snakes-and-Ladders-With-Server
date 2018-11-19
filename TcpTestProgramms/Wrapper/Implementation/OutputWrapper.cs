@@ -38,6 +38,7 @@ namespace Wrapper.Implementation
                 Console.WriteLine(line);
                 offsetY++;
             });
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
 
@@ -46,10 +47,9 @@ namespace Wrapper.Implementation
             ,string updatedView)
         {
             Clear();
-            FirstLine();
 
-            if (errorMsg.Length != 0)
-                ErrorMsg(input,errorMsg);
+            //if (errorMsg.Length != 0)
+            //    ErrorMsg(input,errorMsg);
             if (servertable.Length !=0)
                 UpdatePreLobby(servertable);
             if (afterConectMsg.Length != 0)
@@ -57,7 +57,8 @@ namespace Wrapper.Implementation
             if (updatedView.Length != 0)
                 ServerUpdate(updatedView);
 
-            
+            FirstLine();
+
         }
 
         private void FirstLine()

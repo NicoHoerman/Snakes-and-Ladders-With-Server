@@ -46,9 +46,10 @@ namespace TCP_Server.UDP
                 Payload = JsonConvert.SerializeObject(new PROT_BROADCAST
                 {
                     _Server_ip = SERVER_IP_LAN,
-                    _Server_name = "Eels and Escalators Server_1",
-                    _CurrentPlayerCount = random.Next(0,4),
-                    _MaxPlayerCount = 4
+                    _Server_name = "Test_1",
+                    _CurrentPlayerCount = random.Next(0, 4),
+                    _MaxPlayerCount = 4,
+                    _Server_Port = 8080
                     
                 })
             };

@@ -4,6 +4,7 @@ using Shared.Contracts;
 using Shared.Enums;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using TCP_Client.DTO;
 using Wrapper.Implementation;
@@ -61,7 +62,7 @@ namespace TCP_Client.Actions
             _UpdatedView = updatedView._Updated_View;
         }
 
-        private List<string> _ServerIps = new List<string>(); 
+        private List<IPEndPoint> _ServerEndpoints = new List<IPEndPoint>(); 
         private string[] _Servernames = new string[100];
         private int[] _MaxPlayerCount = new int[100];
         private int[] _CurrentPlayerCount = new int[100];
@@ -72,16 +73,18 @@ namespace TCP_Client.Actions
         {
             var broadcast = MapProtocolToDto<BroadcastDTO>(data);
 
-            if (_ServerIps.Contains(broadcast._Server_ip))
+            var currentIPEndPoint = new IPEndPoint(IPAddress.Parse(broadcast._Server_ip),broadcast._Server_Port);
+
+            if (_ServerEndpoints.Contains(currentIPEndPoint))
             {
-                var servernumber = _ServerIps.IndexOf(broadcast._Server_ip);
+                var servernumber = _ServerEndpoints.IndexOf(currentIPEndPoint);
                 _Servernames[servernumber] = broadcast._Server_name;
                 _MaxPlayerCount[servernumber] = broadcast._MaxPlayerCount;
                 _CurrentPlayerCount[servernumber] = broadcast._CurrentPlayerCount;
             }
             else
             {
-                _ServerIps.Add(broadcast._Server_ip);
+                _ServerEndpoints.Add(currentIPEndPoint);
 
                 _serverDictionary.Add(keyIndex, broadcast);
 

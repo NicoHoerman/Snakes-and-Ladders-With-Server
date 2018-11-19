@@ -78,9 +78,7 @@ namespace TCP_Server.Actions
                 Header = ProtocolActionEnum.UpdateView,
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                 {
-                    _Updated_board = "Test: XD",
-                    _Updated_dice_information = "You rolled a 4",
-                    _Updated_turn_information = "Its Player 1's turn",
+                    _Updated_View = "Placeholder",
                 })
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;
