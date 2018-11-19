@@ -100,8 +100,8 @@ namespace TCP_Client.Actions
             _serverTable = outputFormat.ToString();
             //      Server  Player  
             //
-            //      XD      [0/4]
-            //      LuL     [1/2]
+            //  1   XD      [0/4]
+            //  2   LuL     [1/2]
         }
 
         private void OnAcceptAction(DataPackage data)

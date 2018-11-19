@@ -12,11 +12,11 @@ namespace TCP_Server.Actions
     public class ServerActions
     {
         private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
-        private string servername = "testc Eels and Escalators";
-        private int currentplayer = 0;
-        private int maxplayer = 2;
+        private string servername = string.Empty;
+        private int currentplayer;
+        private int maxplayer;
 
-        public ServerActions()
+        public ServerActions(ServerInfo serverInfo)
         {
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>
             {
@@ -26,6 +26,10 @@ namespace TCP_Server.Actions
                 { ProtocolActionEnum.CloseGame, OnCloseGameAction },
                 { ProtocolActionEnum.OnConnection,OnConnectionAction }
             };
+
+            servername = serverInfo._LobbyName;
+            currentplayer = serverInfo._CurrentPlayerCount;
+            maxplayer = serverInfo._MaxPlayerCount;
         }
 
         public void ExecuteDataActionFor(ICommunication communication, DataPackage data)
@@ -37,7 +41,7 @@ namespace TCP_Server.Actions
         }
 
         #region Protocol actions
-        private void OnConnectionAction(ICommunication arg1, DataPackage arg2)
+        private void OnConnectionAction(ICommunication communication, DataPackage data)
         {
             string returnMsg = string.Empty;
             if(currentplayer < maxplayer)
@@ -61,6 +65,7 @@ namespace TCP_Server.Actions
                 })
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;
+            communication.Send(dataPackage);
 
         }
 

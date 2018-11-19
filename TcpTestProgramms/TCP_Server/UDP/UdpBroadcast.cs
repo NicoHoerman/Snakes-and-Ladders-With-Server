@@ -13,6 +13,8 @@ namespace TCP_Server.UDP
     {
         private bool isBroadcasting;
         private byte[] _ServerInfo;
+        private const string SERVER_IP_WLAN = "172.22.21.132";
+        private const string SERVER_IP_LAN = "172.22.22.153";
 
         UdpClient udpServer;
 
@@ -28,7 +30,7 @@ namespace TCP_Server.UDP
             while (isBroadcasting)
             {
                 SetBroadcastMsg();
-                IPEndPoint ip = new IPEndPoint(IPAddress.Parse("172.22.21.132"), 7070);
+                IPEndPoint ip = new IPEndPoint(IPAddress.Parse(SERVER_IP_LAN), 7070);
                 udpServer.Send(_ServerInfo, _ServerInfo.Length, ip);
                 //udpServer.Close();
                 Thread.Sleep(5000);
@@ -43,7 +45,7 @@ namespace TCP_Server.UDP
                 Header = ProtocolActionEnum.Broadcast,
                 Payload = JsonConvert.SerializeObject(new PROT_BROADCAST
                 {
-                    _Server_ip = "172.22.21.132",
+                    _Server_ip = SERVER_IP_LAN,
                     _Server_name = "Eels and Escalators Server_1",
                     _CurrentPlayerCount = random.Next(0,4),
                     _MaxPlayerCount = 4

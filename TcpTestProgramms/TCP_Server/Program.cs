@@ -21,7 +21,7 @@ namespace TCP_Server
 
 
             Console.WriteLine("Waiting for players ");
-            var server = new Server("Test Lobby", 4);
+            var server = new Server("Test Lobby", 2);
             server.Run();
         }
     }

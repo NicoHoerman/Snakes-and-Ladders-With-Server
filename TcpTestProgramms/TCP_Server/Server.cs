@@ -2,6 +2,7 @@
 using Shared.Contract;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -12,10 +13,10 @@ namespace TCP_Server
 
     public class Server
     {
-        private const string SERVER_IP = "172.22.21.132";
-
+        private const string SERVER_IP_WLAN = "172.22.21.132";
+        private const string SERVER_IP_LAN = "172.22.22.153";
+        
         private string _updateInfo = string.Empty;
-        private int _x;
         private static TcpClient _client;
 
         private List<IPAddress> _WhiteList = new List<IPAddress>();
@@ -29,41 +30,13 @@ namespace TCP_Server
 
         public Server(string lobbyname, int maxplayercount)
         {
-            _ActionsHandler = new ServerActions();
-
             _serverInfo = new ServerInfo( lobbyname, maxplayercount);
+            _ActionsHandler = new ServerActions(_serverInfo);
+
             _serverInfo._communications = new List<ICommunication>();
 
-            _listener = new TcpListener(IPAddress.Parse(SERVER_IP), 8080);
-            CLientConnection(_listener);
-        }
-
-
-        private void CheckForUpdates()
-        {
-            while (true)
-            {
-                var communicated = false;
-
-                _serverInfo._communications.ForEach(communication =>
-                {
-                    if (communication.IsDataAvailable())
-                    {
-                        var data = communication.Receive();
-                        _ActionsHandler.ExecuteDataActionFor(communication, data);
-                        communicated = true;
-                    }
-                });
-
-                if (!communicated)
-                    Thread.Sleep(1);
-            }
-
-        }
-
-        public void Run()
-        {
-            CheckForUpdates();
+            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN), 8080);
+            
         }
 
         public void CLientConnection(TcpListener listener)
@@ -89,15 +62,15 @@ namespace TCP_Server
             tcpClientConnected.WaitOne();
         }
 
-        public static void DoAcceptTcpClientCallback(IAsyncResult ar)
+        public  static void DoAcceptTcpClientCallback(IAsyncResult ar)
         {
             TcpListener listener = (TcpListener)ar.AsyncState;
 
             TcpClient client = listener.EndAcceptTcpClient(ar);
             _client = client;
-            
+            //Conected
             Console.WriteLine("Client connected completed");
-
+            
             tcpClientConnected.Set();
         }
 
@@ -119,6 +92,40 @@ namespace TCP_Server
             _serverInfo.PrintPlayerIP();
             _client = null;
         } 
+
+        public void Run()
+        {
+            var backgroundworker = new BackgroundWorker();
+
+            backgroundworker.DoWork += (obj, ea) => CheckForUpdates();
+            backgroundworker.RunWorkerAsync();
+
+            CLientConnection(_listener);
+
+        }
+
+        private void CheckForUpdates()
+        {
+            while (true)
+            {
+                //var communicated = false;
+
+                _serverInfo._communications.ForEach(communication =>
+                {
+                    if (communication.IsDataAvailable())
+                    {
+                        var data = communication.Receive();
+                        _ActionsHandler.ExecuteDataActionFor(communication, data);
+                        //communicated = true;
+                    }
+                });
+
+                //if (!communicated)
+                Thread.Sleep(1);
+            }
+        }
+
+
 
        /* #region Accept and Decline
         private void DeclineClient(ICommunication communication, DataPackage data, PROT_CONNECT clientId)

@@ -137,6 +137,18 @@ namespace TCP_Client.Actions
                 communication._client.Connect(IPAddress.Parse(current._Server_ip), 8080);
                 _afterConnectMsg = $"Server {chosenServerId} chosen";
                 isConnected = true;
+                communication.SetNWStream();
+                var dataPackage = new DataPackage
+                {
+                    Header = ProtocolActionEnum.OnConnection, 
+                    Payload = JsonConvert.SerializeObject(new PROT_CONNECTION
+                    {
+
+                    })
+                };
+                dataPackage.Size = dataPackage.ToByteArray().Length;
+
+                communication.Send(dataPackage);
             }
             else
             {
@@ -154,8 +166,6 @@ namespace TCP_Client.Actions
             }
 
             _OutputWrapper.WriteOutput(0, 1, "Searching...", ConsoleColor.DarkGray);                                                                                   
-            if (isConnected)
-                return;
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();

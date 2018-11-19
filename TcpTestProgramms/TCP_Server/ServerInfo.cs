@@ -5,7 +5,7 @@ using System.Net;
 
 namespace TCP_Server
 {
-    class ServerInfo
+    public class ServerInfo
     {
         public int _MaxPlayerCount { get; set; }
         public int _CurrentPlayerCount { get; set; } = 0;

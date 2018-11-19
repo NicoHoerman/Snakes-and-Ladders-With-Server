@@ -12,6 +12,8 @@ namespace Shared.Contract
         void ReceiveCallback(Action<DataPackage> receiveCallback);
         void Send(DataPackage data);
         TcpClient _client { get; set; }
+        //NetworkStream GetStream();
+        void SetNWStream();
 
     }
 }

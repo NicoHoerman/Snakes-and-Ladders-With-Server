@@ -40,5 +40,15 @@ namespace Shared.Communications
         {
             throw new NotImplementedException();
         }
+
+        public void GetStream()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetNWStream()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

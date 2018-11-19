@@ -72,7 +72,7 @@ namespace EandE_ServerModel.ServerModel.ClientAndServer
             while (isRunning)
             {
 
-                _OutputWrapper.Updateview(input, _afterConnectMsg, _serverTable,_errorMsg);
+               // _OutputWrapper.Updateview(input, _afterConnectMsg, _serverTable,_errorMsg);
                 _serverTable = string.Empty;
                 _afterConnectMsg = string.Empty;
                 _errorMsg = string.Empty;
