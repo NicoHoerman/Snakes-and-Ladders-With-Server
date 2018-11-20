@@ -10,30 +10,30 @@ using System.Threading;
 
 namespace TCP_Client.UDP
 {
-    public class Receiver
+    public class UdpClientUnit
     {
-        private UdpClient _Udp;
+        private UdpClient _UdpClient;
         public List<DataPackage> _DataList;
         bool _closed = false;
 
-        public Receiver()
+        public UdpClientUnit()
         {
-            _Udp = new UdpClient(7070);
+            _UdpClient = new UdpClient(7075);
             _DataList = new List<DataPackage>();
         }
 
         public void StartListening()
         {
-            if (_Udp.Client != null)
-                _Udp.BeginReceive(Receive, new object());
+            if (_UdpClient.Client != null)
+                _UdpClient.BeginReceive(Receive, new object());
         }
 
         public void Receive(IAsyncResult ar)
         {
             if (!_closed)
             {
-                IPEndPoint ip = new IPEndPoint(IPAddress.Any, 7070);
-                byte[] bytes = _Udp.EndReceive(ar, ref ip);
+                IPEndPoint _receiveEndPoint = new IPEndPoint(IPAddress.Any, 7070);
+                byte[] bytes = _UdpClient.EndReceive(ar, ref _receiveEndPoint);
 
                 //string message = Encoding.ASCII.GetString(bytes);
                 //Console.WriteLine(message);
@@ -60,7 +60,7 @@ namespace TCP_Client.UDP
 
                         _DataList.Add(package);
                         Thread.Sleep(1);
-                        StartListening();
+                        SendRequest();
                     }
                 }
             }
@@ -69,8 +69,23 @@ namespace TCP_Client.UDP
         public void StopListening()
         {
             _closed = true;
-            _Udp.Dispose();
-            _Udp.Close();
+            _UdpClient.Dispose();
+            _UdpClient.Close();
+        }
+
+
+        public void SendRequest()
+        {
+            if (!_closed)
+            {
+                string  broadcastMessage = "is there a Server";
+                var bytes = Encoding.ASCII.GetBytes(broadcastMessage);
+
+                IPEndPoint _ipEndPoint = new IPEndPoint(IPAddress.Broadcast, 7070);
+
+                _UdpClient.Send(bytes,bytes.Length, _ipEndPoint);
+                StartListening();
+            }
         }
     }
 }

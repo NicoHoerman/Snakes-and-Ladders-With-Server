@@ -7,7 +7,7 @@ using Wrapper.Contracts;
 
 namespace Wrapper.View
 {
-    class OutputView : IView
+    public class OutputView : IView
     {
         public OutputView()
         {

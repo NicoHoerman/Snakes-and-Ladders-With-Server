@@ -32,7 +32,7 @@ namespace TCP_Client.Actions
         private readonly IErrorView _errorView;
         private OutputWrapper _OutputWrapper;  
 
-        private Receiver _UdpListener;
+        private UdpClientUnit _UdpListener;
 
         public InputAction(ProtocolAction protocolAction, Dictionary<ClientView, IView> views)
         {
@@ -53,7 +53,7 @@ namespace TCP_Client.Actions
                 {"/startgame", OnStartGameAction }
             };
 
-            _UdpListener = new Receiver();
+            _UdpListener = new UdpClientUnit();
 
         }
 
@@ -175,7 +175,7 @@ namespace TCP_Client.Actions
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            _UdpListener.StartListening();
+            _UdpListener.SendRequest();
 
             while (stopwatch.ElapsedMilliseconds < 10000)
             {

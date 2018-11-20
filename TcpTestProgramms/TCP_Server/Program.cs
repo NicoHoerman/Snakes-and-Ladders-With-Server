@@ -15,7 +15,7 @@ namespace TCP_Server
 
             var backgroundworker = new BackgroundWorker();
 
-            backgroundworker.DoWork += (obj, ea) => udpserver.Broadcast();
+            backgroundworker.DoWork += (obj, ea) => udpserver.StartListening();
             backgroundworker.RunWorkerAsync();
 
 

@@ -4,6 +4,7 @@ using Shared.Enums;
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using TCP_Server.PROTOCOLS;
 
@@ -11,30 +12,53 @@ namespace TCP_Server.UDP
 {
     public class UdpBroadcast
     {
-        private bool isBroadcasting;
         private byte[] _ServerInfo;
         private const string SERVER_IP_WLAN = "172.22.21.132";
         private const string SERVER_IP_LAN = "172.22.22.153";
+        private bool _closed = false;
 
-        UdpClient udpServer;
+        private static ManualResetEvent _MessageSent = new ManualResetEvent(false);
+        UdpClient _udpServer;
+        IPAddress ClientIP;
 
         public UdpBroadcast()
         {
-            udpServer = new UdpClient();
-            //SetBroadcastMsg();
+            _udpServer = new UdpClient(7070);
         }
 
-        public void Broadcast()
+        public void Broadcast(string clientIp)
         {
-            isBroadcasting = true;
-            while (isBroadcasting)
+            SetBroadcastMsg();
+            ClientIP = IPAddress.Parse(clientIp);
+            IPEndPoint _ipEndPoint = new IPEndPoint(ClientIP, 7071);
+            _udpServer.Send(_ServerInfo, _ServerInfo.Length, _ipEndPoint);
+            _MessageSent.Set();
+            Thread.Sleep(5000);
+        }
+
+        public void StartListening()
+        {
+            if (_udpServer.Client != null)
+                _udpServer.BeginReceive(Receive, new object());
+        }
+
+        public void Receive(IAsyncResult ar)
+        {
+            if (!_closed)
             {
-                SetBroadcastMsg();
-                IPEndPoint ip = new IPEndPoint(IPAddress.Parse(SERVER_IP_LAN), 7070);
-                udpServer.Send(_ServerInfo, _ServerInfo.Length, ip);
-                //udpServer.Close();
-                Thread.Sleep(5000);
+                IPEndPoint _recieverEndPoint = new IPEndPoint(IPAddress.Any, 7070);
+                byte[] bytes = _udpServer.EndReceive(ar, ref _recieverEndPoint);
+                string recievedMessage = Encoding.ASCII.GetString(bytes);
+                if(recievedMessage == "is there a Server")
+                Broadcast(_recieverEndPoint.Address.ToString());
+
+                _MessageSent.WaitOne();
+
+                _udpServer.Dispose();
+                _udpServer.Close();
             }
+            Thread.Sleep(1);
+            StartListening();
         }
 
         public void SetBroadcastMsg()

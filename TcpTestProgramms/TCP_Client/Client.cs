@@ -32,8 +32,8 @@ namespace TCP_Client
         private Dictionary<ClientView, IView> _views = new Dictionary<ClientView, IView>
         {
             { ClientView.Error, new ErrorView() },
-            { ClientView.ServerTable, new ServerTableView() },
-            {ClientView.SomeOutput, new OutputView() }
+            /*{ ClientView.ServerTable, new ServerTableView() },
+            {ClientView.SomeOutput, new OutputView() }*/
         };
 
         //<Constructors>
