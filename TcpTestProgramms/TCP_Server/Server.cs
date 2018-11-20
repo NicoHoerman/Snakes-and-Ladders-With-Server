@@ -3,10 +3,12 @@ using Shared.Contract;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using TCP_Server.Actions;
+using TCP_Server.UDP;
 
 namespace TCP_Server
 {
@@ -19,18 +21,18 @@ namespace TCP_Server
         private string _updateInfo = string.Empty;
         private static TcpClient _client;
 
-        private List<IPAddress> _WhiteList = new List<IPAddress>();
-        private List<IPAddress> _Blacklist = new List<IPAddress>();
+        
        
         public static ManualResetEvent tcpClientConnected = new ManualResetEvent(false);
         private TcpListener _listener;
         private ServerInfo _serverInfo;
         private ServerActions _ActionsHandler;
+        private UdpBroadcast _udpServer;
 
-
-        public Server(string lobbyname, int maxplayercount)
+        public Server(ServerInfo serverInfo,UdpBroadcast udpBroadcast)
         {
-            _serverInfo = new ServerInfo( lobbyname, maxplayercount);
+            _serverInfo = serverInfo;
+            _udpServer = udpBroadcast;
             _ActionsHandler = new ServerActions(_serverInfo);
 
             _serverInfo._communications = new List<ICommunication>();
@@ -47,12 +49,16 @@ namespace TCP_Server
             {
                 DoBeginAcceptTcpClient(listener);
                 if (_client != null)
+                {
                     AddCommunication(_client);
+                    _serverInfo._CurrentPlayerCount++;
+                    _udpServer.SetBroadcastMsg(_serverInfo);
+                }
                Thread.Sleep(1000);
             }
         }
 
-        public static void DoBeginAcceptTcpClient(TcpListener listener)
+        public void DoBeginAcceptTcpClient(TcpListener listener)
         {
 
             listener.BeginAcceptTcpClient(
@@ -60,9 +66,10 @@ namespace TCP_Server
                 listener);
 
             tcpClientConnected.WaitOne();
+            tcpClientConnected.Reset();
         }
 
-        public  static void DoAcceptTcpClientCallback(IAsyncResult ar)
+        public  void DoAcceptTcpClientCallback(IAsyncResult ar)
         {
             TcpListener listener = (TcpListener)ar.AsyncState;
 
@@ -106,25 +113,43 @@ namespace TCP_Server
 
         private void CheckForUpdates()
         {
+            // try
+            //{
+            var elementsToRemove = new List<ICommunication>();
             while (true)
             {
-                //var communicated = false;
-
+                elementsToRemove.Clear();
                 _serverInfo._communications.ForEach(communication =>
                 {
-                    if (communication.IsDataAvailable())
+                    if (!communication.IsConnected)
                     {
-                        var data = communication.Receive();
-                        _ActionsHandler.ExecuteDataActionFor(communication, data);
-                        //communicated = true;
+                        communication.Stop();
+                        elementsToRemove.Add(communication);
+                    }
+                    else
+                    {
+                        if (communication.IsDataAvailable())
+                        {
+                            var data = communication.Receive();
+                            _ActionsHandler.ExecuteDataActionFor(communication, data);
+                            //communicated = true;
+                        }
                     }
                 });
+                elementsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
 
                 //if (!communicated)
                 Thread.Sleep(1);
             }
+           // }
+          /*catch
+            {
+                
+            }
+          */
         }
 
+        
 
 
        /* #region Accept and Decline

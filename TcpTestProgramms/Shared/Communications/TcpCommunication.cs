@@ -27,6 +27,8 @@ namespace Shared.Communications
         private BackgroundWorker _backgroundWorker;
         private BackgroundWorker _backgroundWorker2;
 
+        private bool IsRunning = true;
+
         public TcpCommunication()
             : this(new TcpClient())
         { }
@@ -122,13 +124,15 @@ namespace Shared.Communications
 
         }
 
+       
+
         //läuft die ganze Zeit im Hintergrund
         private void CheckNWStreamUpdates()
         {
             //if (_NWStreamNotSet)
             //    return;
 
-            while (true)
+            while (IsRunning)
             {
                 // prüft ob daten auf dem NetworkStream sind 
                 //nicht sicher ob des schon so funktioniert wie es soll
@@ -148,6 +152,36 @@ namespace Shared.Communications
                     return;
                 }
             }
+        }
+
+        public bool IsConnected
+        {
+            get
+            {
+                try
+                {
+                    var client = _client.Client;
+                    if (client.Poll(0, SelectMode.SelectRead))
+                    {
+                        byte[] buff = new byte[1];
+                        if (client.Receive(buff, SocketFlags.Peek) == 0)
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
+        public void Stop()
+        {
+            IsRunning = false;
+            _client.Close();
         }
 
         private void CheckForNewPackages()

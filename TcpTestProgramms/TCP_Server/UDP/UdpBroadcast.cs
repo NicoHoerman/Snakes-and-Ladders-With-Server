@@ -20,17 +20,19 @@ namespace TCP_Server.UDP
         private static ManualResetEvent _MessageSent = new ManualResetEvent(false);
         UdpClient _udpServer;
         IPAddress ClientIP;
+        ServerInfo _serverInfo;
 
-        public UdpBroadcast()
+        public UdpBroadcast(ServerInfo serverInfo)
         {
             _udpServer = new UdpClient(7070);
+            _serverInfo = serverInfo;
+            SetBroadcastMsg(_serverInfo);
         }
 
         public void Broadcast(string clientIp)
         {
-            SetBroadcastMsg();
             ClientIP = IPAddress.Parse(clientIp);
-            IPEndPoint _ipEndPoint = new IPEndPoint(ClientIP, 7071);
+            IPEndPoint _ipEndPoint = new IPEndPoint(ClientIP, 7075);
             _udpServer.Send(_ServerInfo, _ServerInfo.Length, _ipEndPoint);
             _MessageSent.Set();
             Thread.Sleep(5000);
@@ -61,8 +63,9 @@ namespace TCP_Server.UDP
             StartListening();
         }
 
-        public void SetBroadcastMsg()
+        public void SetBroadcastMsg(ServerInfo serverInfo)
         {
+            
             Random random = new Random();
             DataPackage dataPackage = new DataPackage
             {
@@ -70,10 +73,10 @@ namespace TCP_Server.UDP
                 Payload = JsonConvert.SerializeObject(new PROT_BROADCAST
                 {
                     _Server_ip = SERVER_IP_LAN,
-                    _Server_name = "Test_1",
-                    _CurrentPlayerCount = random.Next(0, 4),
-                    _MaxPlayerCount = 4,
-                    _Server_Port = 8080
+                    _Server_name = serverInfo._LobbyName,
+                    _CurrentPlayerCount = serverInfo._CurrentPlayerCount,
+                    _MaxPlayerCount = serverInfo._MaxPlayerCount,
+                    _Server_Port = serverInfo._ServerPort
                     
                 })
             };
