@@ -5,17 +5,14 @@ using Wrapper.Implementation;
 using Shared.Contract;
 using TCP_Client.Actions;
 using Shared.Communications;
-using Wrapper.Contracts;
 using System.Collections.Generic;
 using System.Linq;
+using Wrapper;
+using Wrapper.Contracts;
+using Wrapper.View;
 
 namespace TCP_Client
 {
-    public enum ClientView
-    {
-        Error,
-        ServerTable,
-    }
 
     public class Client
     {
@@ -35,7 +32,8 @@ namespace TCP_Client
         private Dictionary<ClientView, IView> _views = new Dictionary<ClientView, IView>
         {
             { ClientView.Error, new ErrorView() },
-            { ClientView.ServerTable, new ServerTableView() }
+            { ClientView.ServerTable, new ServerTableView() },
+            {ClientView.SomeOutput, new OutputView() }
         };
 
         //<Constructors>
@@ -105,67 +103,5 @@ namespace TCP_Client
 
         }
     }
-
-    public interface IView
-    {
-        void Show();
-    }
-
-    public interface IErrorView : IView
-    {
-        void SetContent(string lastInput, string errorMessage);
-    }
-
-    public class ErrorView : IErrorView
-    {
-        public const int DEFAULT_POSITION_X = 20;
-        public const int DEFAULT_POSITION_Y = 10;
-
-        private readonly IOutputWrapper _outputWrapper;
-        private int _posX;
-        private int _posY;
-        private string _lastInput = string.Empty;
-        private string _errorMessage = string.Empty;
-
-        public ErrorView(IOutputWrapper outputWrapper, int posX, int posY)
-        {
-            _outputWrapper = outputWrapper;
-            _posX = posX;
-            _posY = posY;
-        }
-
-        public ErrorView()
-            : this(new OutputWrapper(), DEFAULT_POSITION_X, DEFAULT_POSITION_Y)
-        { }
-
-
-        public void SetContent(string lastInput, string errorMessage)
-        {
-            _lastInput = lastInput;
-            _errorMessage = errorMessage;
-        }
-
-
-        public void Show()
-        {
-            _outputWrapper.WriteOutput(_posX, _posY, _lastInput, ConsoleColor.DarkRed);
-            _outputWrapper.WriteOutput(_posX, _posY + 1, _errorMessage, ConsoleColor.Red);
-        }
-    }
-
-    internal class ServerTableView : IView
-    {
-        public ServerTableView()
-        {
-
-        }
-
-        public void Show()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-
 }
 

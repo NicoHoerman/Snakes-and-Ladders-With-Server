@@ -10,6 +10,8 @@ using System.Net;
 using TCP_Client.DTO;
 using TCP_Client.PROTOCOLS;
 using TCP_Client.UDP;
+using Wrapper;
+using Wrapper.Contracts;
 using Wrapper.Implementation;
 
 namespace TCP_Client.Actions

@@ -44,6 +44,12 @@
     <Compile Include="Contracts\IOutputWrapper.cs" />
     <Compile Include="Implementation\OutputWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ClientView.cs" />
+    <Compile Include="View\ErrorView.cs" />
+    <Compile Include="Contracts\IErrorView.cs" />
+    <Compile Include="Contracts\IView.cs" />
+    <Compile Include="View\OutputView.cs" />
+    <Compile Include="View\ServerTableView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
