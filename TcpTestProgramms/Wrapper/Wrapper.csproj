@@ -48,8 +48,11 @@
     <Compile Include="View\ErrorView.cs" />
     <Compile Include="Contracts\IErrorView.cs" />
     <Compile Include="Contracts\IView.cs" />
-    <Compile Include="View\OutputView.cs" />
+    <Compile Include="View\HelpOutputView.cs" />
+    <Compile Include="View\MasterCommandsView.cs" />
+    <Compile Include="View\InfoOutputView.cs" />
     <Compile Include="View\ServerTableView.cs" />
+    <Compile Include="View\SymbolExplanationView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

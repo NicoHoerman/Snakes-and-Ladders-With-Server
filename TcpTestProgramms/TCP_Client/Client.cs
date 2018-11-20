@@ -32,8 +32,11 @@ namespace TCP_Client
         private Dictionary<ClientView, IView> _views = new Dictionary<ClientView, IView>
         {
             { ClientView.Error, new ErrorView() },
-            /*{ ClientView.ServerTable, new ServerTableView() },
-            {ClientView.SomeOutput, new OutputView() }*/
+            { ClientView.ServerTable, new ServerTableView() },
+            { ClientView.InfoOutput, new InfoOutputView() },
+            { ClientView.MasterCommands, new MasterCommandsView() },
+            { ClientView.HelpOutput, new HelpOutputView() },
+            { ClientView.SymbolExplanation, new SymbolExplanationView() }
         };
 
         //<Constructors>
@@ -87,7 +90,7 @@ namespace TCP_Client
 
 
                 Console.SetCursorPosition(17, 0);
-                input = Console.ReadLine();
+                input = _OutputWrapper.ReadInput();
                 _InputHandler.ParseAndExecuteCommand(input, _communication);
 
                 SetParameters();
