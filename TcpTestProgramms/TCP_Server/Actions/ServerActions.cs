@@ -5,16 +5,23 @@ using Shared.Contracts;
 using Shared.Enums;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using TCP_Server.Enum;
 using TCP_Server.PROTOCOLS;
+
 
 namespace TCP_Server.Actions
 {
     public class ServerActions
     {
-        private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
         private string servername = string.Empty;
         private int currentplayer;
         private int maxplayer;
+
+        private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
+        public static ManualResetEvent verificationVariableSet = new ManualResetEvent(false);
+        ServerInfo _ServerInfo;
+        public ClientConnectionAttempt _ConnectionStatus;
 
         public ServerActions(ServerInfo serverInfo)
         {
@@ -27,9 +34,7 @@ namespace TCP_Server.Actions
                 { ProtocolActionEnum.OnConnection,OnConnectionAction }
             };
 
-            servername = serverInfo._LobbyName;
-            currentplayer = serverInfo._CurrentPlayerCount;
-            maxplayer = serverInfo._MaxPlayerCount;
+            _ServerInfo = serverInfo;
         }
 
         public void ExecuteDataActionFor(ICommunication communication, DataPackage data)
@@ -43,18 +48,27 @@ namespace TCP_Server.Actions
         #region Protocol actions
         private void OnConnectionAction(ICommunication communication, DataPackage data)
         {
+            servername = _ServerInfo._LobbyName;
+            currentplayer = _ServerInfo._CurrentPlayerCount;
+            maxplayer = _ServerInfo._MaxPlayerCount;
+
+            verificationVariableSet.WaitOne();
+            verificationVariableSet.Reset();
+
             string returnMsg = string.Empty;
-            if(currentplayer < maxplayer)
+            if(_ConnectionStatus == ClientConnectionAttempt.Accepted)
             {
-                currentplayer++;
                 returnMsg = "You are Conected to the Server and in the Lobby\n " +
                             $"Lobby {servername} Player [{currentplayer}/{maxplayer}]";
             }
-            else
+            else if(_ConnectionStatus == ClientConnectionAttempt.Declined)
             {
                 throw new InvalidOperationException();
             }
+            else if(_ConnectionStatus == ClientConnectionAttempt.NotSet)
+                throw new InvalidOperationException();
 
+            _ConnectionStatus = ClientConnectionAttempt.NotSet;
             var dataPackage = new DataPackage
             {
 

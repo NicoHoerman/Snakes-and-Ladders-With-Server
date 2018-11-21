@@ -16,30 +16,45 @@ namespace TCP_Server.UDP
         private const string SERVER_IP_WLAN = "172.22.21.132";
         private const string SERVER_IP_LAN = "172.22.22.153";
         private bool _closed = false;
+        private bool isRunning;
 
-        private static ManualResetEvent _MessageSent = new ManualResetEvent(false);
+
+        private static ManualResetEvent _MessageReceived = new ManualResetEvent(true);
         UdpClient _udpServer;
         IPAddress ClientIP;
+        ServerInfo _serverInfo;
 
-        public UdpBroadcast()
+        public UdpBroadcast(ServerInfo serverInfo)
         {
             _udpServer = new UdpClient(7070);
+            _serverInfo = serverInfo;
+            SetBroadcastMsg(_serverInfo);
         }
 
+        public void RunUdpServer()
+        {
+            isRunning = true;
+            while (isRunning)
+            {
+                _MessageReceived.WaitOne();
+                _MessageReceived.Reset();
+                StartListening();
+            }
+        }
         public void Broadcast(string clientIp)
         {
-            SetBroadcastMsg();
             ClientIP = IPAddress.Parse(clientIp);
-            IPEndPoint _ipEndPoint = new IPEndPoint(ClientIP, 7071);
+            IPEndPoint _ipEndPoint = new IPEndPoint(ClientIP, 7075);
             _udpServer.Send(_ServerInfo, _ServerInfo.Length, _ipEndPoint);
-            _MessageSent.Set();
             Thread.Sleep(5000);
+            
         }
 
         public void StartListening()
         {
             if (_udpServer.Client != null)
                 _udpServer.BeginReceive(Receive, new object());
+
         }
 
         public void Receive(IAsyncResult ar)
@@ -51,18 +66,17 @@ namespace TCP_Server.UDP
                 string recievedMessage = Encoding.ASCII.GetString(bytes);
                 if(recievedMessage == "is there a Server")
                 Broadcast(_recieverEndPoint.Address.ToString());
-
-                _MessageSent.WaitOne();
-
-                _udpServer.Dispose();
-                _udpServer.Close();
+                
+                //_udpServer.Dispose();
+                //_udpServer.Close();
             }
             Thread.Sleep(1);
-            StartListening();
+            _MessageReceived.Set();
         }
 
-        public void SetBroadcastMsg()
+        public void SetBroadcastMsg(ServerInfo serverInfo)
         {
+            
             Random random = new Random();
             DataPackage dataPackage = new DataPackage
             {
@@ -70,10 +84,10 @@ namespace TCP_Server.UDP
                 Payload = JsonConvert.SerializeObject(new PROT_BROADCAST
                 {
                     _Server_ip = SERVER_IP_LAN,
-                    _Server_name = "Test_1",
-                    _CurrentPlayerCount = random.Next(0, 4),
-                    _MaxPlayerCount = 4,
-                    _Server_Port = 8080
+                    _Server_name = serverInfo._LobbyName,
+                    _CurrentPlayerCount = serverInfo._CurrentPlayerCount,
+                    _MaxPlayerCount = serverInfo._MaxPlayerCount,
+                    _Server_Port = serverInfo._ServerPort
                     
                 })
             };

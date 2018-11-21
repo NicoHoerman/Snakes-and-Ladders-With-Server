@@ -175,9 +175,10 @@ namespace TCP_Client.Actions
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
+            _UdpListener._closed = false;
             _UdpListener.SendRequest();
 
-            while (stopwatch.ElapsedMilliseconds < 10000)
+            while (stopwatch.ElapsedMilliseconds < 3000)
             {
                 if (_UdpListener._DataList.Count > 0)
                 {
@@ -188,6 +189,8 @@ namespace TCP_Client.Actions
             stopwatch.Stop();
             _UdpListener.StopListening();
             Searched = true;
+
+            //_UdpListener._closed = false;
         }
 
         private void OnCloseGameAction(string obj,ICommunication communication)

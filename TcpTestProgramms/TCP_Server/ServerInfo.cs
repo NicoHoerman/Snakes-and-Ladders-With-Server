@@ -10,12 +10,16 @@ namespace TCP_Server
         public int _MaxPlayerCount { get; set; }
         public int _CurrentPlayerCount { get; set; } = 0;
         public string _LobbyName { get;  set; }
+        public int _ServerPort { get; set; }
         public List<ICommunication> _communications { get; set; }
 
-        public ServerInfo(string lobbyname,int maxplayercount)
+        private List<IPAddress> _Blacklist = new List<IPAddress>();
+
+        public ServerInfo(string lobbyname,int maxplayercount,int port)
         {
             _MaxPlayerCount = maxplayercount;
             _LobbyName = lobbyname;
+            _ServerPort = port;
         }
 
         public void PrintPlayerIP()
@@ -24,6 +28,11 @@ namespace TCP_Server
             {
                 Console.WriteLine(((IPEndPoint)_communications[i]._client.Client.RemoteEndPoint).Address.ToString());
             }
+        }
+
+        public IPAddress GetPlayerIP(int communicationNr)
+        {
+            return ((IPEndPoint)_communications[communicationNr]._client.Client.RemoteEndPoint).Address;
         }
     }
 }

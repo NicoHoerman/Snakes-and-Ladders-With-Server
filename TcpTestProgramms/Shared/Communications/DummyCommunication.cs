@@ -11,6 +11,8 @@ namespace Shared.Communications
 
         public TcpClient _client { get; set; }
 
+        public bool IsConnected => throw new NotImplementedException();
+
         public bool IsDataAvailable()
         {
             return false;
@@ -47,6 +49,11 @@ namespace Shared.Communications
         }
 
         public void SetNWStream()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Stop()
         {
             throw new NotImplementedException();
         }

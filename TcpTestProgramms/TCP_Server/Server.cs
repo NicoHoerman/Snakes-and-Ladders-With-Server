@@ -3,34 +3,37 @@ using Shared.Contract;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using TCP_Server.Actions;
+using TCP_Server.Enum;
+using TCP_Server.UDP;
 
 namespace TCP_Server
 {
-
     public class Server
     {
         private const string SERVER_IP_WLAN = "172.22.21.132";
         private const string SERVER_IP_LAN = "172.22.22.153";
         
-        private string _updateInfo = string.Empty;
-        private static TcpClient _client;
-
-        private List<IPAddress> _WhiteList = new List<IPAddress>();
-        private List<IPAddress> _Blacklist = new List<IPAddress>();
+        //private string _updateInfo = string.Empty;
+        private bool isRunning;
+        
        
         public static ManualResetEvent tcpClientConnected = new ManualResetEvent(false);
+        
         private TcpListener _listener;
         private ServerInfo _serverInfo;
         private ServerActions _ActionsHandler;
+        private UdpBroadcast _udpServer;
+        private TcpClient _client;
 
-
-        public Server(string lobbyname, int maxplayercount)
+        public Server(ServerInfo serverInfo,UdpBroadcast udpBroadcast)
         {
-            _serverInfo = new ServerInfo( lobbyname, maxplayercount);
+            _serverInfo = serverInfo;
+            _udpServer = udpBroadcast;
             _ActionsHandler = new ServerActions(_serverInfo);
 
             _serverInfo._communications = new List<ICommunication>();
@@ -43,16 +46,33 @@ namespace TCP_Server
         {
             _listener.Start();
 
-            while (!isLobbyComplete())
+            while (isRunning)
             {
                 DoBeginAcceptTcpClient(listener);
                 if (_client != null)
-                    AddCommunication(_client);
-               Thread.Sleep(1000);
+                {
+                    
+                    if (!isLobbyComplete())
+                    {
+                        _ActionsHandler._ConnectionStatus = ClientConnectionAttempt.Accepted;
+                        AddCommunication(_client);
+                        _client = null;
+                        _serverInfo._CurrentPlayerCount++;
+                        _udpServer.SetBroadcastMsg(_serverInfo);
+                        Console.WriteLine("Test in client Connection");
+                    }
+                    else if (isLobbyComplete())
+                    {
+                        _ActionsHandler._ConnectionStatus = ClientConnectionAttempt.Declined;
+                    }
+
+                    ServerActions.verificationVariableSet.Set();
+                }
+                Thread.Sleep(1000);
             }
         }
 
-        public static void DoBeginAcceptTcpClient(TcpListener listener)
+        public void DoBeginAcceptTcpClient(TcpListener listener)
         {
 
             listener.BeginAcceptTcpClient(
@@ -60,14 +80,15 @@ namespace TCP_Server
                 listener);
 
             tcpClientConnected.WaitOne();
+            tcpClientConnected.Reset();
         }
 
-        public  static void DoAcceptTcpClientCallback(IAsyncResult ar)
+        public void DoAcceptTcpClientCallback(IAsyncResult ar)
         {
             TcpListener listener = (TcpListener)ar.AsyncState;
 
-            TcpClient client = listener.EndAcceptTcpClient(ar);
-            _client = client;
+            _client = listener.EndAcceptTcpClient(ar);
+            
             //Conected
             Console.WriteLine("Client connected completed");
             
@@ -78,7 +99,6 @@ namespace TCP_Server
         {
             if (_serverInfo._communications.Count == _serverInfo._MaxPlayerCount)
             {
-                _listener.Stop();
                 return true;
             }
             else
@@ -95,36 +115,63 @@ namespace TCP_Server
 
         public void Run()
         {
+            isRunning = true;
+
             var backgroundworker = new BackgroundWorker();
 
             backgroundworker.DoWork += (obj, ea) => CheckForUpdates();
             backgroundworker.RunWorkerAsync();
 
-            CLientConnection(_listener);
+            var backgroundworker2 = new BackgroundWorker();
+
+            backgroundworker2.DoWork += (obj, ea) => CLientConnection(_listener);
+            backgroundworker2.RunWorkerAsync();
+
+            while (isRunning)
+            {
+
+            }
 
         }
 
         private void CheckForUpdates()
         {
-            while (true)
+            var elementsToRemove = new List<ICommunication>();
+            while (isRunning)
             {
-                //var communicated = false;
-
+                elementsToRemove.Clear();
                 _serverInfo._communications.ForEach(communication =>
                 {
-                    if (communication.IsDataAvailable())
+                    if (!communication.IsConnected)
                     {
-                        var data = communication.Receive();
-                        _ActionsHandler.ExecuteDataActionFor(communication, data);
-                        //communicated = true;
+                        communication.Stop();
+                        elementsToRemove.Add(communication);
+                    }
+                    else
+                    {
+                        if (communication.IsDataAvailable())
+                        {
+                            var data = communication.Receive();
+                            _ActionsHandler.ExecuteDataActionFor(communication, data);
+                            //communicated = true;
+                        }
                     }
                 });
 
-                //if (!communicated)
+                // All elements that lost conenction!
+                if(elementsToRemove.Count > 0)
+                {
+                    elementsToRemove.ForEach(x => _serverInfo._CurrentPlayerCount--);
+                    _udpServer.SetBroadcastMsg(_serverInfo);
+                    elementsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
+                }
+
                 Thread.Sleep(1);
             }
+          
         }
 
+        
 
 
        /* #region Accept and Decline
