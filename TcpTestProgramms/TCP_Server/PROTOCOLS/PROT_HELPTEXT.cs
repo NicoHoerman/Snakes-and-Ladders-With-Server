@@ -4,6 +4,6 @@ namespace TCP_Server.PROTOCOLS
 {
     class PROT_HELPTEXT : IProtocol
     {
-        public string _Text;
+        public string _HelpText;
     }
 }

@@ -21,7 +21,7 @@ namespace TCP_Server.Actions
         private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
         public static ManualResetEvent verificationVariableSet = new ManualResetEvent(false);
         ServerInfo _ServerInfo;
-        public ClientConnectionAttempt _ConnectionStatus;
+        public ClientConnectionAttempt _ConnectionStatus = ClientConnectionAttempt.NotSet;
 
         public ServerActions(ServerInfo serverInfo)
         {
@@ -55,44 +55,60 @@ namespace TCP_Server.Actions
             verificationVariableSet.WaitOne();
             verificationVariableSet.Reset();
 
-            string returnMsg = string.Empty;
-            if(_ConnectionStatus == ClientConnectionAttempt.Accepted)
+            var dataPackage = new DataPackage();
+            if (_ConnectionStatus == ClientConnectionAttempt.Accepted)
             {
-                returnMsg = "You are Conected to the Server and in the Lobby\n " +
-                            $"Lobby {servername} Player [{currentplayer}/{maxplayer}]";
+                dataPackage = new DataPackage
+                {
+                    Header = ProtocolActionEnum.UpdateView,
+                    Payload = JsonConvert.SerializeObject(new PROT_ACCEPT
+                    {
+                        _SmallUpdate = "You are Conected to the Server and in the Lobby\n " +
+                            $"Lobby {servername} Player [{currentplayer}/{maxplayer}]"
+                    })
+                };
             }
-            else if(_ConnectionStatus == ClientConnectionAttempt.Declined)
+            else if (_ConnectionStatus == ClientConnectionAttempt.Declined)
             {
-                throw new InvalidOperationException();
+                dataPackage = new DataPackage
+                {
+                    Header = ProtocolActionEnum.UpdateView,
+                    Payload = JsonConvert.SerializeObject(new PROT_DECLINE
+                    {
+                        _SmallUpdate = "You got declined Lobby is probably full"
+                    })
+                };
+
+                var updatePackage = new DataPackage
+                {
+                    Header = ProtocolActionEnum.UpdateView,
+                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                    {
+                        _SmallUpdate = "A player got decliend" 
+                    })
+                };
+                updatePackage.Size = updatePackage.ToByteArray().Length;
+                //A send that sends to evreyone except the current comunication
             }
-            else if(_ConnectionStatus == ClientConnectionAttempt.NotSet)
+            else if (_ConnectionStatus == ClientConnectionAttempt.NotSet)
                 throw new InvalidOperationException();
 
             _ConnectionStatus = ClientConnectionAttempt.NotSet;
-            var dataPackage = new DataPackage
-            {
-
-                Header = ProtocolActionEnum.UpdateView,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                {
-                    _Updated_View = returnMsg
-                })
-            };
+            
             dataPackage.Size = dataPackage.ToByteArray().Length;
             communication.Send(dataPackage);
-
         }
 
         private void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
-
+            throw new NotImplementedException();
             var dataPackage = new DataPackage
             {
 
                 Header = ProtocolActionEnum.UpdateView,
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                 {
-                    _Updated_View = "Placeholder",
+                    _GameViewUpdate = "Placeholder",
                 })
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;
@@ -102,7 +118,7 @@ namespace TCP_Server.Actions
 
         private void OnGetHelpAction(ICommunication communication, DataPackage data)
         {
-
+            throw new NotImplementedException();
             var clientId = CreateProtocol<PROT_HELPTEXT>(data);
 
             var dataPackage = new DataPackage
@@ -110,8 +126,7 @@ namespace TCP_Server.Actions
                 Header = ProtocolActionEnum.HelpText,
                 Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
                 {
-                    _Text = $"Here is your help Player {clientId._Text}.\n " +
-                    $"Commands:\n/rolldice\n/closegame\n"
+                    
                 })
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;
