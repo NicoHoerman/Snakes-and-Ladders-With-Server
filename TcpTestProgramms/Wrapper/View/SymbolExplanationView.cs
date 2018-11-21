@@ -7,12 +7,14 @@ using Wrapper.Contracts;
 
 namespace Wrapper.View
 {
-    public class OutputView : IView
+    public class SymbolExplanationView : IView
     {
-        public OutputView()
-        {
-            
-        }
+        public const int DEFAULT_POSITION_X = 20;
+        public const int DEFAULT_POSITION_Y = 10;
+
+        private readonly IOutputWrapper _outputWrapper;
+        private int _posX;
+        private int _posY;
 
         public void Show()
         {
