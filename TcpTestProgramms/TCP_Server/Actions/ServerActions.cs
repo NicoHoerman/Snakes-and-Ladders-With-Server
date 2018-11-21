@@ -108,7 +108,7 @@ namespace TCP_Server.Actions
                 Header = ProtocolActionEnum.UpdateView,
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                 {
-                    _Updated_View = "Placeholder",
+                    _GameViewUpdate = "Placeholder",
                 })
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;
@@ -126,8 +126,7 @@ namespace TCP_Server.Actions
                 Header = ProtocolActionEnum.HelpText,
                 Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
                 {
-                    _Text = $"Here is your help Player {clientId._Text}.\n " +
-                    $"Commands:\n/rolldice\n/closegame\n"
+                    
                 })
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;

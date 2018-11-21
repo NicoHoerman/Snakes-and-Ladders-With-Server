@@ -49,7 +49,7 @@ namespace TCP_Client.Actions
                 { "/rolldice", OnInputRollDiceAction },
                 { "/closegame", OnCloseGameAction },
                 {"/someInt" ,OnIntAction },
-                {"/SEARCH", OnSearchAction },
+                {"/search", OnSearchAction },
                 {"/startgame", OnStartGameAction }
             };
 
