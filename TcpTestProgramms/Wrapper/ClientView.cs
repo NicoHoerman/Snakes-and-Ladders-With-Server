@@ -4,7 +4,10 @@
     {
         Error,
         ServerTable,
-        SomeOutput
+        InfoOutput,
+        MasterCommands,
+        HelpOutput,
+        SymbolExplanation
     }
 
 

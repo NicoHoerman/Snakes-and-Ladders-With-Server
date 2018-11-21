@@ -8,10 +8,10 @@ namespace Wrapper.Implementation
 {
     public class OutputWrapper : IOutputWrapper
     {
-
+        
         private string _Memory = string.Empty;
-       
-
+        private bool _ShiftPressed = false;           
+        public string userInput = string.Empty;
 
         public void Clear()
         {
@@ -20,6 +20,24 @@ namespace Wrapper.Implementation
 
         public string ReadInput()
         {
+             /*ConsoleKeyInfo cki = new ConsoleKeyInfo();
+             userInput = string.Empty;
+
+             while (cki.Key != ConsoleKey.Enter)
+             {
+                 cki = Console.ReadKey();
+
+                 if ((cki.Modifiers & ConsoleModifiers.Shift) != 0)
+                     _ShiftPressed = true;
+                 if (_ShiftPressed == true & cki.Key == ConsoleKey.D7)
+                     userInput += "/";
+                 else if (cki.Key != ConsoleKey.Enter)
+                     userInput += cki.Key.ToString();        
+
+             }
+
+             return userInput;*/
+             
             return Console.ReadLine();
         }
 
