@@ -8,6 +8,7 @@ namespace Shared.Communications
 
     public class DummyCommunication : ICommunication
     {
+        public bool IsMaster { get; set; }
 
         public TcpClient _client { get; set; }
 

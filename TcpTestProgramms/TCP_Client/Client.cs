@@ -32,11 +32,11 @@ namespace TCP_Client
         private Dictionary<ClientView, IView> _views = new Dictionary<ClientView, IView>
         {
             { ClientView.Error, new ErrorView() },
-            { ClientView.ServerTable, new ServerTableView() },
-            { ClientView.InfoOutput, new InfoOutputView() },
-            { ClientView.MasterCommands, new MasterCommandsView() },
+            //{ ClientView.ServerTable, new ServerTableView() },
+            //{ ClientView.InfoOutput, new InfoOutputView() },
+            //{ ClientView.MasterCommands, new MasterCommandsView() },
             { ClientView.HelpOutput, new HelpOutputView() },
-            { ClientView.SymbolExplanation, new SymbolExplanationView() }
+            //{ ClientView.SymbolExplanation, new SymbolExplanationView() }
         };
 
         //<Constructors>
@@ -80,8 +80,8 @@ namespace TCP_Client
 
             while (isRunning)
             {
-
-                _OutputWrapper.Updateview(input, _afterConnectMsg, _serverTable,string.Empty,_UpdatedView);
+                _OutputWrapper.WriteOutput(0, 0, "Type /search to find a server", ConsoleColor.White);
+                //_OutputWrapper.Updateview(input, _afterConnectMsg, _serverTable,string.Empty,_UpdatedView);
                 _views.Values.ToList().ForEach(x => x.Show());
 
                 _serverTable = string.Empty;
@@ -89,11 +89,11 @@ namespace TCP_Client
                 _UpdatedView = string.Empty;
 
 
-                Console.SetCursorPosition(17, 0);
+                Console.SetCursorPosition(0, 1);
                 input = _OutputWrapper.ReadInput();
                 _InputHandler.ParseAndExecuteCommand(input, _communication);
 
-                SetParameters();
+                //SetParameters();
                 
             }
         }

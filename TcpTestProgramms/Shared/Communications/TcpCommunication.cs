@@ -9,6 +9,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
+
+
 /// <summary>
 /// Wir haben eine TcpCommunication eine klasse die die Verbindung zwischen Server und client regelt 
 /// </summary>
@@ -19,7 +21,8 @@ namespace Shared.Communications
         public TcpClient _client { get; set; }
         private NetworkStream _nwStream;
         private bool _NWStreamNotSet = true;
-
+        public bool IsMaster { get; set; } = false;
+       
         private MemoryStream _localBuffer;
         private List<DataPackage> _packageQueue;
 
@@ -218,8 +221,7 @@ namespace Shared.Communications
             _localBuffer.Seek(0, SeekOrigin.End);
             //schreibt die Daten in ein MemoryStream unsere warteschlange so zu sagen
             _localBuffer.Write(bytesToRead, 0, bytesToRead.Length);
-        }
-
+        }       
 
     }
 }

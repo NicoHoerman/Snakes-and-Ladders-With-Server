@@ -14,6 +14,7 @@ namespace Shared.Contract
         TcpClient _client { get; set; }
         //NetworkStream GetStream();
         void SetNWStream();
+        bool IsMaster { get; set; }
 
     }
 }

@@ -5,7 +5,7 @@
         Error,
         ServerTable,
         InfoOutput,
-        MasterCommandList,
+        MasterCommands,
         HelpOutput,
         SymbolExplanation
     }
