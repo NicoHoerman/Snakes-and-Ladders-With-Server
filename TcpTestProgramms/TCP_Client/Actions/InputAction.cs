@@ -30,6 +30,7 @@ namespace TCP_Client.Actions
         private ProtocolAction _ActionHandler;
         private Dictionary<ClientView, IView> _views;
         private readonly IErrorView _errorView;
+        private readonly IHelpOutputView _helpOutputView;
         private OutputWrapper _OutputWrapper;  
 
         private UdpClientUnit _UdpListener;
@@ -40,7 +41,7 @@ namespace TCP_Client.Actions
             _ActionHandler = protocolAction;
             _views = views;
             _errorView = views[ClientView.Error] as IErrorView; // Potential null exception error.
-
+            _helpOutputView = views[ClientView.HelpOutput] as IHelpOutputView; //Potenzieller Null Ausnahmen Fehler 
             _OutputWrapper = new OutputWrapper();
 
             _inputActions = new Dictionary<string, Action<string,ICommunication>>
@@ -49,7 +50,7 @@ namespace TCP_Client.Actions
                 { "/rolldice", OnInputRollDiceAction },
                 { "/closegame", OnCloseGameAction },
                 {"/someInt" ,OnIntAction },
-                {"/SEARCH", OnSearchAction },
+                {"/search", OnSearchAction },
                 {"/startgame", OnStartGameAction }
             };
 
@@ -91,6 +92,10 @@ namespace TCP_Client.Actions
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
+            if (communication.IsMaster == true)
+                _helpOutputView.SetHelp("Your master help could be standing here");
+            else
+                _helpOutputView.SetHelp("Your normal help could be standing here");
 
             var dataPackage = new DataPackage
             {

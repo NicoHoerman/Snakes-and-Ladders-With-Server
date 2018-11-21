@@ -109,6 +109,10 @@ namespace TCP_Server
         {
             _serverInfo._communications.Add(
                 new TcpCommunication(client));
+
+            if (_serverInfo._communications.Count == 1)
+                _serverInfo._communications[0].IsMaster = true;
+
             _serverInfo.PrintPlayerIP();
             _client = null;
         } 
