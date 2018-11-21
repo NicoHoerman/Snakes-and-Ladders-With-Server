@@ -16,8 +16,10 @@ namespace TCP_Server.UDP
         private const string SERVER_IP_WLAN = "172.22.21.132";
         private const string SERVER_IP_LAN = "172.22.22.153";
         private bool _closed = false;
+        private bool isRunning;
 
-        private static ManualResetEvent _MessageSent = new ManualResetEvent(false);
+
+        private static ManualResetEvent _MessageReceived = new ManualResetEvent(true);
         UdpClient _udpServer;
         IPAddress ClientIP;
         ServerInfo _serverInfo;
@@ -29,19 +31,30 @@ namespace TCP_Server.UDP
             SetBroadcastMsg(_serverInfo);
         }
 
+        public void RunUdpServer()
+        {
+            isRunning = true;
+            while (isRunning)
+            {
+                _MessageReceived.WaitOne();
+                _MessageReceived.Reset();
+                StartListening();
+            }
+        }
         public void Broadcast(string clientIp)
         {
             ClientIP = IPAddress.Parse(clientIp);
             IPEndPoint _ipEndPoint = new IPEndPoint(ClientIP, 7075);
             _udpServer.Send(_ServerInfo, _ServerInfo.Length, _ipEndPoint);
-            _MessageSent.Set();
             Thread.Sleep(5000);
+            
         }
 
         public void StartListening()
         {
             if (_udpServer.Client != null)
                 _udpServer.BeginReceive(Receive, new object());
+
         }
 
         public void Receive(IAsyncResult ar)
@@ -53,14 +66,12 @@ namespace TCP_Server.UDP
                 string recievedMessage = Encoding.ASCII.GetString(bytes);
                 if(recievedMessage == "is there a Server")
                 Broadcast(_recieverEndPoint.Address.ToString());
-
-                _MessageSent.WaitOne();
-
-                _udpServer.Dispose();
-                _udpServer.Close();
+                
+                //_udpServer.Dispose();
+                //_udpServer.Close();
             }
             Thread.Sleep(1);
-            StartListening();
+            _MessageReceived.Set();
         }
 
         public void SetBroadcastMsg(ServerInfo serverInfo)

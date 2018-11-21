@@ -8,26 +8,27 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using TCP_Server.Actions;
+using TCP_Server.Enum;
 using TCP_Server.UDP;
 
 namespace TCP_Server
 {
-
     public class Server
     {
         private const string SERVER_IP_WLAN = "172.22.21.132";
         private const string SERVER_IP_LAN = "172.22.22.153";
         
-        private string _updateInfo = string.Empty;
-        private static TcpClient _client;
-
+        //private string _updateInfo = string.Empty;
+        private bool isRunning;
         
        
         public static ManualResetEvent tcpClientConnected = new ManualResetEvent(false);
+        
         private TcpListener _listener;
         private ServerInfo _serverInfo;
         private ServerActions _ActionsHandler;
         private UdpBroadcast _udpServer;
+        private TcpClient _client;
 
         public Server(ServerInfo serverInfo,UdpBroadcast udpBroadcast)
         {
@@ -45,16 +46,29 @@ namespace TCP_Server
         {
             _listener.Start();
 
-            while (!isLobbyComplete())
+            while (isRunning)
             {
                 DoBeginAcceptTcpClient(listener);
                 if (_client != null)
                 {
-                    AddCommunication(_client);
-                    _serverInfo._CurrentPlayerCount++;
-                    _udpServer.SetBroadcastMsg(_serverInfo);
+                    
+                    if (!isLobbyComplete())
+                    {
+                        _ActionsHandler._ConnectionStatus = ClientConnectionAttempt.Accepted;
+                        AddCommunication(_client);
+                        _client = null;
+                        _serverInfo._CurrentPlayerCount++;
+                        _udpServer.SetBroadcastMsg(_serverInfo);
+                        Console.WriteLine("Test in client Connection");
+                    }
+                    else if (isLobbyComplete())
+                    {
+                        _ActionsHandler._ConnectionStatus = ClientConnectionAttempt.Declined;
+                    }
+
+                    ServerActions.verificationVariableSet.Set();
                 }
-               Thread.Sleep(1000);
+                Thread.Sleep(1000);
             }
         }
 
@@ -69,12 +83,12 @@ namespace TCP_Server
             tcpClientConnected.Reset();
         }
 
-        public  void DoAcceptTcpClientCallback(IAsyncResult ar)
+        public void DoAcceptTcpClientCallback(IAsyncResult ar)
         {
             TcpListener listener = (TcpListener)ar.AsyncState;
 
-            TcpClient client = listener.EndAcceptTcpClient(ar);
-            _client = client;
+            _client = listener.EndAcceptTcpClient(ar);
+            
             //Conected
             Console.WriteLine("Client connected completed");
             
@@ -85,7 +99,6 @@ namespace TCP_Server
         {
             if (_serverInfo._communications.Count == _serverInfo._MaxPlayerCount)
             {
-                _listener.Stop();
                 return true;
             }
             else
@@ -102,21 +115,29 @@ namespace TCP_Server
 
         public void Run()
         {
+            isRunning = true;
+
             var backgroundworker = new BackgroundWorker();
 
             backgroundworker.DoWork += (obj, ea) => CheckForUpdates();
             backgroundworker.RunWorkerAsync();
 
-            CLientConnection(_listener);
+            var backgroundworker2 = new BackgroundWorker();
+
+            backgroundworker2.DoWork += (obj, ea) => CLientConnection(_listener);
+            backgroundworker2.RunWorkerAsync();
+
+            while (isRunning)
+            {
+
+            }
 
         }
 
         private void CheckForUpdates()
         {
-            // try
-            //{
             var elementsToRemove = new List<ICommunication>();
-            while (true)
+            while (isRunning)
             {
                 elementsToRemove.Clear();
                 _serverInfo._communications.ForEach(communication =>
@@ -136,17 +157,18 @@ namespace TCP_Server
                         }
                     }
                 });
-                elementsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
 
-                //if (!communicated)
+                // All elements that lost conenction!
+                if(elementsToRemove.Count > 0)
+                {
+                    elementsToRemove.ForEach(x => _serverInfo._CurrentPlayerCount--);
+                    _udpServer.SetBroadcastMsg(_serverInfo);
+                    elementsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
+                }
+
                 Thread.Sleep(1);
             }
-           // }
-          /*catch
-            {
-                
-            }
-          */
+          
         }
 
         

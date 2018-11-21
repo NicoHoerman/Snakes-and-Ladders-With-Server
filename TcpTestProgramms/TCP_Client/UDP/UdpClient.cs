@@ -14,7 +14,7 @@ namespace TCP_Client.UDP
     {
         private UdpClient _UdpClient;
         public List<DataPackage> _DataList;
-        bool _closed = false;
+        public bool _closed = false;
 
         public UdpClientUnit()
         {
@@ -69,8 +69,8 @@ namespace TCP_Client.UDP
         public void StopListening()
         {
             _closed = true;
-            _UdpClient.Dispose();
-            _UdpClient.Close();
+            //_UdpClient.Dispose();
+            //_UdpClient.Close();
         }
 
 
