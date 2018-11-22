@@ -8,7 +8,7 @@ using Wrapper.Implementation;
 
 namespace Wrapper.View
 {
-    public class HelpOutputView : IView
+    public class HelpOutputView : IHelpOutputView
     {
         public const int DEFAULT_POSITION_X = 35;
         public const int DEFAULT_POSITION_Y = 3;
