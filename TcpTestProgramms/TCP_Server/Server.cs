@@ -18,9 +18,8 @@ namespace TCP_Server
         private const string SERVER_IP_WLAN = "172.22.21.132";
         private const string SERVER_IP_LAN = "172.22.22.153";
         
-        //private string _updateInfo = string.Empty;
         private bool isRunning;
-        
+        List<ICommunication> communicationsToRemove = new List<ICommunication>();
        
         public static ManualResetEvent tcpClientConnected = new ManualResetEvent(false);
         
@@ -52,21 +51,28 @@ namespace TCP_Server
                 if (_client != null)
                 {
                     
+                    AddCommunication(_client);
+
                     if (!isLobbyComplete())
                     {
                         _ActionsHandler._ConnectionStatus = ClientConnectionAttempt.Accepted;
-                        AddCommunication(_client);
-                        _client = null;
+                        ServerActions.verificationVariableSet.Set();
                         _serverInfo._CurrentPlayerCount++;
                         _udpServer.SetBroadcastMsg(_serverInfo);
-                        Console.WriteLine("Test in client Connection");
                     }
                     else if (isLobbyComplete())
                     {
                         _ActionsHandler._ConnectionStatus = ClientConnectionAttempt.Declined;
-                    }
+                        ServerActions.verificationVariableSet.Set();
 
-                    ServerActions.verificationVariableSet.Set();
+                        ServerActions.MessageSent.WaitOne();
+                        ServerActions.MessageSent.Reset();
+                        var currentCommunication = _serverInfo._communications.Last();
+                        currentCommunication.Stop();
+                         
+                        communicationsToRemove.Add(currentCommunication);
+                    }
+                    _client = null;
                 }
                 Thread.Sleep(1000);
             }
@@ -136,84 +142,47 @@ namespace TCP_Server
 
         private void CheckForUpdates()
         {
-            var elementsToRemove = new List<ICommunication>();
+            
             while (isRunning)
             {
-                elementsToRemove.Clear();
+                communicationsToRemove.Clear();
                 _serverInfo._communications.ForEach(communication =>
                 {
                     if (!communication.IsConnected)
                     {
                         communication.Stop();
-                        elementsToRemove.Add(communication);
+                        communicationsToRemove.Add(communication);
                     }
                     else
                     {
                         if (communication.IsDataAvailable())
                         {
                             var data = communication.Receive();
+                            //object objdata = data;
+                            //object objcommunication = communication;
+                            //ThreadPool.QueueUserWorkItem(ThreadProc,objcommunication);
+                            
                             _ActionsHandler.ExecuteDataActionFor(communication, data);
-                            //communicated = true;
                         }
                     }
                 });
 
                 // All elements that lost conenction!
-                if(elementsToRemove.Count > 0)
+                if(communicationsToRemove.Count > 0)
                 {
-                    elementsToRemove.ForEach(x => _serverInfo._CurrentPlayerCount--);
+                    communicationsToRemove.ForEach(x => _serverInfo._CurrentPlayerCount--);
                     _udpServer.SetBroadcastMsg(_serverInfo);
-                    elementsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
+                    communicationsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
                 }
 
                 Thread.Sleep(1);
             }
-          
         }
 
-        
-
-
-       /* #region Accept and Decline
-        private void DeclineClient(ICommunication communication, DataPackage data, PROT_CONNECT clientId)
+        private void ThreadProc(object communication)
         {
-            
-            var dataPackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.Decline,
-                Payload = JsonConvert.SerializeObject(new PROT_DECLINE
-                {
-                    _Message = $"Your connection was declined because the Client ID({clientId._Client_id}) is on our Blacklist."
-                    
-                })
-            };
-            dataPackage.Size = dataPackage.ToByteArray().Length;
-
-            communication.Send(dataPackage);
-
-            communication._client.Close();
-
+            _ActionsHandler.ExecuteDataActionFor(communication, data);
         }
-
-        private void AcceptClient(ICommunication communication, DataPackage data, PROT_CONNECT clientId)
-        {
-
-            var dataPackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.Accept,
-                Payload = JsonConvert.SerializeObject(new PROT_ACCEPT
-                {
-                    _Message = "Congratulations! Your client has been accepted."
-                    + "\nGet ready to play a fun round of Eels and Escalators!"
-                    + $"\nYou have  been assigned player number {clientId._Client_id}."
-                })
-            };
-            dataPackage.Size = dataPackage.ToByteArray().Length;
-
-            communication.Send(dataPackage);
-        }
-        #endregion
-        */
        
     }
 }

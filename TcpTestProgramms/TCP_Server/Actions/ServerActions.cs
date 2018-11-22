@@ -19,7 +19,10 @@ namespace TCP_Server.Actions
         private int maxplayer;
 
         private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
+
         public static ManualResetEvent verificationVariableSet = new ManualResetEvent(false);
+        public static ManualResetEvent MessageSent = new ManualResetEvent(false);
+
         ServerInfo _ServerInfo;
         public ClientConnectionAttempt _ConnectionStatus = ClientConnectionAttempt.NotSet;
 
@@ -88,7 +91,12 @@ namespace TCP_Server.Actions
                     })
                 };
                 updatePackage.Size = updatePackage.ToByteArray().Length;
-                //A send that sends to evreyone except the current comunication
+                //A send that sends to everyone except the current comunication
+                for(int i=0;i<= _ServerInfo._communications.Count; i++)
+                {
+                    if(!(_ServerInfo._communications[i] == communication))
+                    _ServerInfo._communications[i].Send(updatePackage);
+                }
             }
             else if (_ConnectionStatus == ClientConnectionAttempt.NotSet)
                 throw new InvalidOperationException();
@@ -97,6 +105,7 @@ namespace TCP_Server.Actions
             
             dataPackage.Size = dataPackage.ToByteArray().Length;
             communication.Send(dataPackage);
+            MessageSent.Set();
         }
 
         private void OnRollDiceAction(ICommunication communication, DataPackage data)
