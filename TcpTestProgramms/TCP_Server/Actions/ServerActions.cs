@@ -87,7 +87,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _SmallUpdate = "A player got decliend" 
+                        _SmallUpdate = "A player got declined" 
                     })
                 };
                 updatePackage.Size = updatePackage.ToByteArray().Length;
@@ -127,7 +127,7 @@ namespace TCP_Server.Actions
 
         private void OnGetHelpAction(ICommunication communication, DataPackage data)
         {
-            throw new NotImplementedException();
+            
             var clientId = CreateProtocol<PROT_HELPTEXT>(data);
 
             var dataPackage = new DataPackage

@@ -8,6 +8,9 @@ using System.Net;
 using System.Text;
 using TCP_Client.DTO;
 using Wrapper.Implementation;
+using Wrapper.Contracts;
+using Wrapper.View;
+using Wrapper;
 
 namespace TCP_Client.Actions
 {
@@ -15,13 +18,17 @@ namespace TCP_Client.Actions
     {
         public Dictionary<ProtocolActionEnum, Action<DataPackage>> _protocolActions;
         public Dictionary<int, BroadcastDTO> _serverDictionary = new Dictionary<int, BroadcastDTO>();
-
+        private readonly IServerTableView _serverTableView;
+        private Dictionary<ClientView, IView> _views;
         private OutputWrapper outputWrapper;
         public string _serverTable =string.Empty;
         public string _UpdatedView = string.Empty;
 
-        public ProtocolAction()
+        public ProtocolAction(Dictionary<ClientView, IView> views)
         {
+            _views = views;
+            _serverTableView = views[ClientView.ServerTable] as IServerTableView;
+
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage>>
             {
                 { ProtocolActionEnum.HelpText, OnHelpTextAction},
@@ -101,6 +108,8 @@ namespace TCP_Client.Actions
                     _MaxPlayerCount[index], _Servernames[index],(index+1)));
 
             _serverTable = outputFormat.ToString();
+            _serverTableView.SetServerTableContent(_serverTable);
+            _serverTableView.viewEnabled = true;
             //      Server  Player  
             //
             //  1   XD      [0/4]

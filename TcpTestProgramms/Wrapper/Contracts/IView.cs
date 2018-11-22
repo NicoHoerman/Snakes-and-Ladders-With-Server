@@ -3,6 +3,8 @@
     public interface IView
     {
         void Show();
+        bool viewEnabled { get; set; }
+        
     }
 
 

@@ -7,7 +7,8 @@
         InfoOutput,
         MasterCommands,
         HelpOutput,
-        SymbolExplanation
+        SymbolExplanation,
+        Input
     }
 
 

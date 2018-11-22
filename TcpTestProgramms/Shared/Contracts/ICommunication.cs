@@ -15,7 +15,6 @@ namespace Shared.Contract
         //NetworkStream GetStream();
         void SetNWStream();
         bool IsMaster { get; set; }
-
         bool IsConnected { get; }
         void Stop();
     }

@@ -17,7 +17,7 @@ namespace TCP_Server
     public class Server
     {
         private const string SERVER_IP_WLAN = "172.22.21.132";
-        private const string SERVER_IP_LAN = "172.22.22.153";
+        private const string SERVER_IP_LAN = "172.22.22.207";
         
         private bool isRunning;
         List<ICommunication> communicationsToRemove = new List<ICommunication>();
@@ -100,7 +100,7 @@ namespace TCP_Server
             _client = listener.EndAcceptTcpClient(ar);
             
             //Conected
-            Console.WriteLine("Client connected completed");
+            Console.WriteLine("Client succesfully connected");
             
             tcpClientConnected.Set();
         }
@@ -119,6 +119,10 @@ namespace TCP_Server
         {
             _serverInfo._communications.Add(
                 new TcpCommunication(client));
+
+            if (_serverInfo._communications.Count == 1)
+                _serverInfo._communications[0].IsMaster = true;
+
             _serverInfo.PrintPlayerIP();
             _client = null;
         } 

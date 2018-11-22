@@ -10,12 +10,14 @@ namespace Wrapper.View
 {
     public class HelpOutputView : IHelpOutputView
     {
-        public const int DEFAULT_POSITION_X = 35;
-        public const int DEFAULT_POSITION_Y = 3;
+        public const int DEFAULT_POSITION_X = 70;
+        public const int DEFAULT_POSITION_Y = 20;
         private string _help = string.Empty;
         private readonly IOutputWrapper _outputWrapper;
         private int _posX;
         private int _posY;
+
+        public bool viewEnabled { get ; set ; }
 
         public HelpOutputView(IOutputWrapper outputWrapper, int posX, int posY)
         {
@@ -31,6 +33,7 @@ namespace Wrapper.View
         public void SetHelp(string help)
         {
             _help = help;
+            //set
         }
 
         public void Show()
