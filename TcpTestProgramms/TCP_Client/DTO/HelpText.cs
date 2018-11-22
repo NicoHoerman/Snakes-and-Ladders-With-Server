@@ -7,6 +7,6 @@ namespace TCP_Client.DTO
 {
     public class HelpTextDTO : IProtocol
     {
-        public string _Text;
+        public string _HelpText;
     }
 }

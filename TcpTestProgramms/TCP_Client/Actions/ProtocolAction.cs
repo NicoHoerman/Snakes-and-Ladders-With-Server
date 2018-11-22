@@ -53,13 +53,13 @@ namespace TCP_Client.Actions
         {
             var helpText = MapProtocolToDto<HelpTextDTO>(data);
 
-            Console.Write("Received help text: " + helpText._Text);
+            Console.Write("Received help text: " + helpText._HelpText);
         }
 
         private void OnUpdateAction(DataPackage data)
         {
             var updatedView = MapProtocolToDto<UpdateDTO>(data);
-            _UpdatedView = updatedView._Updated_View;
+            _UpdatedView = updatedView._SmallUpdate;
         }
 
         private List<IPEndPoint> _ServerEndpoints = new List<IPEndPoint>(); 
@@ -112,7 +112,6 @@ namespace TCP_Client.Actions
             var accept = MapProtocolToDto<AcceptDTO>(data);
 
             throw new NotImplementedException();
-            
         }
 
         private void OnDeclineAction(DataPackage data)
@@ -120,8 +119,6 @@ namespace TCP_Client.Actions
             var decline = MapProtocolToDto<DeclineDTO>(data);
 
             throw new NotImplementedException();
-            Console.WriteLine(decline._Message);
-
         }
         #endregion
 

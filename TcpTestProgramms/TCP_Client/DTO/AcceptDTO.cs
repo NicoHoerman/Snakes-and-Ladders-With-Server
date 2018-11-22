@@ -7,6 +7,6 @@ namespace TCP_Client.DTO
 {
     public class AcceptDTO : IProtocol
     {
-        public string _Message;
+        public string _SmallUpdate;
     }
 }

@@ -89,7 +89,7 @@ namespace TCP_Client
                 _UpdatedView = string.Empty;
 
 
-                Console.SetCursorPosition(0, 17);
+                Console.SetCursorPosition(0, 2);
                 input = _OutputWrapper.ReadInput();
                 _InputHandler.ParseAndExecuteCommand(input, _communication);
 

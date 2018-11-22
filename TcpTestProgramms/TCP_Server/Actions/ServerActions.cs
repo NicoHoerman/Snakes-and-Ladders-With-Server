@@ -92,7 +92,7 @@ namespace TCP_Server.Actions
                 };
                 updatePackage.Size = updatePackage.ToByteArray().Length;
                 //A send that sends to everyone except the current comunication
-                for(int i=0;i<= _ServerInfo._communications.Count; i++)
+                for(int i=0;i<= _ServerInfo._communications.Count-1; i++)
                 {
                     if(!(_ServerInfo._communications[i] == communication))
                     _ServerInfo._communications[i].Send(updatePackage);

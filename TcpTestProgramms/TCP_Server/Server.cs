@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 using TCP_Server.Actions;
 using TCP_Server.Enum;
 using TCP_Server.UDP;
@@ -52,6 +53,7 @@ namespace TCP_Server
                 {
                     
                     AddCommunication(_client);
+                    
 
                     if (!isLobbyComplete())
                     {
@@ -69,8 +71,10 @@ namespace TCP_Server
                         ServerActions.MessageSent.Reset();
                         var currentCommunication = _serverInfo._communications.Last();
                         currentCommunication.Stop();
-                         
+
                         communicationsToRemove.Add(currentCommunication);
+
+                        RemoveFromList();
                     }
                     _client = null;
                 }
@@ -103,7 +107,7 @@ namespace TCP_Server
 
         public bool isLobbyComplete()
         {
-            if (_serverInfo._communications.Count == _serverInfo._MaxPlayerCount)
+            if (_serverInfo._CurrentPlayerCount == _serverInfo._MaxPlayerCount)
             {
                 return true;
             }
@@ -158,11 +162,7 @@ namespace TCP_Server
                         if (communication.IsDataAvailable())
                         {
                             var data = communication.Receive();
-                            //object objdata = data;
-                            //object objcommunication = communication;
-                            //ThreadPool.QueueUserWorkItem(ThreadProc,objcommunication);
-                            
-                            _ActionsHandler.ExecuteDataActionFor(communication, data);
+                            Task.Run(() => _ActionsHandler.ExecuteDataActionFor(communication, data));
                         }
                     }
                 });
@@ -170,19 +170,28 @@ namespace TCP_Server
                 // All elements that lost conenction!
                 if(communicationsToRemove.Count > 0)
                 {
-                    communicationsToRemove.ForEach(x => _serverInfo._CurrentPlayerCount--);
-                    _udpServer.SetBroadcastMsg(_serverInfo);
-                    communicationsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
+                    RemoveFromLobby();
                 }
 
                 Thread.Sleep(1);
             }
         }
 
-        private void ThreadProc(object communication)
+
+        private void ThreadProc(ICommunication communication, DataPackage data)
         {
             _ActionsHandler.ExecuteDataActionFor(communication, data);
         }
-       
+        private void RemoveFromLobby()
+        {
+            communicationsToRemove.ForEach(x => _serverInfo._CurrentPlayerCount--);
+            _udpServer.SetBroadcastMsg(_serverInfo);
+            RemoveFromList();
+        }
+
+        private void RemoveFromList()
+        {
+            communicationsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
+        }
     }
 }
