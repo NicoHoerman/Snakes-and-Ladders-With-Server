@@ -80,7 +80,7 @@ namespace TCP_Client
 
             while (isRunning)
             {
-                _OutputWrapper.WriteOutput(0, 0, "Type /search to find a server", ConsoleColor.White);
+                _OutputWrapper.WriteOutput(0, 0, "Type a command", ConsoleColor.White);
                 //_OutputWrapper.Updateview(input, _afterConnectMsg, _serverTable,string.Empty,_UpdatedView);
                 _views.Values.ToList().ForEach(x => x.Show());
 
@@ -89,7 +89,7 @@ namespace TCP_Client
                 _UpdatedView = string.Empty;
 
 
-                Console.SetCursorPosition(0, 1);
+                Console.SetCursorPosition(0, 2);
                 input = _OutputWrapper.ReadInput();
                 _InputHandler.ParseAndExecuteCommand(input, _communication);
 

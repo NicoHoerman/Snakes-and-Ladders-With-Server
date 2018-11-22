@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\IHelpOutputView.cs" />
+    <Compile Include="Contracts\IInfoOutputView.cs" />
     <Compile Include="Contracts\IOutputWrapper.cs" />
     <Compile Include="Implementation\OutputWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -50,7 +51,6 @@
     <Compile Include="Contracts\IErrorView.cs" />
     <Compile Include="Contracts\IView.cs" />
     <Compile Include="View\HelpOutputView.cs" />
-    <Compile Include="View\MasterCommandsView.cs" />
     <Compile Include="View\InfoOutputView.cs" />
     <Compile Include="View\ServerTableView.cs" />
     <Compile Include="View\SymbolExplanationView.cs" />

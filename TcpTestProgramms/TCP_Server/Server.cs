@@ -16,7 +16,7 @@ namespace TCP_Server
     public class Server
     {
         private const string SERVER_IP_WLAN = "172.22.21.132";
-        private const string SERVER_IP_LAN = "172.22.22.153";
+        private const string SERVER_IP_LAN = "172.22.22.207";
         
         //private string _updateInfo = string.Empty;
         private bool isRunning;
