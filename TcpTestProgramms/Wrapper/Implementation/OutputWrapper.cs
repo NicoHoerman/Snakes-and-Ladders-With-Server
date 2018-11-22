@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Wrapper.Contracts;
+using Wrapper.View;
+using Wrapper;
 
 namespace Wrapper.Implementation
 {
     public class OutputWrapper : IOutputWrapper
     {
-        
+        public List<IView> viewList;
         private string _Memory = string.Empty;
         private bool _ShiftPressed = false;           
         public string userInput = string.Empty;
@@ -18,26 +20,39 @@ namespace Wrapper.Implementation
             Console.Clear();
         }
 
-        public string ReadInput()
+        public OutputWrapper()
         {
-             /*ConsoleKeyInfo cki = new ConsoleKeyInfo();
-             userInput = string.Empty;
+            viewList = new List<IView>()
+            {
+                new ErrorView(),
+                new HelpOutputView(),
+                new InfoOutputView(),
+                new ServerTableView(),
+                new InputView(),
+                //new Game()
+                //new MainMenu
 
-             while (cki.Key != ConsoleKey.Enter)
-             {
-                 cki = Console.ReadKey();
+            };
+        }
 
-                 if ((cki.Modifiers & ConsoleModifiers.Shift) != 0)
-                     _ShiftPressed = true;
-                 if (_ShiftPressed == true & cki.Key == ConsoleKey.D7)
-                     userInput += "/";
-                 else if (cki.Key != ConsoleKey.Enter)
-                     userInput += cki.Key.ToString();        
 
-             }
+        public void UpdateView()
+        {
+            viewList.ForEach(view =>
+            {
+                if (view.viewEnabled)
+                {
+                    view.Show();
+                        
+                }
 
-             return userInput;*/
-             
+            });
+            
+        }
+
+ 
+        public string ReadInput()
+        {            
             return Console.ReadLine();
         }
 

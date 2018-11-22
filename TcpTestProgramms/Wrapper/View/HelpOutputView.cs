@@ -17,6 +17,8 @@ namespace Wrapper.View
         private int _posX;
         private int _posY;
 
+        public bool viewEnabled { get ; set ; }
+
         public HelpOutputView(IOutputWrapper outputWrapper, int posX, int posY)
         {
             _outputWrapper = outputWrapper;

@@ -109,6 +109,7 @@ namespace TCP_Client.Actions
 
             _serverTable = outputFormat.ToString();
             _serverTableView.SetServerTableContent(_serverTable);
+            _serverTableView.viewEnabled = true;
             //      Server  Player  
             //
             //  1   XD      [0/4]

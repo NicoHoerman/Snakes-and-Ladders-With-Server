@@ -18,11 +18,14 @@ namespace Wrapper.View
         private int _posY;
         private string _info;
 
+        public bool viewEnabled { get; set; }
+
         public InfoOutputView(IOutputWrapper outputWrapper, int posX, int posY)
         {
             _outputWrapper = outputWrapper;
             _posX = posX;
             _posY = posY;
+           
         }
 
         public InfoOutputView()

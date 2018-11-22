@@ -32,6 +32,8 @@ namespace TCP_Client.Actions
         private readonly IErrorView _errorView;
         private readonly IHelpOutputView _helpOutputView;
         public readonly IInputView _inputView;
+        private readonly IServerTableView _serverTableView;
+        private readonly IInfoOutputView _infoOutputView;
         
         private OutputWrapper _OutputWrapper;  
 
@@ -45,6 +47,8 @@ namespace TCP_Client.Actions
             _errorView = views[ClientView.Error] as IErrorView; // Potential null exception error.
             _helpOutputView = views[ClientView.HelpOutput] as IHelpOutputView; //Potenzieller Null Ausnahmen Fehler
             _inputView = views[ClientView.Input] as IInputView;
+            _serverTableView = views[ClientView.ServerTable] as IServerTableView;
+            _infoOutputView = views[ClientView.InfoOutput] as IInfoOutputView;
             _OutputWrapper = new OutputWrapper();
 
             _inputActions = new Dictionary<string, Action<string,ICommunication>>
@@ -52,7 +56,7 @@ namespace TCP_Client.Actions
                 { "/help", OnInputHelpAction },
                 { "/rolldice", OnInputRollDiceAction },
                 { "/closegame", OnCloseGameAction },
-                {"/someInt" ,OnIntAction },
+                {"/someInt" , OnIntAction },
                 {"/search", OnSearchAction },
                 {"/startgame", OnStartGameAction }
             };
@@ -68,17 +72,19 @@ namespace TCP_Client.Actions
             string receivedInput = input;
             if(input == "/someInt")
             {
+                _errorView.viewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
             if (input.All(char.IsDigit))
             {
+                
                 input = "/someInt";
             }
 
             if (_inputActions.TryGetValue(input, out var action) == false)
             {
-                //log
+                _errorView.viewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
@@ -92,13 +98,21 @@ namespace TCP_Client.Actions
         {
             if (!isConnected)
             {
+                _errorView.viewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
             if (communication.IsMaster == true)
+            {
+                _helpOutputView.viewEnabled = true;
                 _helpOutputView.SetHelp("Your master help\ncould be standing here");
+            }
             else
+            {
+                _helpOutputView.viewEnabled = true;
                 _helpOutputView.SetHelp("Your normal help\ncould be standing here");
+            }
+                
 
             var dataPackage = new DataPackage
             {
@@ -119,6 +133,7 @@ namespace TCP_Client.Actions
         {
             if (!isConnected)
             {
+                _errorView.viewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
@@ -141,6 +156,7 @@ namespace TCP_Client.Actions
 
             if (isConnected | !Searched)
             {
+                _errorView.viewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
@@ -151,6 +167,8 @@ namespace TCP_Client.Actions
                 communication._client.Connect(IPAddress.Parse(current._Server_ip), current._Server_Port);
                 AfterConnectMsg = $"Server {chosenServerId} chosen";
                 isConnected = true;
+                _infoOutputView.viewEnabled = true;
+                _infoOutputView.SetInfoContent(AfterConnectMsg +"\nYou succesfully connected to the server");
                 communication.SetNWStream();
                 var dataPackage = new DataPackage
                 {
@@ -166,6 +184,7 @@ namespace TCP_Client.Actions
             }
             else
             {
+                _errorView.viewEnabled = true;
                 _errorView.SetContent(input, "There is no server with this ID");
             }
 
@@ -177,6 +196,7 @@ namespace TCP_Client.Actions
         {
             if (isConnected)
             {
+                _errorView.viewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
@@ -199,9 +219,9 @@ namespace TCP_Client.Actions
             stopwatch.Stop();
             _UdpListener.StopListening();
             Searched = true;
+            _inputView.viewEnabled = true;
             _inputView.SetInputLine("Enter the server number you want to connect to.",49);
-
-            //_UdpListener._closed = false;
+            
         }
 
         private void OnCloseGameAction(string obj,ICommunication communication)

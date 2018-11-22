@@ -56,7 +56,7 @@
     <Compile Include="View\InfoOutputView.cs" />
     <Compile Include="View\InputView.cs" />
     <Compile Include="View\ServerTableView.cs" />
-    <Compile Include="View\SymbolExplanationView.cs" />
+    <Compile Include="View\GameView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -7,7 +7,7 @@ using Wrapper.Contracts;
 
 namespace Wrapper.View
 {
-    public class SymbolExplanationView : IView
+    public class GameView : IView
     {
         public const int DEFAULT_POSITION_X = 20;
         public const int DEFAULT_POSITION_Y = 10;
@@ -15,6 +15,8 @@ namespace Wrapper.View
         private readonly IOutputWrapper _outputWrapper;
         private int _posX;
         private int _posY;
+
+        public bool viewEnabled { get ; set ; }
 
         public void Show()
         {

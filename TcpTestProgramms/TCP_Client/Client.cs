@@ -78,39 +78,24 @@ namespace TCP_Client
             backgroundworker.DoWork += (obj, ea) => CheckTCPUpdates();
             backgroundworker.RunWorkerAsync();
 
+            var backgroundworker2 = new BackgroundWorker();
+
+            backgroundworker2.DoWork += (obj, ea) => _OutputWrapper.UpdateView();
+            backgroundworker2.RunWorkerAsync();
+
             string input = string.Empty;
             isRunning = true;
 
             while (isRunning)
             {
-                //_OutputWrapper.FirstLine();
-
-                //_OutputWrapper.Updateview(input, _afterConnectMsg, _serverTable,string.Empty,_UpdatedView);
-                Thread.Sleep(1000);
-                //WaitHandle.WaitAll(_AllViewsSet);
-                _views.Values.ToList().ForEach(x => x.Show());
-
-                _serverTable = string.Empty;
-                _afterConnectMsg = string.Empty;
-                _UpdatedView = string.Empty;
-
+                        
                 Console.SetCursorPosition(_InputHandler._inputView._xCursorPosition, 0);
                 input = _OutputWrapper.ReadInput();
                 _OutputWrapper.Clear();
-                _InputHandler.ParseAndExecuteCommand(input, _communication);
-
-                //SetParameters();
+                _InputHandler.ParseAndExecuteCommand(input, _communication);                
                 
             }
-        }
-
-        private void SetParameters()
-        {
-            _afterConnectMsg = _InputHandler.AfterConnectMsg;
-            _serverTable = _ActionHandler._serverTable;
-            _UpdatedView = _ActionHandler._UpdatedView;
-
-        }
+        }        
     }
 }
 

@@ -16,11 +16,8 @@ namespace Wrapper.View
         private int _posX;
         private int _posY;
         StringBuilder serverTableContent;
-        
-        
-        
-        
-
+        public bool viewEnabled { get; set; } = false;
+                              
         public ServerTableView(IOutputWrapper outputWrapper, int posX, int posY)
         {
             _outputWrapper = outputWrapper;
