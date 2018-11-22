@@ -17,12 +17,6 @@ namespace TCP_Client
     public class Client
     {
         public bool isRunning;
-        private string _requiredString = string.Empty;
-
-        private string _serverTable = string.Empty;
-        private string _afterConnectMsg = string.Empty;
-        private string _UpdatedView = string.Empty;
-
 
         private ICommunication _communication;
         private ProtocolAction _ActionHandler;
@@ -32,11 +26,9 @@ namespace TCP_Client
         private Dictionary<ClientView, IView> _views = new Dictionary<ClientView, IView>
         {
             { ClientView.Error, new ErrorView() },
-            //{ ClientView.ServerTable, new ServerTableView() },
-            //{ ClientView.InfoOutput, new InfoOutputView() },
-            //{ ClientView.MasterCommands, new MasterCommandsView() },
+            { ClientView.ServerTable, new ServerTableView() },
+            { ClientView.InfoOutput, new InfoOutputView() },
             { ClientView.HelpOutput, new HelpOutputView() },
-            //{ ClientView.SymbolExplanation, new SymbolExplanationView() }
         };
 
         //<Constructors>
@@ -80,30 +72,11 @@ namespace TCP_Client
 
             while (isRunning)
             {
-                //_OutputWrapper.WriteOutput(0, 0, "Type /search to find a server", ConsoleColor.White);
-                _OutputWrapper.Updateview(input, _afterConnectMsg, _serverTable,string.Empty,_UpdatedView);
-                _views.Values.ToList().ForEach(x => x.Show());
-
-                _serverTable = string.Empty;
-                _afterConnectMsg = string.Empty;
-                _UpdatedView = string.Empty;
-
-
                 Console.SetCursorPosition(0, 2);
                 input = _OutputWrapper.ReadInput();
                 _InputHandler.ParseAndExecuteCommand(input, _communication);
-
-                SetParameters();
                 
             }
-        }
-
-        private void SetParameters()
-        {
-            _afterConnectMsg = _InputHandler.AfterConnectMsg;
-            _serverTable = _ActionHandler._serverTable;
-            _UpdatedView = _ActionHandler._UpdatedView;
-
         }
     }
 }
