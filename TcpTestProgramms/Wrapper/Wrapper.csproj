@@ -43,7 +43,9 @@
   <ItemGroup>
     <Compile Include="Contracts\IHelpOutputView.cs" />
     <Compile Include="Contracts\IInfoOutputView.cs" />
+    <Compile Include="Contracts\IInputView.cs" />
     <Compile Include="Contracts\IOutputWrapper.cs" />
+    <Compile Include="Contracts\IServerTableView.cs" />
     <Compile Include="Implementation\OutputWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ClientView.cs" />
@@ -52,6 +54,7 @@
     <Compile Include="Contracts\IView.cs" />
     <Compile Include="View\HelpOutputView.cs" />
     <Compile Include="View\InfoOutputView.cs" />
+    <Compile Include="View\InputView.cs" />
     <Compile Include="View\ServerTableView.cs" />
     <Compile Include="View\SymbolExplanationView.cs" />
   </ItemGroup>

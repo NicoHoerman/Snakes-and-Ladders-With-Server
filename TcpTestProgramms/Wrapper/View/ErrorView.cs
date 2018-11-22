@@ -6,7 +6,7 @@ namespace Wrapper.View
 {
     public class ErrorView : IErrorView
     {
-        public const int DEFAULT_POSITION_X = 20;
+        public const int DEFAULT_POSITION_X = 70;
         public const int DEFAULT_POSITION_Y = 10;
 
         private readonly IOutputWrapper _outputWrapper;
@@ -31,6 +31,7 @@ namespace Wrapper.View
         {
             _lastInput = lastInput;
             _errorMessage = errorMessage;
+            //set
         }
 
 

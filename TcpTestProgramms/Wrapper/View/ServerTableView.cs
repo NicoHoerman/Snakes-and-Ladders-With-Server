@@ -1,26 +1,58 @@
 ﻿using System;
+using System.Text;
 using Wrapper.Contracts;
+using Wrapper.Implementation;
 
 namespace Wrapper.View
 {
-    public class ServerTableView : IView
+    public class ServerTableView : IServerTableView
     {
-        public const int DEFAULT_POSITION_X = 20;
-        public const int DEFAULT_POSITION_Y = 10;
+        public const int DEFAULT_POSITION_X = 0;
+        public const int DEFAULT_POSITION_Y = 5;
+        public const string DEFAULT_CONTENT = "";
 
-        private readonly IOutputWrapper _outputWrapper;
+        private readonly IOutputWrapper _outputWrapper;       
+        private string _serverTableContent;
         private int _posX;
         private int _posY;
+        StringBuilder serverTableContent;
+        
+        
+        
+        
 
-        public ServerTableView()
+        public ServerTableView(IOutputWrapper outputWrapper, int posX, int posY)
         {
+            _outputWrapper = outputWrapper;
+            _posX = posX;
+            _posY = posY;
+            if(_serverTableContent == null || _serverTableContent.Length == 0)
+            _serverTableContent = DEFAULT_CONTENT;
+            serverTableContent = new StringBuilder();
 
         }
+
+        public ServerTableView()
+            : this(new OutputWrapper(), DEFAULT_POSITION_X, DEFAULT_POSITION_Y)
+        { }
 
         public void Show()
         {
-            throw new NotImplementedException();
+            
+            _outputWrapper.WriteOutput(_posX, _posY, _serverTableContent, ConsoleColor.Blue);
         }
+
+        public void SetServerTableContent(string serverTable)
+        {
+            
+            string tableHeader = string.Format("{2,3} {0,6}  {1,6}\n", "Player", "Server", "Key");
+            serverTableContent.Append(tableHeader);
+
+            _serverTableContent =  serverTableContent.Append(serverTable).ToString();
+            //set
+        }
+
+       
     }
 
 

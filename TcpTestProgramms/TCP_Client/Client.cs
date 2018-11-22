@@ -23,19 +23,22 @@ namespace TCP_Client
         private string _afterConnectMsg = string.Empty;
         private string _UpdatedView = string.Empty;
 
+        private const int numberOfViewSets = 4;
 
         private ICommunication _communication;
         private ProtocolAction _ActionHandler;
         private InputAction _InputHandler;
         private OutputWrapper _OutputWrapper;
 
+        public static ManualResetEvent[] _AllViewsSet = new ManualResetEvent[numberOfViewSets];
+
         private Dictionary<ClientView, IView> _views = new Dictionary<ClientView, IView>
         {
             { ClientView.Error, new ErrorView() },
-            //{ ClientView.ServerTable, new ServerTableView() },
+            { ClientView.ServerTable, new ServerTableView() },
             //{ ClientView.InfoOutput, new InfoOutputView() },
-            //{ ClientView.MasterCommands, new MasterCommandsView() },
             { ClientView.HelpOutput, new HelpOutputView() },
+            { ClientView.Input, new InputView() }
             //{ ClientView.SymbolExplanation, new SymbolExplanationView() }
         };
 
@@ -43,7 +46,7 @@ namespace TCP_Client
         public Client(ICommunication communication)
         {
             _communication = communication;
-            _ActionHandler = new ProtocolAction();
+            _ActionHandler = new ProtocolAction(_views);
             _InputHandler = new InputAction(_ActionHandler, _views);
             _OutputWrapper = new OutputWrapper();
         }
@@ -80,17 +83,20 @@ namespace TCP_Client
 
             while (isRunning)
             {
-                _OutputWrapper.WriteOutput(0, 0, "Type a command", ConsoleColor.White);
+                //_OutputWrapper.FirstLine();
+
                 //_OutputWrapper.Updateview(input, _afterConnectMsg, _serverTable,string.Empty,_UpdatedView);
+                Thread.Sleep(1000);
+                //WaitHandle.WaitAll(_AllViewsSet);
                 _views.Values.ToList().ForEach(x => x.Show());
 
                 _serverTable = string.Empty;
                 _afterConnectMsg = string.Empty;
                 _UpdatedView = string.Empty;
 
-
-                Console.SetCursorPosition(0, 2);
+                Console.SetCursorPosition(_InputHandler._inputView._xCursorPosition, 0);
                 input = _OutputWrapper.ReadInput();
+                _OutputWrapper.Clear();
                 _InputHandler.ParseAndExecuteCommand(input, _communication);
 
                 //SetParameters();

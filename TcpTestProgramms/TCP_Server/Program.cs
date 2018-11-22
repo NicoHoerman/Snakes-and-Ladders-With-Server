@@ -11,7 +11,7 @@ namespace TCP_Server
         {
             var serverInfo = new ServerInfo("TestLobby",2,8080);
 
-            Console.WriteLine("Broadcasting...");
+            Console.WriteLine("Listening for Clients...");
             var udpserver = new UdpBroadcast(serverInfo);
             
 

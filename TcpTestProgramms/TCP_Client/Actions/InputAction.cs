@@ -31,6 +31,8 @@ namespace TCP_Client.Actions
         private Dictionary<ClientView, IView> _views;
         private readonly IErrorView _errorView;
         private readonly IHelpOutputView _helpOutputView;
+        public readonly IInputView _inputView;
+        
         private OutputWrapper _OutputWrapper;  
 
         private UdpClientUnit _UdpListener;
@@ -41,7 +43,8 @@ namespace TCP_Client.Actions
             _ActionHandler = protocolAction;
             _views = views;
             _errorView = views[ClientView.Error] as IErrorView; // Potential null exception error.
-            _helpOutputView = views[ClientView.HelpOutput] as IHelpOutputView; //Potenzieller Null Ausnahmen Fehler 
+            _helpOutputView = views[ClientView.HelpOutput] as IHelpOutputView; //Potenzieller Null Ausnahmen Fehler
+            _inputView = views[ClientView.Input] as IInputView;
             _OutputWrapper = new OutputWrapper();
 
             _inputActions = new Dictionary<string, Action<string,ICommunication>>
@@ -93,9 +96,9 @@ namespace TCP_Client.Actions
                 return;
             }
             if (communication.IsMaster == true)
-                _helpOutputView.SetHelp("Your master help could be standing here");
+                _helpOutputView.SetHelp("Your master help\ncould be standing here");
             else
-                _helpOutputView.SetHelp("Your normal help could be standing here");
+                _helpOutputView.SetHelp("Your normal help\ncould be standing here");
 
             var dataPackage = new DataPackage
             {
@@ -163,8 +166,10 @@ namespace TCP_Client.Actions
             }
             else
             {
-                AfterConnectMsg = "no Server with this indentifier";
+                _errorView.SetContent(input, "There is no server with this ID");
             }
+
+            _inputView.SetInputLine("Type a command:", 16);
 
         }
 
@@ -194,6 +199,7 @@ namespace TCP_Client.Actions
             stopwatch.Stop();
             _UdpListener.StopListening();
             Searched = true;
+            _inputView.SetInputLine("Enter the server number you want to connect to.",49);
 
             //_UdpListener._closed = false;
         }
