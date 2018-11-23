@@ -18,7 +18,6 @@ namespace TCP_Client.Actions
 {
     public class InputAction
     {
-        private int someInt;
         private bool isConnected = false;
         private bool Searched = false;
         private System.Timers.Timer timer;
@@ -26,17 +25,16 @@ namespace TCP_Client.Actions
         public string AfterConnectMsg { get; set; } = string.Empty;
 
         public Dictionary<string, Action<string,ICommunication>> _inputActions;
-
-        private ProtocolAction _ActionHandler;
         private Dictionary<ClientView, IView> _views;
+
         private readonly IErrorView _errorView;
         private readonly IHelpOutputView _helpOutputView;
         public readonly IInputView _inputView;
         private readonly IServerTableView _serverTableView;
-        private readonly IInfoOutputView _infoOutputView;
+        private readonly IUpdateOutputView _infoOutputView;
         
         private OutputWrapper _OutputWrapper;  
-
+        private ProtocolAction _ActionHandler;
         private UdpClientUnit _UdpListener;
 
         public InputAction(ProtocolAction protocolAction, Dictionary<ClientView, IView> views)
@@ -48,7 +46,7 @@ namespace TCP_Client.Actions
             _helpOutputView = views[ClientView.HelpOutput] as IHelpOutputView; //Potenzieller Null Ausnahmen Fehler
             _inputView = views[ClientView.Input] as IInputView;
             _serverTableView = views[ClientView.ServerTable] as IServerTableView;
-            _infoOutputView = views[ClientView.InfoOutput] as IInfoOutputView;
+            _infoOutputView = views[ClientView.InfoOutput] as IUpdateOutputView;
             _OutputWrapper = new OutputWrapper();
 
             _inputActions = new Dictionary<string, Action<string,ICommunication>>
@@ -58,19 +56,20 @@ namespace TCP_Client.Actions
                 { "/closegame", OnCloseGameAction },
                 {"/someInt" , OnIntAction },
                 {"/search", OnSearchAction },
-                {"/startgame", OnStartGameAction }
+                {"/startgame", OnStartGameAction },
             };
 
             _UdpListener = new UdpClientUnit();
 
         }
 
-       
 
         public void ParseAndExecuteCommand(string input,ICommunication communication)
         {
             string receivedInput = input;
-            if(input == "/someInt")
+            if (input == "")
+                return;
+            if (input == "/someInt")
             {
                 _errorView.viewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
@@ -102,17 +101,15 @@ namespace TCP_Client.Actions
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
-            if (communication.IsMaster == true)
+            if (_helpOutputView.viewEnabled)
+            {
+                _helpOutputView.viewEnabled = false;
+            }
+            else if(!_helpOutputView.viewEnabled)
             {
                 _helpOutputView.viewEnabled = true;
-                _helpOutputView.SetHelp("Your master help\ncould be standing here");
             }
-            else
-            {
-                _helpOutputView.viewEnabled = true;
-                _helpOutputView.SetHelp("Your normal help\ncould be standing here");
-            }
-                
+                            
 
             var dataPackage = new DataPackage
             {
@@ -168,7 +165,7 @@ namespace TCP_Client.Actions
                 AfterConnectMsg = $"Server {chosenServerId} chosen";
                 isConnected = true;
                 _infoOutputView.viewEnabled = true;
-                _infoOutputView.SetInfoContent(AfterConnectMsg +"\nYou succesfully connected to the server");
+                _infoOutputView.SetUpdateContent(AfterConnectMsg +"\nYou succesfully connected to the server");
                 communication.SetNWStream();
                 var dataPackage = new DataPackage
                 {
@@ -189,6 +186,7 @@ namespace TCP_Client.Actions
             }
 
             _inputView.SetInputLine("Type a command:", 16);
+            _serverTableView.viewEnabled = false;
 
         }
 
@@ -218,8 +216,10 @@ namespace TCP_Client.Actions
             }
             stopwatch.Stop();
             _UdpListener.StopListening();
+            _OutputWrapper.Clear();
             Searched = true;
             _inputView.viewEnabled = true;
+            if(_ActionHandler._serverTable.Length != 0)
             _inputView.SetInputLine("Enter the server number you want to connect to.",49);
             
         }

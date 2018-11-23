@@ -13,9 +13,11 @@ namespace Wrapper.View
 
         private readonly IOutputWrapper _outputWrapper;       
         private string _serverTableContent;
+        private string _memory;
         private int _posX;
         private int _posY;
         StringBuilder serverTableContent;
+
         public bool viewEnabled { get; set; } = false;
                               
         public ServerTableView(IOutputWrapper outputWrapper, int posX, int posY)
@@ -33,22 +35,22 @@ namespace Wrapper.View
             : this(new OutputWrapper(), DEFAULT_POSITION_X, DEFAULT_POSITION_Y)
         { }
 
-        public void Show()
-        {
-            
-            _outputWrapper.WriteOutput(_posX, _posY, _serverTableContent, ConsoleColor.Blue);
-        }
 
         public void SetServerTableContent(string serverTable)
         {
-            
+            serverTableContent.Clear();
             string tableHeader = string.Format("{2,3} {0,6}  {1,6}\n", "Player", "Server", "Key");
             serverTableContent.Append(tableHeader);
 
             _serverTableContent =  serverTableContent.Append(serverTable).ToString();
-            //set
+            _memory = _serverTableContent;
         }
 
+        public void Show()
+        {
+            _outputWrapper.WriteOutput(_posX, _posY, _memory, ConsoleColor.Blue);
+            _serverTableContent = string.Empty;
+        }
        
     }
 

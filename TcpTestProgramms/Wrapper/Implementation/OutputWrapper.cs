@@ -10,43 +10,11 @@ namespace Wrapper.Implementation
 {
     public class OutputWrapper : IOutputWrapper
     {
-        public List<IView> viewList;
 
         public void Clear()
         {
             Console.Clear();
         }
-
-        public OutputWrapper()
-        {
-            viewList = new List<IView>()
-            {
-                new ErrorView(),
-                new HelpOutputView(),
-                new InfoOutputView(),
-                new ServerTableView(),
-                new InputView()
-                //new Game()
-                //new MainMenu
-
-            };
-        }
-
-
-        public void UpdateView()
-        {
-            viewList.ForEach(view =>
-            {
-                if (view.viewEnabled)
-                {
-                    view.Show();
-                        
-                }
-
-            });
-            
-        }
-
  
         public string ReadInput()
         {            
@@ -70,23 +38,5 @@ namespace Wrapper.Implementation
             });
             Console.ForegroundColor = ConsoleColor.White;
         }      
-
-        public void FirstLine()
-        {
-            string header = "Type a command: ";
-            WriteOutput(0, 0, header, ConsoleColor.Gray);
-            Console.SetCursorPosition(30, 0);
-        }      
-
-        private void OnServerSelection(string msg)
-        {
-            
-        }       
-
-        private void ServerUpdate(string updateview)
-        {
-            Clear();
-            WriteOutput(0, 3, updateview,ConsoleColor.White);
-        }
     }
 }

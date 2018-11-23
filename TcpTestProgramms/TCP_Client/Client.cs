@@ -22,14 +22,16 @@ namespace TCP_Client
         private ProtocolAction _ActionHandler;
         private InputAction _InputHandler;
         private OutputWrapper _OutputWrapper;
+        private ViewUpdater _ViewUpdater;
 
-        private Dictionary<ClientView, IView> _views = new Dictionary<ClientView, IView>
+        public Dictionary<ClientView, IView> _views = new Dictionary<ClientView, IView>
         {
             { ClientView.Error, new ErrorView() },
             { ClientView.ServerTable, new ServerTableView() },
             { ClientView.InfoOutput, new InfoOutputView() },
             { ClientView.HelpOutput, new HelpOutputView() },
-            { ClientView.Input, new InputView() }
+            { ClientView.Input, new InputView() },
+            { ClientView.Game, new GameView() }
         };
 
         //<Constructors>
@@ -39,6 +41,7 @@ namespace TCP_Client
             _ActionHandler = new ProtocolAction(_views);
             _InputHandler = new InputAction(_ActionHandler, _views);
             _OutputWrapper = new OutputWrapper();
+            _ViewUpdater = new ViewUpdater(_views);
         }
 
         public Client()
@@ -70,14 +73,15 @@ namespace TCP_Client
 
             var backgroundworker2 = new BackgroundWorker();
 
-            backgroundworker2.DoWork += (obj, ea) => _OutputWrapper.UpdateView();
-            backgroundworker2.RunWorkerAsync();
+            backgroundworker2.DoWork += (obj, ea) => _ViewUpdater.RunUpdater();
+            //backgroundworker2.RunWorkerAsync();
 
             string input = string.Empty;
             isRunning = true;
 
             while (isRunning)
             {
+                _ViewUpdater.UpdateView();
                 Console.SetCursorPosition(_InputHandler._inputView._xCursorPosition, 0);
                 input = _OutputWrapper.ReadInput();
                 _OutputWrapper.Clear();

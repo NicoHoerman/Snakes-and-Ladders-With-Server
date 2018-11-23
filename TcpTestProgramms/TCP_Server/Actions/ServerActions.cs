@@ -59,23 +59,34 @@ namespace TCP_Server.Actions
             verificationVariableSet.Reset();
 
             var dataPackage = new DataPackage();
+            var lobbyUpdatePackage = new DataPackage();
             if (_ConnectionStatus == ClientConnectionAttempt.Accepted)
             {
                 dataPackage = new DataPackage
                 {
-                    Header = ProtocolActionEnum.UpdateView,
+                    Header = ProtocolActionEnum.Accept,
                     Payload = JsonConvert.SerializeObject(new PROT_ACCEPT
                     {
-                        _SmallUpdate = "You are Conected to the Server and in the Lobby\n " +
-                            $"Lobby {servername} Player [{currentplayer}/{maxplayer}]"
+                        _SmallUpdate = "You are connected to the Server and in the Lobby "
                     })
                 };
+
+                lobbyUpdatePackage = new DataPackage
+                {
+                    Header = ProtocolActionEnum.UpdateView,
+                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                    {
+                        _GameViewUpdate = $"Lobby {servername} Player [{currentplayer}/{maxplayer}]"
+                    })
+                };
+                lobbyUpdatePackage.Size = lobbyUpdatePackage.ToByteArray().Length;
+                _ServerInfo._communications.ForEach(x => x.Send(lobbyUpdatePackage));
             }
             else if (_ConnectionStatus == ClientConnectionAttempt.Declined)
             {
                 dataPackage = new DataPackage
                 {
-                    Header = ProtocolActionEnum.UpdateView,
+                    Header = ProtocolActionEnum.Decline,
                     Payload = JsonConvert.SerializeObject(new PROT_DECLINE
                     {
                         _SmallUpdate = "You got declined Lobby is probably full"
@@ -87,7 +98,9 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _SmallUpdate = "A player got declined" 
+                        _SmallUpdate = "A player got declined"
+                        
+                       
                     })
                 };
                 updatePackage.Size = updatePackage.ToByteArray().Length;
@@ -104,6 +117,7 @@ namespace TCP_Server.Actions
             _ConnectionStatus = ClientConnectionAttempt.NotSet;
             
             dataPackage.Size = dataPackage.ToByteArray().Length;
+            Thread.Sleep(10);
             communication.Send(dataPackage);
             MessageSent.Set();
         }
@@ -135,7 +149,9 @@ namespace TCP_Server.Actions
                 Header = ProtocolActionEnum.HelpText,
                 Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
                 {
-                    
+                    _HelpText = "Your normal help could be standing here.",
+                    _MasterHelp = "Your master help could be standing here."
+                   
                 })
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;

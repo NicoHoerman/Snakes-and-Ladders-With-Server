@@ -7,8 +7,8 @@
         InfoOutput,
         MasterCommands,
         HelpOutput,
-        SymbolExplanation,
-        Input
+        Input,
+        Game
     }
 
 

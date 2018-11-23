@@ -18,16 +18,24 @@ namespace TCP_Client.Actions
     {
         public Dictionary<ProtocolActionEnum, Action<DataPackage>> _protocolActions;
         public Dictionary<int, BroadcastDTO> _serverDictionary = new Dictionary<int, BroadcastDTO>();
-        private readonly IServerTableView _serverTableView;
         private Dictionary<ClientView, IView> _views;
-        private OutputWrapper outputWrapper;
+
+        private readonly IServerTableView _serverTableView;
+        private readonly IHelpOutputView _helpOutputView;
+        private readonly IUpdateOutputView _infoOutputView;
+        private readonly IUpdateOutputView _gameOutputView;
+
         public string _serverTable =string.Empty;
-        public string _UpdatedView = string.Empty;
+
+        private OutputWrapper outputWrapper;
 
         public ProtocolAction(Dictionary<ClientView, IView> views)
         {
             _views = views;
             _serverTableView = views[ClientView.ServerTable] as IServerTableView;
+            _helpOutputView = views[ClientView.HelpOutput] as IHelpOutputView;
+            _infoOutputView = views[ClientView.InfoOutput] as IUpdateOutputView;
+            _gameOutputView = views[ClientView.Game] as IUpdateOutputView;
 
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage>>
             {
@@ -59,14 +67,30 @@ namespace TCP_Client.Actions
         private void OnHelpTextAction(DataPackage data)
         {
             var helpText = MapProtocolToDto<HelpTextDTO>(data);
-
-            Console.Write("Received help text: " + helpText._HelpText);
+            
+            //_helpOutputView.SetHelp(helpText._MasterHelp);
+            _helpOutputView.SetHelp(helpText._HelpText);
+            
         }
 
         private void OnUpdateAction(DataPackage data)
         {
             var updatedView = MapProtocolToDto<UpdateDTO>(data);
-            _UpdatedView = updatedView._SmallUpdate;
+            if (updatedView._GameViewUpdate == null)
+                return;
+            else if(updatedView._GameViewUpdate.Length != 0)
+            {
+                _gameOutputView.viewEnabled = true;
+                _gameOutputView.SetUpdateContent(updatedView._GameViewUpdate);
+            }
+            if(updatedView._SmallUpdate == null)
+                return;
+            if(updatedView._SmallUpdate.Length != 0)
+            {
+                _infoOutputView.viewEnabled = true;
+                _infoOutputView.SetUpdateContent(updatedView._SmallUpdate);
+            }
+            
         }
 
         private List<IPEndPoint> _ServerEndpoints = new List<IPEndPoint>(); 
@@ -109,25 +133,27 @@ namespace TCP_Client.Actions
 
             _serverTable = outputFormat.ToString();
             _serverTableView.SetServerTableContent(_serverTable);
+            _serverTable = string.Empty;
             _serverTableView.viewEnabled = true;
-            //      Server  Player  
+            // Key Player Server 
             //
-            //  1   XD      [0/4]
-            //  2   LuL     [1/2]
+            //  1  [0/4]  XD
+            //  2  [1/2]  LuL
         }
 
         private void OnAcceptAction(DataPackage data)
+
         {
             var accept = MapProtocolToDto<AcceptDTO>(data);
-
-            throw new NotImplementedException();
+            _infoOutputView.viewEnabled = true;
+            _infoOutputView.SetUpdateContent(accept._SmallUpdate);
         }
 
         private void OnDeclineAction(DataPackage data)
         {
             var decline = MapProtocolToDto<DeclineDTO>(data);
-
-            throw new NotImplementedException();
+            _infoOutputView.viewEnabled = true;
+            _infoOutputView.SetUpdateContent(decline._SmallUpdate);
         }
         #endregion
 

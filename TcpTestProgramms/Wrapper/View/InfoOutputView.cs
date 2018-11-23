@@ -8,7 +8,7 @@ using Wrapper.Implementation;
 
 namespace Wrapper.View
 {
-    public class InfoOutputView : IInfoOutputView
+    public class InfoOutputView : IUpdateOutputView
     {
         public const int DEFAULT_POSITION_X = 70;
         public const int DEFAULT_POSITION_Y = 0;
@@ -32,15 +32,16 @@ namespace Wrapper.View
             : this(new OutputWrapper(), DEFAULT_POSITION_X, DEFAULT_POSITION_Y)
         { }
 
-        public void SetInfoContent(string info)
+        public void SetUpdateContent(string updateContent)
         {
-            _info = info;
+
+            _info = updateContent;
             //set
         }
 
         public void Show()
         {
-            _outputWrapper.WriteOutput(_posX, _posY, _info, ConsoleColor.Blue);
+            _outputWrapper.WriteOutput(_posX, _posY, _info, ConsoleColor.Magenta);
         }
     }
 }

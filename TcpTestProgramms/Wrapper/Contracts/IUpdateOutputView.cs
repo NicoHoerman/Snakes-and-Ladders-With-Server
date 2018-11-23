@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Wrapper.Contracts
 {
-    public interface IInfoOutputView : IView
+    public interface IUpdateOutputView : IView
     {
-        void SetInfoContent(string info);
+        void SetUpdateContent(string updateContent);
     }
 }

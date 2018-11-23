@@ -113,12 +113,8 @@ namespace Shared.Communications
         {
             try
             {
-                //_nwStream = _client.GetStream();
-                var bytesToSend = data.ToByteArray();
-                //Console.WriteLine("Test in Send");
-                //Console.WriteLine($"Sending : Header: {data.Header}, Size: {data.Size}, Payload: {data.Payload}");
-
-                _nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+                    var bytesToSend = data.ToByteArray();
+                    _nwStream.Write(bytesToSend, 0, bytesToSend.Length);
             }
 
             catch
