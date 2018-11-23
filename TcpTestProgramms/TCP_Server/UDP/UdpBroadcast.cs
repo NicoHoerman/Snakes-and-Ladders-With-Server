@@ -13,8 +13,12 @@ namespace TCP_Server.UDP
     public class UdpBroadcast
     {
         private byte[] _ServerInfo;
+
         private const string SERVER_IP_WLAN = "172.22.21.132";
-        private const string SERVER_IP_LAN = "172.22.22.207";
+        private const string SERVER_IP_LAN = "172.22.21.207";
+        private const string SERVER_IP_LAN_LEON = "172.22.22.207";
+        private const string SERVER_IP_NETWORK = "194.205.205.2";
+
         private bool _closed = false;
         private bool isRunning;
 
@@ -83,7 +87,7 @@ namespace TCP_Server.UDP
                 Header = ProtocolActionEnum.Broadcast,
                 Payload = JsonConvert.SerializeObject(new PROT_BROADCAST
                 {
-                    _Server_ip = SERVER_IP_LAN,
+                    _Server_ip = SERVER_IP_NETWORK,
                     _Server_name = serverInfo._LobbyName,
                     _CurrentPlayerCount = serverInfo._CurrentPlayerCount,
                     _MaxPlayerCount = serverInfo._MaxPlayerCount,

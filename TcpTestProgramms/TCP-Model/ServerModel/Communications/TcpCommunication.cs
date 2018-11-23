@@ -96,7 +96,6 @@ namespace EandE_ServerModel.ServerModel.Communications
                       
             catch
             {
-                Console.WriteLine("You are no longer connected to the server.");
             }
                                               
         }

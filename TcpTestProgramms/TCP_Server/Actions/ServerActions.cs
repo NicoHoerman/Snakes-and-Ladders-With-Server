@@ -19,6 +19,7 @@ namespace TCP_Server.Actions
         private int maxplayer;
 
         private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
+        private Server _server;
 
         public static ManualResetEvent verificationVariableSet = new ManualResetEvent(false);
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
@@ -26,7 +27,7 @@ namespace TCP_Server.Actions
         ServerInfo _ServerInfo;
         public ClientConnectionAttempt _ConnectionStatus = ClientConnectionAttempt.NotSet;
 
-        public ServerActions(ServerInfo serverInfo)
+        public ServerActions(ServerInfo serverInfo,Server server)
         {
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>
             {
@@ -37,6 +38,7 @@ namespace TCP_Server.Actions
                 { ProtocolActionEnum.OnConnection,OnConnectionAction }
             };
 
+            _server = server;
             _ServerInfo = serverInfo;
         }
 
@@ -173,12 +175,14 @@ namespace TCP_Server.Actions
 
         }
 
-        private void OnCloseGameAction(ICommunication arg1, DataPackage arg2)
+        private void OnCloseGameAction(ICommunication communication, DataPackage data)
         {
-            throw new NotImplementedException();
+            communication.Stop();
+            _server.communicationsToRemove.Add(communication);
+            _server.RemoveFromLobby();
         }
 
-        private void OnStartGameAction(ICommunication arg1, DataPackage arg2)
+        private void OnStartGameAction(ICommunication communication, DataPackage data)
         {
             throw new NotImplementedException();
         }

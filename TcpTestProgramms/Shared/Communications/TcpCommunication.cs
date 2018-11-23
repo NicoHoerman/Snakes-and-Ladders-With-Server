@@ -30,7 +30,7 @@ namespace Shared.Communications
         private BackgroundWorker _backgroundWorker;
         private BackgroundWorker _backgroundWorker2;
 
-        private bool IsRunning = true;
+        private bool IsCommunicationRunning = true;
 
         public TcpCommunication()
             : this(new TcpClient())
@@ -132,7 +132,7 @@ namespace Shared.Communications
             //if (_NWStreamNotSet)
             //    return;
 
-            while (IsRunning)
+            while (IsCommunicationRunning)
             {
                 // prüft ob daten auf dem NetworkStream sind 
                 //nicht sicher ob des schon so funktioniert wie es soll
@@ -180,7 +180,7 @@ namespace Shared.Communications
 
         public void Stop()
         {
-            IsRunning = false;
+            IsCommunicationRunning = false;
             _client.Close();
         }
 

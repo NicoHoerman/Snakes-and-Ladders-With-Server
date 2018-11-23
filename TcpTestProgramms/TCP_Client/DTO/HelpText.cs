@@ -8,6 +8,5 @@ namespace TCP_Client.DTO
     public class HelpTextDTO : IProtocol
     {
         public string _HelpText;
-        public string _MasterHelp;
     }
 }

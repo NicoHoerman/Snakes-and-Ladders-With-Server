@@ -39,7 +39,7 @@ namespace TCP_Client
         {
             _communication = communication;
             _ActionHandler = new ProtocolAction(_views);
-            _InputHandler = new InputAction(_ActionHandler, _views);
+            _InputHandler = new InputAction(_ActionHandler, _views,this);
             _OutputWrapper = new OutputWrapper();
             _ViewUpdater = new ViewUpdater(_views);
         }
@@ -52,7 +52,7 @@ namespace TCP_Client
 
         private void CheckTCPUpdates()
         {
-            while (true)
+            while (isRunning)
             {
                 if (_communication.IsDataAvailable())
                 {
@@ -85,9 +85,21 @@ namespace TCP_Client
                 Console.SetCursorPosition(_InputHandler._inputView._xCursorPosition, 0);
                 input = _OutputWrapper.ReadInput();
                 _OutputWrapper.Clear();
-                _InputHandler.ParseAndExecuteCommand(input, _communication);                
+                _InputHandler.ParseAndExecuteCommand(input, _communication);
             }
-        }        
+        }    
+        
+
+
+        public void CloseClient()
+        {
+            
+            _ViewUpdater.isViewRunning = false;
+            _communication.Stop();
+            isRunning = false;
+        }
+
+        
     }
 }
 

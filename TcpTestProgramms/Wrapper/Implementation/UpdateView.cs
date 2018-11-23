@@ -12,7 +12,7 @@ namespace Wrapper.Implementation
     public class ViewUpdater
     {
         private Dictionary<ClientView, IView> _views;
-        private bool isRunning;
+        public bool isViewRunning;
 
         public ViewUpdater(Dictionary<ClientView, IView> views)
         {
@@ -36,8 +36,8 @@ namespace Wrapper.Implementation
         }
         public void RunUpdater()
         {
-            isRunning = true;
-            while (isRunning)
+            isViewRunning = true;
+            while (isViewRunning)
             {
                 if (CheckForOutputchanges())
                     UpdateView();
