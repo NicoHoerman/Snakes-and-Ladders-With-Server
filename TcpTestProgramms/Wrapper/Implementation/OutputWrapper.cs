@@ -11,9 +11,6 @@ namespace Wrapper.Implementation
     public class OutputWrapper : IOutputWrapper
     {
         public List<IView> viewList;
-        private string _Memory = string.Empty;
-        private bool _ShiftPressed = false;           
-        public string userInput = string.Empty;
 
         public void Clear()
         {
@@ -28,7 +25,7 @@ namespace Wrapper.Implementation
                 new HelpOutputView(),
                 new InfoOutputView(),
                 new ServerTableView(),
-                new InputView(),
+                new InputView()
                 //new Game()
                 //new MainMenu
 

@@ -17,29 +17,19 @@ namespace TCP_Client
     public class Client
     {
         public bool isRunning;
-        private string _requiredString = string.Empty;
-
-        private string _serverTable = string.Empty;
-        private string _afterConnectMsg = string.Empty;
-        private string _UpdatedView = string.Empty;
-
-        private const int numberOfViewSets = 4;
 
         private ICommunication _communication;
         private ProtocolAction _ActionHandler;
         private InputAction _InputHandler;
         private OutputWrapper _OutputWrapper;
 
-        public static ManualResetEvent[] _AllViewsSet = new ManualResetEvent[numberOfViewSets];
-
         private Dictionary<ClientView, IView> _views = new Dictionary<ClientView, IView>
         {
             { ClientView.Error, new ErrorView() },
             { ClientView.ServerTable, new ServerTableView() },
-            //{ ClientView.InfoOutput, new InfoOutputView() },
+            { ClientView.InfoOutput, new InfoOutputView() },
             { ClientView.HelpOutput, new HelpOutputView() },
             { ClientView.Input, new InputView() }
-            //{ ClientView.SymbolExplanation, new SymbolExplanationView() }
         };
 
         //<Constructors>
@@ -88,12 +78,10 @@ namespace TCP_Client
 
             while (isRunning)
             {
-                        
                 Console.SetCursorPosition(_InputHandler._inputView._xCursorPosition, 0);
                 input = _OutputWrapper.ReadInput();
                 _OutputWrapper.Clear();
                 _InputHandler.ParseAndExecuteCommand(input, _communication);                
-                
             }
         }        
     }
