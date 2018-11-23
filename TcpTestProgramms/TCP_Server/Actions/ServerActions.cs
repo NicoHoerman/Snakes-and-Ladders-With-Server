@@ -144,19 +144,33 @@ namespace TCP_Server.Actions
             
             var clientId = CreateProtocol<PROT_HELPTEXT>(data);
 
+            if (communication.IsMaster)
+            {
             var dataPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.HelpText,
                 Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
                 {
-                    _HelpText = "Your normal help could be standing here.",
-                    _MasterHelp = "Your master help could be standing here."
-                   
+                    _HelpText = "Your master help could be standing here."
                 })
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;
-
             communication.Send(dataPackage);
+            }
+            else
+            {
+                var dataPackage = new DataPackage
+                {
+                    Header = ProtocolActionEnum.HelpText,
+                    Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
+                    {
+                        _HelpText = "Your normal help could be standing here."
+                    })
+                };
+                dataPackage.Size = dataPackage.ToByteArray().Length;
+                communication.Send(dataPackage);
+            }
+
         }
 
         private void OnCloseGameAction(ICommunication arg1, DataPackage arg2)

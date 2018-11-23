@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Wrapper.Contracts;
 using Wrapper.Implementation;
+using System.Threading;
 
 namespace Wrapper.View
 {
@@ -38,6 +39,7 @@ namespace Wrapper.View
 
         public void Show()
         {
+            
             _outputWrapper.WriteOutput(_posX, _posY, _help, ConsoleColor.Yellow);
         }
     }

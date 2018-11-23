@@ -68,7 +68,7 @@ namespace TCP_Client.Actions
         {
             var helpText = MapProtocolToDto<HelpTextDTO>(data);
             
-            //_helpOutputView.SetHelp(helpText._MasterHelp);
+            
             _helpOutputView.SetHelp(helpText._HelpText);
             
         }
