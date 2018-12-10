@@ -35,7 +35,7 @@ namespace TCP_Server.Actions
                 { ProtocolActionEnum.GetHelp,   OnGetHelpAction },
                 { ProtocolActionEnum.StartGame, OnStartGameAction },
                 { ProtocolActionEnum.CloseGame, OnCloseGameAction },
-                { ProtocolActionEnum.OnConnection,OnConnectionAction }
+                { ProtocolActionEnum.OnConnection, OnConnectionAction }
             };
 
             _server = server;
@@ -100,9 +100,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _SmallUpdate = "A player got declined"
-                        
-                       
+                        _SmallUpdate = "A player got declined"                                               
                     })
                 };
                 updatePackage.Size = updatePackage.ToByteArray().Length;
@@ -112,6 +110,9 @@ namespace TCP_Server.Actions
                     if(!(_ServerInfo._communications[i] == communication))
                     _ServerInfo._communications[i].Send(updatePackage);
                 }
+                //communication.Stop();
+                //_server.communicationsToRemove.Add(communication);
+                //_server.RemoveFromList();
             }
             else if (_ConnectionStatus == ClientConnectionAttempt.NotSet)
                 throw new InvalidOperationException();

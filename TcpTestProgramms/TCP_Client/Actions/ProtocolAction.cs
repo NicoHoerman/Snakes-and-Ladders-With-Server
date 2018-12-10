@@ -24,13 +24,15 @@ namespace TCP_Client.Actions
         private readonly IHelpOutputView _helpOutputView;
         private readonly IUpdateOutputView _infoOutputView;
         private readonly IUpdateOutputView _gameOutputView;
+        private readonly Client _client;
 
         public string _serverTable =string.Empty;
 
         private OutputWrapper outputWrapper;
 
-        public ProtocolAction(Dictionary<ClientView, IView> views)
+        public ProtocolAction(Dictionary<ClientView, IView> views, Client client)
         {
+            _client = client;
             _views = views;
             _serverTableView = views[ClientView.ServerTable] as IServerTableView;
             _helpOutputView = views[ClientView.HelpOutput] as IHelpOutputView;
@@ -151,9 +153,12 @@ namespace TCP_Client.Actions
 
         private void OnDeclineAction(DataPackage data)
         {
+            _client._InputHandler.Declined = true;
+            _client._InputHandler.isConnected = false;
             var decline = MapProtocolToDto<DeclineDTO>(data);
             _infoOutputView.viewEnabled = true;
             _infoOutputView.SetUpdateContent(decline._SmallUpdate);
+   
         }
         #endregion
 

@@ -20,7 +20,7 @@ namespace TCP_Client
 
         private ICommunication _communication;
         private ProtocolAction _ActionHandler;
-        private InputAction _InputHandler;
+        public InputAction _InputHandler;
         private OutputWrapper _OutputWrapper;
         private ViewUpdater _ViewUpdater;
 
@@ -38,7 +38,7 @@ namespace TCP_Client
         public Client(ICommunication communication)
         {
             _communication = communication;
-            _ActionHandler = new ProtocolAction(_views);
+            _ActionHandler = new ProtocolAction(_views, this);
             _InputHandler = new InputAction(_ActionHandler, _views,this);
             _OutputWrapper = new OutputWrapper();
             _ViewUpdater = new ViewUpdater(_views);
@@ -89,7 +89,11 @@ namespace TCP_Client
             }
         }    
         
-
+        public void CloseCommunication()
+        {
+            _communication.Stop();
+           
+        }
 
         public void CloseClient()
         {

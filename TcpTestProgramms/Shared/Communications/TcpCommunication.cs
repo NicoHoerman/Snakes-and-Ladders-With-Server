@@ -182,6 +182,7 @@ namespace Shared.Communications
         {
             IsCommunicationRunning = false;
             _client.Close();
+            //_nwStream.Close();
         }
 
         private void CheckForNewPackages()

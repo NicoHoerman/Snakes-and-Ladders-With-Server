@@ -8,7 +8,7 @@ namespace TCP_Server
     public class ServerInfo
     {
         public int _MaxPlayerCount { get; set; }
-        public int _CurrentPlayerCount { get; set; } = 0;
+        public int _CurrentPlayerCount { get; set; } = 2;
         public string _LobbyName { get;  set; }
         public int _ServerPort { get; set; }
         public List<ICommunication> _communications { get; set; }

@@ -19,7 +19,8 @@ namespace TCP_Client.Actions
 {
     public class InputAction
     {
-        private bool isConnected = false;
+        public bool isConnected = false;
+        public bool Declined = false;
         private bool Searched = false;
         private System.Timers.Timer timer;
 
@@ -153,7 +154,7 @@ namespace TCP_Client.Actions
         private void OnIntAction(string input, ICommunication communication)
         {
 
-            if (isConnected | !Searched)
+            if (isConnected | !Searched | Declined)
             {
                 _errorView.viewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
@@ -163,11 +164,18 @@ namespace TCP_Client.Actions
             if (_ActionHandler._serverDictionary.Count >= chosenServerId)
             {
                 BroadcastDTO current = _ActionHandler.GetServer(chosenServerId-1);
-                communication._client.Connect(IPAddress.Parse(current._Server_ip), current._Server_Port);
+                try
+                {
+                    communication._client.Connect(IPAddress.Parse(current._Server_ip), current._Server_Port);    
+                }
+                catch
+                {
+
+                }
                 AfterConnectMsg = $"Server {chosenServerId} chosen";
                 isConnected = true;
                 _infoOutputView.viewEnabled = true;
-                _infoOutputView.SetUpdateContent(AfterConnectMsg +"\nYou succesfully connected to the server");
+                _infoOutputView.SetUpdateContent(AfterConnectMsg +"\nYou established a connection with the server. Verifying Player Information...");
                 communication.SetNWStream();
                 var dataPackage = new DataPackage
                 {
@@ -220,6 +228,7 @@ namespace TCP_Client.Actions
             _UdpListener.StopListening();
             _OutputWrapper.Clear();
             Searched = true;
+            Declined = false;
             _inputView.viewEnabled = true;
             if(_ActionHandler._serverTable.Length != 0)
             _inputView.SetInputLine("Enter the server number you want to connect to.",49);
