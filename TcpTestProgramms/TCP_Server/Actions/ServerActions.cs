@@ -89,7 +89,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.Decline,
                     Payload = JsonConvert.SerializeObject(new PROT_DECLINE
                     {
-                        _SmallUpdate = "You got declined Lobby is probably full"
+                        _SmallUpdate = "You got declined. Lobby is probably full"
                     })
                 };
 
