@@ -17,10 +17,12 @@ namespace TCP_Server
     public class Server
     {
         private const string SERVER_IP_WLAN = "172.22.21.132";
-        private const string SERVER_IP_LAN = "172.22.23.87";
+        private const string SERVER_IP_LAN = "172.22.21.207";
+        private const string SERVER_IP_LAN_LEON = "172.22.22.207";
+        private const string SERVER_IP_NETWORK = "194.205.205.2";
         
         private bool isRunning;
-        List<ICommunication> communicationsToRemove = new List<ICommunication>();
+        public List<ICommunication> communicationsToRemove = new List<ICommunication>();
        
         public static ManualResetEvent tcpClientConnected = new ManualResetEvent(false);
         
@@ -34,11 +36,11 @@ namespace TCP_Server
         {
             _serverInfo = serverInfo;
             _udpServer = udpBroadcast;
-            _ActionsHandler = new ServerActions(_serverInfo);
+            _ActionsHandler = new ServerActions(_serverInfo,this);
 
             _serverInfo._communications = new List<ICommunication>();
 
-            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN), 8080);
+            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_NETWORK), 8080);
             
         }
 
@@ -182,20 +184,18 @@ namespace TCP_Server
         }
 
 
-        private void ThreadProc(ICommunication communication, DataPackage data)
-        {
-            _ActionsHandler.ExecuteDataActionFor(communication, data);
-        }
-        private void RemoveFromLobby()
+        
+        public void RemoveFromLobby()
         {
             communicationsToRemove.ForEach(x => _serverInfo._CurrentPlayerCount--);
             _udpServer.SetBroadcastMsg(_serverInfo);
             RemoveFromList();
         }
 
-        private void RemoveFromList()
+        public void RemoveFromList()
         {
             communicationsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
         }
+
     }
 }

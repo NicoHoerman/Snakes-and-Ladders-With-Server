@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using TCP_Client.DTO;
 using TCP_Client.PROTOCOLS;
 using TCP_Client.UDP;
@@ -32,14 +33,15 @@ namespace TCP_Client.Actions
         public readonly IInputView _inputView;
         private readonly IServerTableView _serverTableView;
         private readonly IUpdateOutputView _infoOutputView;
+        private Client _client;
         
         private OutputWrapper _OutputWrapper;  
         private ProtocolAction _ActionHandler;
         private UdpClientUnit _UdpListener;
 
-        public InputAction(ProtocolAction protocolAction, Dictionary<ClientView, IView> views)
+        public InputAction(ProtocolAction protocolAction, Dictionary<ClientView, IView> views,Client client)
         {
-
+            _client = client;
             _ActionHandler = protocolAction;
             _views = views;
             _errorView = views[ClientView.Error] as IErrorView; // Potential null exception error.
@@ -226,7 +228,27 @@ namespace TCP_Client.Actions
 
         private void OnCloseGameAction(string obj,ICommunication communication)
         {
-            throw new NotImplementedException();
+            if (!isConnected)
+            {
+                Thread.Sleep(5000);
+                _client.CloseClient();
+                return;
+            }
+            var dataPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.CloseGame,
+                Payload = JsonConvert.SerializeObject(new PROT_CLOSEGAME
+                {
+
+                })
+            };
+            dataPackage.Size = dataPackage.ToByteArray().Length;
+
+            communication.Send(dataPackage);
+            Thread.Sleep(5000);
+            _client.CloseClient();
+
+
         }
 
         private void OnStartGameAction(string arg1, ICommunication arg2)
