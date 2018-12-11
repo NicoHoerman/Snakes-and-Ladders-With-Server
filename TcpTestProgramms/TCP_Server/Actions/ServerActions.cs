@@ -206,8 +206,8 @@ namespace TCP_Server.Actions
         private void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
             _game.State.SetInput("/rolldice");
-
-            if(_game.State.ToString() == "GameRunningstate")
+            var test = _game.State.ToString();
+            if (test == "EandE_ServerModel.EandE.States.GameRunningState")
             {
                 var turnPackage = new DataPackage
                 {
@@ -228,7 +228,7 @@ namespace TCP_Server.Actions
                     communication.Send(turnPackage);
 
             }
-            else if(_game.State.ToString() == "GameFinishedstate")
+            else if(_game.State.ToString() == "GameFinishedState")
             {
                 var gameEndedPackage = new DataPackage
                 {
