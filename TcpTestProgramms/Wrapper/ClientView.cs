@@ -8,7 +8,13 @@
         MasterCommands,
         HelpOutput,
         Input,
-        Game
+        Game,
+        AdditionalInformation,
+        Board,
+        GameInfo,
+        TurnInfo,
+        AfterTurnOutput,
+        MenuOutput
     }
 
 

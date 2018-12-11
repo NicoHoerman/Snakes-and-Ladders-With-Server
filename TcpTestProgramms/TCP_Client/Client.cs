@@ -31,7 +31,12 @@ namespace TCP_Client
             { ClientView.InfoOutput, new InfoOutputView() },
             { ClientView.HelpOutput, new HelpOutputView() },
             { ClientView.Input, new InputView() },
-            { ClientView.Game, new GameView() }
+            { ClientView.Game, new GameView() },
+            { ClientView.MenuOutput, new MainMenuOutputView() },
+            { ClientView.TurnInfo, new TurnInfoOutputView() },
+            { ClientView.GameInfo, new GameInfoOutputView() },
+            { ClientView.AfterTurnOutput, new AfterTurnOutputView() },
+            { ClientView.Board, new BoardOutputView() }
         };
 
         //<Constructors>

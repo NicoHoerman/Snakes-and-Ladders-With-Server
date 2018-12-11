@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace Wrapper.View
 {
-    public class HelpOutputView : IHelpOutputView
+    public class HelpOutputView : IUpdateOutputView
     {
         public const int DEFAULT_POSITION_X = 70;
         public const int DEFAULT_POSITION_Y = 20;
@@ -31,7 +31,7 @@ namespace Wrapper.View
             : this(new OutputWrapper(), DEFAULT_POSITION_X, DEFAULT_POSITION_Y)
         { }
 
-        public void SetHelp(string help)
+        public void SetUpdateContent(string help)
         {
             _help = help;
             //set

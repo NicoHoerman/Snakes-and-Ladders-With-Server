@@ -20,10 +20,17 @@ namespace TCP_Client.Actions
         public Dictionary<int, BroadcastDTO> _serverDictionary = new Dictionary<int, BroadcastDTO>();
         private Dictionary<ClientView, IView> _views;
 
-        private readonly IServerTableView _serverTableView;
-        private readonly IHelpOutputView _helpOutputView;
-        private readonly IUpdateOutputView _infoOutputView;
-        private readonly IUpdateOutputView _gameOutputView;
+        private readonly IUpdateOutputView _serverTableView;
+        private readonly IUpdateOutputView _helpOutputView;
+        private readonly IUpdateOutputView _smallUpdateOutputView;
+        
+        private readonly IUpdateOutputView _additionalInformationView;
+        private readonly IUpdateOutputView _boardOutputView;
+        private readonly IErrorView _errorView;
+        private readonly IUpdateOutputView _gameInfoOutputView;
+        private readonly IUpdateOutputView _turnInfoOutputView;
+        private readonly IUpdateOutputView _afterTurnOutputView;
+        private readonly IUpdateOutputView _mainMenuOutputView;
         private readonly Client _client;
 
         public string _serverTable =string.Empty;
@@ -34,10 +41,15 @@ namespace TCP_Client.Actions
         {
             _client = client;
             _views = views;
-            _serverTableView = views[ClientView.ServerTable] as IServerTableView;
-            _helpOutputView = views[ClientView.HelpOutput] as IHelpOutputView;
-            _infoOutputView = views[ClientView.InfoOutput] as IUpdateOutputView;
-            _gameOutputView = views[ClientView.Game] as IUpdateOutputView;
+            _serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
+            _helpOutputView = views[ClientView.HelpOutput] as IUpdateOutputView;
+            _smallUpdateOutputView = views[ClientView.InfoOutput] as IUpdateOutputView;          
+            _boardOutputView = views[ClientView.Board] as IUpdateOutputView;
+            _errorView = views[ClientView.Error] as IErrorView;
+            _gameInfoOutputView = views[ClientView.GameInfo] as IUpdateOutputView;
+            _turnInfoOutputView = views[ClientView.TurnInfo] as IUpdateOutputView;
+            _afterTurnOutputView = views[ClientView.AfterTurnOutput] as IUpdateOutputView;
+            _mainMenuOutputView = views[ClientView.MenuOutput] as IUpdateOutputView;
 
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage>>
             {
@@ -71,26 +83,52 @@ namespace TCP_Client.Actions
             var helpText = MapProtocolToDto<HelpTextDTO>(data);
             
             
-            _helpOutputView.SetHelp(helpText._HelpText);
+            _helpOutputView.SetUpdateContent(helpText._HelpText);
             
         }
 
         private void OnUpdateAction(DataPackage data)
         {
-            var updatedView = MapProtocolToDto<UpdateDTO>(data);
-            if (updatedView._GameViewUpdate == null)
-                return;
-            else if(updatedView._GameViewUpdate.Length != 0)
-            {
-                _gameOutputView.viewEnabled = true;
-                _gameOutputView.SetUpdateContent(updatedView._GameViewUpdate);
-            }
-            if(updatedView._SmallUpdate == null)
-                return;
+            var updatedView = MapProtocolToDto<UpdateDTO>(data);         
+            
             if(updatedView._SmallUpdate.Length != 0)
             {
-                _infoOutputView.viewEnabled = true;
-                _infoOutputView.SetUpdateContent(updatedView._SmallUpdate);
+                _smallUpdateOutputView.viewEnabled = true;
+                _smallUpdateOutputView.SetUpdateContent(updatedView._SmallUpdate);
+            }                  
+            if(updatedView._boardOutput.Length != 0)
+            {
+                _boardOutputView.viewEnabled = true;
+                _boardOutputView.SetUpdateContent(updatedView._boardOutput);
+            }      
+            if(updatedView._error.Length != 0)
+            {
+                _errorView.viewEnabled = true;
+                _errorView.SetContent(updatedView._lastinput, updatedView._error);
+            }
+            if(updatedView._gameInfoOutput.Length != 0)
+            {
+                _gameInfoOutputView.viewEnabled = true;
+                _gameInfoOutputView.SetUpdateContent(updatedView._gameInfoOutput);
+            }
+            if(updatedView._turnInfoOutput.Length != 0)
+            {
+                _turnInfoOutputView.viewEnabled = true;
+                _turnInfoOutputView.SetUpdateContent(updatedView._turnInfoOutput);
+            }
+            if(updatedView._afterTurnOutput.Length != 0)
+            {
+                _afterTurnOutputView.viewEnabled = true;
+                _afterTurnOutputView.SetUpdateContent(updatedView._afterTurnOutput);
+            }
+            if(updatedView._mainMenuOutput.Length != 0)
+            {
+                _mainMenuOutputView.viewEnabled = true;
+                _mainMenuOutputView.SetUpdateContent(updatedView._mainMenuOutput);
+            }
+            if(updatedView._finishinfo.Length != 0)
+            {
+
             }
             
         }
@@ -134,7 +172,7 @@ namespace TCP_Client.Actions
                     _MaxPlayerCount[index], _Servernames[index],(index+1)));
 
             _serverTable = outputFormat.ToString();
-            _serverTableView.SetServerTableContent(_serverTable);
+            _serverTableView.SetUpdateContent(_serverTable);
             _serverTable = string.Empty;
             _serverTableView.viewEnabled = true;
             // Key Player Server 
@@ -147,8 +185,8 @@ namespace TCP_Client.Actions
 
         {
             var accept = MapProtocolToDto<AcceptDTO>(data);
-            _infoOutputView.viewEnabled = true;
-            _infoOutputView.SetUpdateContent(accept._SmallUpdate);
+            _smallUpdateOutputView.viewEnabled = true;
+            _smallUpdateOutputView.SetUpdateContent(accept._SmallUpdate);
         }
 
         private void OnDeclineAction(DataPackage data)
@@ -156,8 +194,8 @@ namespace TCP_Client.Actions
             _client._InputHandler.Declined = true;
             _client._InputHandler.isConnected = false;
             var decline = MapProtocolToDto<DeclineDTO>(data);
-            _infoOutputView.viewEnabled = true;
-            _infoOutputView.SetUpdateContent(decline._SmallUpdate);
+            _smallUpdateOutputView.viewEnabled = true;
+            _smallUpdateOutputView.SetUpdateContent(decline._SmallUpdate);
    
         }
         #endregion

@@ -5,7 +5,7 @@ using Wrapper.Implementation;
 
 namespace Wrapper.View
 {
-    public class ServerTableView : IServerTableView
+    public class ServerTableView : IUpdateOutputView
     {
         public const int DEFAULT_POSITION_X = 0;
         public const int DEFAULT_POSITION_Y = 5;
@@ -36,7 +36,7 @@ namespace Wrapper.View
         { }
 
 
-        public void SetServerTableContent(string serverTable)
+        public void SetUpdateContent(string serverTable)
         {
             serverTableContent.Clear();
             string tableHeader = string.Format("{2,3} {0,6}  {1,6}\n", "Player", "Server", "Key");

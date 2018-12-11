@@ -41,23 +41,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Contracts\IHelpOutputView.cs" />
+    <Compile Include="Contracts\[NNRN]\IBoardOutputView.cs" />
+    <Compile Include="Contracts\[NNRN]\IGameInfoOutput.cs" />
+    <Compile Include="Contracts\[NNRN]\IHelpOutputView.cs" />
+    <Compile Include="Contracts\[NNRN]\ITurnInfoOutputView.cs" />
     <Compile Include="Contracts\IUpdateOutputView.cs" />
     <Compile Include="Contracts\IInputView.cs" />
     <Compile Include="Contracts\IOutputWrapper.cs" />
-    <Compile Include="Contracts\IServerTableView.cs" />
+    <Compile Include="Contracts\[NNRN]\IServerTableView.cs" />
     <Compile Include="Implementation\OutputWrapper.cs" />
     <Compile Include="Implementation\UpdateView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ClientView.cs" />
+    <Compile Include="Contracts\[NNRN]\IAdditionalInformationView.cs" />
+    <Compile Include="View\AfterTurnOutputView.cs" />
+    <Compile Include="View\BoardOutputView.cs" />
     <Compile Include="View\ErrorView.cs" />
     <Compile Include="Contracts\IErrorView.cs" />
     <Compile Include="Contracts\IView.cs" />
+    <Compile Include="View\GameInfoOutputView.cs" />
     <Compile Include="View\HelpOutputView.cs" />
     <Compile Include="View\InfoOutputView.cs" />
     <Compile Include="View\InputView.cs" />
+    <Compile Include="View\MainMenuOutputView.cs" />
     <Compile Include="View\ServerTableView.cs" />
     <Compile Include="View\GameView.cs" />
+    <Compile Include="View\TurnInfoOutputView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

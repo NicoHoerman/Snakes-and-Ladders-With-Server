@@ -60,6 +60,7 @@ namespace TCP_Client.Actions
                 {"/someInt" , OnIntAction },
                 {"/search", OnSearchAction },
                 {"/startgame", OnStartGameAction },
+                {"/classic", OnClassicAction }
             };
 
             _UdpListener = new UdpClientUnit();
@@ -270,6 +271,24 @@ namespace TCP_Client.Actions
                     Payload = JsonConvert.SerializeObject(new PROT_STARTGAME
                     {
                         
+                    })
+                };
+                dataPackage.Size = dataPackage.ToByteArray().Length;
+
+                communication.Send(dataPackage);
+            }
+        }
+
+        public void OnClassicCommand(string input, ICommunication communication)
+        {
+            if (isConnected)
+            {
+                var dataPackage = new DataPackage
+                {
+                    Header = ProtocolActionEnum.StartGame,
+                    Payload = JsonConvert.SerializeObject(new PROT_STARTGAME
+                    {
+
                     })
                 };
                 dataPackage.Size = dataPackage.ToByteArray().Length;
