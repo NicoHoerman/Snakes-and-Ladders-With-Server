@@ -12,7 +12,8 @@ namespace Shared.Enums
         Decline = 202,
         Accept = 203,
         UpdateView = 204,
-        HelpText = 205
-
+        HelpText = 205,
+        OnStartMenu = 206,
+        Classic = 207
     }
 }

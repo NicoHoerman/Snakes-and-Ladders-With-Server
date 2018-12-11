@@ -23,10 +23,11 @@ namespace EandE_ServerModel.EandE.States
         private string _lastInput = string.Empty;
         private string _additionalInformation = string.Empty;
         private string _mainMenuOutput = string.Empty;
+        public string Input { get; set; } = string.Empty;
+        
 
         #region Properties
         public string MainMenuOuput { get; set; } = string.Empty;
-        public string AdditionalInformation { get; set; } = string.Empty;
         public string Lastinput { get; set; } = string.Empty;
         public string Error { get; set; } = string.Empty;
 
@@ -85,39 +86,30 @@ namespace EandE_ServerModel.EandE.States
                 while (ruleNotSet)
                 {
                     UpdateOutput();
-                    SaveProperties(_error,_lastInput,_mainMenuOutput,_additionalInformation);
+                    SaveProperties(_error,_lastInput,_mainMenuOutput);
                     _error = string.Empty;
 
                     _sourceWrapper.WriteOutput(0, 15, "Type an Command: ", ConsoleColor.DarkGray);
                     Console.SetCursorPosition(17, 15);
-                    var input = _sourceWrapper.ReadInput();
+                    while(Input == string.Empty)
+                    {
 
-                    _lastInput = input;
-                    rulesname = input;
-                    parser.Execute(input);
+                    }
+
+                    _lastInput = Input;
+                    rulesname = Input;
+                    parser.Execute(Input);
+                    Input = string.Empty;
              
-                }
-                while (gameNotStarted)
-                {
-                    UpdateOutput();
-                    _error = string.Empty;
-
-                    _sourceWrapper.WriteOutput(0, 17, "Type an Command: ", ConsoleColor.DarkGray);
-                    Console.SetCursorPosition(17, 17);
-                    var input = _sourceWrapper.ReadInput();
-
-                    _lastInput = input;
-                    parser.Execute(input);
                 }
             }
         }
 
-        private void SaveProperties(string lastInput, string error, string mainmenuInfo, string additionalinformation )
+        private void SaveProperties(string lastInput, string error, string mainmenuInfo)
         {
             Lastinput = lastInput;
             Error = error;
             MainMenuOuput = mainmenuInfo;
-            AdditionalInformation = additionalinformation;
         }
 
         public void ClearProperties()
@@ -125,7 +117,6 @@ namespace EandE_ServerModel.EandE.States
             Lastinput = string.Empty;
             Error = string.Empty;
             MainMenuOuput = string.Empty;
-            AdditionalInformation = string.Empty;
         }
 
         private void OnErrorCommand(string token)
@@ -187,5 +178,9 @@ namespace EandE_ServerModel.EandE.States
                 _error = "Interal error.";
         }
 
+        public void SetInput(string input)
+        {
+            Input = input;
+        }
     }
 }

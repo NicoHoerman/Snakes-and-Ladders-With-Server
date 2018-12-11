@@ -7,6 +7,7 @@ using Shared.Contracts;
 using Shared.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading;
 using TCP_Server.Enum;
 using TCP_Server.PROTOCOLS;
@@ -38,13 +39,17 @@ namespace TCP_Server.Actions
                 { ProtocolActionEnum.GetHelp,   OnGetHelpAction },
                 { ProtocolActionEnum.StartGame, OnStartGameAction },
                 { ProtocolActionEnum.CloseGame, OnCloseGameAction },
-                { ProtocolActionEnum.OnConnection, OnConnectionAction }
+                { ProtocolActionEnum.OnConnection, OnConnectionAction },
+                { ProtocolActionEnum.OnStartMenu, OnStartMenuAction },
+                { ProtocolActionEnum.Classic, OnClassicAction }
             };
 
             _server = server;
             _ServerInfo = serverInfo;
             _game = new Game();
         }
+
+       
 
         public void ExecuteDataActionFor(ICommunication communication, DataPackage data)
         {
@@ -129,11 +134,83 @@ namespace TCP_Server.Actions
             MessageSent.Set();
         }
 
+        private void OnStartGameAction(ICommunication communication, DataPackage data)
+        {
+            var backgroundworker = new BackgroundWorker();
+
+            backgroundworker.DoWork += (obj, ea) => _game.Init();
+
+            if (_server.isLobbyComplete())
+            {
+                backgroundworker.RunWorkerAsync();
+
+                var dataPackage = new DataPackage
+                {
+
+                    Header = ProtocolActionEnum.UpdateView,
+                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                    {
+                        _mainMenuOuput = "Choose a rule./n Ruleslist:/n /classic",
+                        _error = _game.State.Error,
+                        _lastinput = _game.State.Lastinput
+                    })
+                };
+                dataPackage.Size = dataPackage.ToByteArray().Length;
+
+                _game.State.ClearProperties();
+
+                communication.Send(dataPackage);
+
+            }
+            else
+            {
+                var dataPackage = new DataPackage
+                {
+
+                    Header = ProtocolActionEnum.UpdateView,
+                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                    {
+                        _SmallUpdate = "Not enough Players to start the game "
+                    })
+                };
+                dataPackage.Size = dataPackage.ToByteArray().Length;
+
+                communication.Send(dataPackage);
+            }
+        }
+
+        private void OnClassicAction(ICommunication communication, DataPackage data)
+        {
+
+            _game.State.SetInput("/classic");
+
+                var dataPackage = new DataPackage
+                {
+
+                    Header = ProtocolActionEnum.UpdateView,
+                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                    {
+                        _gameInfoOuptput = _game.State.GameInfoOuptput,
+                        _boardOutput = _game.State.BoardOutput,
+                        _error = _game.State.Error,
+                        _lastinput = _game.State.Lastinput,
+                        _afterBoardOutput = _game.State.AfterBoardOutput,
+                        _afterTurnOutput = _game.State.AfterTurnOutput
+                    })
+                };
+                dataPackage.Size = dataPackage.ToByteArray().Length;
+
+                _game.State.ClearProperties();
+
+                communication.Send(dataPackage);
+            
+        }
+
         private void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
             //game steuern 
 
-            //if fertig oder nur ein Zug
+            //if Game finished oder nur ein Zug
 
             var turnPackage = new DataPackage
             {
@@ -209,33 +286,6 @@ namespace TCP_Server.Actions
             _server.communicationsToRemove.Add(communication);
             _server.RemoveFromLobby();
         }
-
-        private void OnStartGameAction(ICommunication communication, DataPackage data)
-        {
-            if (_server.isLobbyComplete())
-            {
-                _game.Init();
-
-                var dataPackage = new DataPackage
-                {
-
-                    Header = ProtocolActionEnum.UpdateView,
-                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                    {
-                        _mainMenuOuput = _game.State.MainMenuOuput,
-                        _additionalInformation = _game.State.AdditionalInformation,
-                        _error = _game.State.Error,
-                        _lastinput = _game.State.Lastinput
-                    })
-                };
-                dataPackage.Size = dataPackage.ToByteArray().Length;
-
-                _game.State.ClearProperties();
-
-                communication.Send(dataPackage);
-            }
-        }
-
 
         #endregion
 
