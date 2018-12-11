@@ -260,9 +260,22 @@ namespace TCP_Client.Actions
 
         }
 
-        private void OnStartGameAction(string arg1, ICommunication arg2)
+        private void OnStartGameAction(string arg1, ICommunication communication)
         {
-            throw new NotImplementedException();
+            if (isConnected)
+            {
+                var dataPackage = new DataPackage
+                {
+                    Header = ProtocolActionEnum.StartGame,
+                    Payload = JsonConvert.SerializeObject(new PROT_STARTGAME
+                    {
+                        
+                    })
+                };
+                dataPackage.Size = dataPackage.ToByteArray().Length;
+
+                communication.Send(dataPackage);
+            }
         }
         #endregion
 
