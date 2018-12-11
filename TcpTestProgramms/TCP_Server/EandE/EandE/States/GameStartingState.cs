@@ -6,18 +6,18 @@ namespace EandE_ServerModel.EandE.States
     {
         private readonly IGame _game;
         #region Properties
-        public string MainMenuOuput { get; set; } 
-        public string Lastinput { get; set; }
-        public string Error { get; set; }
-        public string GameInfoOuptput { get; set; }
-        public string BoardOutput { get; set; }
-        public string AfterBoardOutput { get; set; }
-        public string AfterTurnOutput { get; set; }
-        public string HelpOutput { get; set; }
-        public string Finishinfo { get; set; }
-        public string Finishskull1 { get; set; }
-        public string Finishskull2 { get; set; }
-        public string Input { get; set; }
+        public string MainMenuOuput { get; set; } = string.Empty;
+        public string Lastinput { get; set; } = string.Empty;
+        public string Error { get; set; } = string.Empty;
+        public string GameInfoOuptput { get; set; } = string.Empty;
+        public string BoardOutput { get; set; } = string.Empty;
+        public string AfterBoardOutput { get; set; } = string.Empty;
+        public string AfterTurnOutput { get; set; } = string.Empty;
+        public string HelpOutput { get; set; } = string.Empty;
+        public string Finishinfo { get; set; } = string.Empty;
+        public string Finishskull1 { get; set; } = string.Empty;
+        public string Finishskull2 { get; set; } = string.Empty;
+        public string Input { get; set; } = string.Empty;
         #endregion
         public GameStartingState(IGame game) 
         {

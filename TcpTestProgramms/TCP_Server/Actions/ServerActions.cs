@@ -145,7 +145,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _mainMenuOuput = "Choose a rule./n Ruleslist:/n /classic",
+                        _mainMenuOutput = "Choose a rule.\n Ruleslist:\n /classic",
                         _error = _game.State.Error,
                         _lastinput = _game.State.Lastinput
                     })

@@ -30,7 +30,7 @@ namespace TCP_Client.Actions
         private Dictionary<ClientView, IView> _views;
 
         private readonly IErrorView _errorView;
-        private readonly IHelpOutputView _helpOutputView;
+        private readonly IUpdateOutputView _helpOutputView;
         public readonly IInputView _inputView;
         private readonly IUpdateOutputView _serverTableView;
         private readonly IUpdateOutputView _infoOutputView;
@@ -46,7 +46,7 @@ namespace TCP_Client.Actions
             _ActionHandler = protocolAction;
             _views = views;
             _errorView = views[ClientView.Error] as IErrorView; // Potential null exception error.
-            _helpOutputView = views[ClientView.HelpOutput] as IHelpOutputView; //Potenzieller Null Ausnahmen Fehler
+            _helpOutputView = views[ClientView.HelpOutput] as IUpdateOutputView; //Potenzieller Null Ausnahmen Fehler
             _inputView = views[ClientView.Input] as IInputView;
             _serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
             _infoOutputView = views[ClientView.InfoOutput] as IUpdateOutputView;

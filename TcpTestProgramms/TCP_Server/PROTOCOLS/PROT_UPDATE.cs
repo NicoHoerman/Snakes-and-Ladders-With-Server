@@ -5,7 +5,7 @@ namespace TCP_Server.PROTOCOLS
     public class PROT_UPDATE : IProtocol
     {
         public string _SmallUpdate;
-        public string _mainMenuOuput;
+        public string _mainMenuOutput;
         public string _additionalInformation;
         public string _lastinput;
         public string _error;
