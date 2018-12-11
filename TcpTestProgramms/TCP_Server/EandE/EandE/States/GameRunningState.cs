@@ -20,6 +20,22 @@ namespace EandE_ServerModel.EandE.States
         public string _afterTurnOutput = string.Empty;
         private string _afterBoardOutput = string.Empty;
 
+        #region Properties
+        public string Lastinput { get; set; } = string.Empty;
+        public string Error { get; set; } = string.Empty;
+        public string GameInfoOuptput { get; set; } = string.Empty;
+        public string BoardOutput { get; set; } = string.Empty;
+        public string AfterBoardOutput { get; set; } = string.Empty;
+        public string AfterTurnOutput { get; set; } = string.Empty;
+        public string HelpOutput { get; set; } = string.Empty;
+
+        public string MainMenuOuput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string AdditionalInformation { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Finishinfo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Finishskull1 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Finishskull2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        #endregion
+
         public GameRunningState(IGame game, ISourceWrapper sourceWrapper, DataProvider dataProvider, Logic logic)
         {
             _game = game;
@@ -51,6 +67,7 @@ namespace EandE_ServerModel.EandE.States
             {
                 _boardOutput = _game.Board.CreateOutput();
                 UpdateOutput();
+                SaveProperties(_lastInput,_error,_gameInfoOutput,_boardOutput,_helpOutput,_afterTurnOutput,_afterBoardOutput);
                 _error = string.Empty;
                 _helpOutput = string.Empty;
                 _afterTurnOutput = string.Empty;
@@ -160,5 +177,27 @@ namespace EandE_ServerModel.EandE.States
             }
         }
 
+        public void ClearProperties()
+        {
+            Lastinput = string.Empty;
+            Error = string.Empty;
+            GameInfoOuptput = string.Empty;
+            BoardOutput = string.Empty;
+            AfterBoardOutput = string.Empty;
+            AfterTurnOutput = string.Empty;
+            HelpOutput = string.Empty;
+        }
+
+        private void SaveProperties(string _lastInput, string _error, string _gameInfoOutput, string _boardOutput, string _helpOutput, string _afterTurnOutput, string _afterBoardOutput)
+        {
+            Lastinput = _lastInput;
+            Error = _error;
+            GameInfoOuptput = _gameInfoOutput;
+            BoardOutput = _boardOutput;
+            AfterBoardOutput = _afterBoardOutput;
+            AfterTurnOutput = _afterTurnOutput;
+            HelpOutput = _helpOutput;
+
+        }
     }
 }

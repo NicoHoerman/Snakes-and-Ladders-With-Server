@@ -17,6 +17,22 @@ namespace EandE_ServerModel.EandE.States
         private string _finishskull2 = string.Empty;
         public int _winner;
 
+        #region Properties
+        public string Finishinfo { get; set; } = string.Empty;
+        public string Finishskull1 { get; set; } = string.Empty;
+        public string Finishskull2 { get; set; } = string.Empty;
+       
+        public string MainMenuOuput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string AdditionalInformation { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Lastinput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Error { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string GameInfoOuptput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string BoardOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string AfterBoardOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string AfterTurnOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string HelpOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        #endregion
+
         public GameFinishedState(IGame game, ISourceWrapper sourceWrapper, DataProvider dataProvider, int winner)
         {
             _game = game;
@@ -42,6 +58,7 @@ namespace EandE_ServerModel.EandE.States
 
             while (isFinished)
             {
+                SaveProperties(_finishinfo,Finishskull1,Finishskull2);
                 _sourceWrapper.Clear();
                 _sourceWrapper.WriteOutput(35, 0, _finishinfo, ConsoleColor.Green);
                 _sourceWrapper.WriteOutput(0, 0, _finishskull1);
@@ -62,5 +79,18 @@ namespace EandE_ServerModel.EandE.States
             }
         }
 
+        public void ClearProperties()
+        {
+            Finishinfo = string.Empty;
+            Finishskull1 = string.Empty;
+            Finishskull2 = string.Empty;
+        }
+
+        public void SaveProperties(string _finshinfo,string _finishskull1,string _finishskull2)
+        {
+            Finishinfo = _finishinfo;
+            Finishskull1 = _finishskull1;
+            Finishskull2 = _finishskull2;
+        }
     }
 }

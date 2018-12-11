@@ -24,12 +24,29 @@ namespace EandE_ServerModel.EandE.States
         private string _additionalInformation = string.Empty;
         private string _mainMenuOutput = string.Empty;
 
+        #region Properties
+        public string MainMenuOuput { get; set; } = string.Empty;
+        public string AdditionalInformation { get; set; } = string.Empty;
+        public string Lastinput { get; set; } = string.Empty;
+        public string Error { get; set; } = string.Empty;
+
+        public string GameInfoOuptput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string BoardOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string AfterBoardOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string AfterTurnOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string HelpOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Finishinfo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Finishskull1 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Finishskull2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        #endregion
+
         private Dictionary<string, Func<IGame,IConfigurationProvider, IRules>> _rulesFactory = new Dictionary<string, Func<IGame, IConfigurationProvider, IRules>>
         {
             { "classic", (game,configP) => new ClassicRules(game,configP) },
         //    { "fancy", (g) => new FancyRules(g) },
         };
         private string rulesname;
+
 
         public MainMenuState(
             IGame game, 
@@ -68,6 +85,7 @@ namespace EandE_ServerModel.EandE.States
                 while (ruleNotSet)
                 {
                     UpdateOutput();
+                    SaveProperties(_error,_lastInput,_mainMenuOutput,_additionalInformation);
                     _error = string.Empty;
 
                     _sourceWrapper.WriteOutput(0, 15, "Type an Command: ", ConsoleColor.DarkGray);
@@ -92,6 +110,22 @@ namespace EandE_ServerModel.EandE.States
                     parser.Execute(input);
                 }
             }
+        }
+
+        private void SaveProperties(string lastInput, string error, string mainmenuInfo, string additionalinformation )
+        {
+            Lastinput = lastInput;
+            Error = error;
+            MainMenuOuput = mainmenuInfo;
+            AdditionalInformation = additionalinformation;
+        }
+
+        public void ClearProperties()
+        {
+            Lastinput = string.Empty;
+            Error = string.Empty;
+            MainMenuOuput = string.Empty;
+            AdditionalInformation = string.Empty;
         }
 
         private void OnErrorCommand(string token)

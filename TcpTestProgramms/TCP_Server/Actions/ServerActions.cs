@@ -82,7 +82,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _GameViewUpdate = $"Lobby {servername} Player [{currentplayer}/{maxplayer}]"
+                        _SmallUpdate = $"Lobby {servername} Player [{currentplayer}/{maxplayer}]"
                     })
                 };
                 lobbyUpdatePackage.Size = lobbyUpdatePackage.ToByteArray().Length;
@@ -108,7 +108,7 @@ namespace TCP_Server.Actions
                     })
                 };
                 updatePackage.Size = updatePackage.ToByteArray().Length;
-                //A send that sends to everyone except the current comunication
+                //a send that sends to everyone except the current comunication
                 for(int i=0;i<= _ServerInfo._communications.Count-1; i++)
                 {
                     if(!(_ServerInfo._communications[i] == communication))
@@ -131,22 +131,45 @@ namespace TCP_Server.Actions
 
         private void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
-            throw new NotImplementedException();
-            var dataPackage = new DataPackage
+            //game steuern 
+
+            //if fertig oder nur ein Zug
+
+            var turnPackage = new DataPackage
             {
 
                 Header = ProtocolActionEnum.UpdateView,
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                 {
-                    _GameViewUpdate = "Placeholder",
+                    _gameInfoOuptput = _game.State.GameInfoOuptput,
+                    _boardOutput = _game.State.BoardOutput,
+                    _error = _game.State.Error,
+                    _lastinput = _game.State.Lastinput,
+                    _afterBoardOutput = _game.State.AfterBoardOutput,
+                    _afterTurnOutput = _game.State.AfterTurnOutput
                 })
             };
-            dataPackage.Size = dataPackage.ToByteArray().Length;
+            turnPackage.Size = turnPackage.ToByteArray().Length;
 
-            communication.Send(dataPackage);
+            communication.Send(turnPackage);
+
+            var gameEndedPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.UpdateView,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                {
+                    _finishinfo = _game.State.Finishinfo,
+                    _finishskull1 = _game.State.Finishskull1,
+                    _finishskull2 = _game.State.Finishskull2
+                })
+            };
+            gameEndedPackage.Size = gameEndedPackage.ToByteArray().Length;
+
+            communication.Send(gameEndedPackage);
+
         }
 
-        private void OnGetHelpAction(ICommunication communication, DataPackage data)
+    private void OnGetHelpAction(ICommunication communication, DataPackage data)
         {
             
             var clientId = CreateProtocol<PROT_HELPTEXT>(data);
@@ -158,7 +181,7 @@ namespace TCP_Server.Actions
                 Header = ProtocolActionEnum.HelpText,
                 Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
                 {
-                    _HelpText = "Your master help could be standing here."
+                    _HelpText = _game.State.HelpOutput
                 })
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;
@@ -171,7 +194,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.HelpText,
                     Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
                     {
-                        _HelpText = "Your normal help could be standing here."
+                        _HelpText = _game.State.HelpOutput
                     })
                 };
                 dataPackage.Size = dataPackage.ToByteArray().Length;
@@ -192,6 +215,24 @@ namespace TCP_Server.Actions
             if (_server.isLobbyComplete())
             {
                 _game.Init();
+
+                var dataPackage = new DataPackage
+                {
+
+                    Header = ProtocolActionEnum.UpdateView,
+                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                    {
+                        _mainMenuOuput = _game.State.MainMenuOuput,
+                        _additionalInformation = _game.State.AdditionalInformation,
+                        _error = _game.State.Error,
+                        _lastinput = _game.State.Lastinput
+                    })
+                };
+                dataPackage.Size = dataPackage.ToByteArray().Length;
+
+                _game.State.ClearProperties();
+
+                communication.Send(dataPackage);
             }
         }
 
