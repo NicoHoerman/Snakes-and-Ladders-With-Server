@@ -28,7 +28,6 @@ namespace EandE_ServerModel.EandE.States
 
         #region Properties
         public string MainMenuOuput { get; set; } = string.Empty;
-        public string AdditionalInformation { get; set; } = string.Empty;
         public string Lastinput { get; set; } = string.Empty;
         public string Error { get; set; } = string.Empty;
 
@@ -87,7 +86,7 @@ namespace EandE_ServerModel.EandE.States
                 while (ruleNotSet)
                 {
                     UpdateOutput();
-                    SaveProperties(_error,_lastInput,_mainMenuOutput,_additionalInformation);
+                    SaveProperties(_error,_lastInput,_mainMenuOutput);
                     _error = string.Empty;
 
                     _sourceWrapper.WriteOutput(0, 15, "Type an Command: ", ConsoleColor.DarkGray);
@@ -103,31 +102,14 @@ namespace EandE_ServerModel.EandE.States
                     Input = string.Empty;
              
                 }
-                while (gameNotStarted)
-                {
-                    UpdateOutput();
-                    _error = string.Empty;
-
-                    _sourceWrapper.WriteOutput(0, 17, "Type an Command: ", ConsoleColor.DarkGray);
-                    Console.SetCursorPosition(17, 17);
-                    while (Input == string.Empty)
-                    {
-
-                    }
-
-                    _lastInput = Input;
-                    parser.Execute(Input);
-                    Input = string.Empty;
-                }
             }
         }
 
-        private void SaveProperties(string lastInput, string error, string mainmenuInfo, string additionalinformation )
+        private void SaveProperties(string lastInput, string error, string mainmenuInfo)
         {
             Lastinput = lastInput;
             Error = error;
             MainMenuOuput = mainmenuInfo;
-            AdditionalInformation = additionalinformation;
         }
 
         public void ClearProperties()
@@ -135,7 +117,6 @@ namespace EandE_ServerModel.EandE.States
             Lastinput = string.Empty;
             Error = string.Empty;
             MainMenuOuput = string.Empty;
-            AdditionalInformation = string.Empty;
         }
 
         private void OnErrorCommand(string token)

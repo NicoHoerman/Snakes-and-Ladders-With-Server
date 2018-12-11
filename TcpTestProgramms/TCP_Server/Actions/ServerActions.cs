@@ -134,30 +134,49 @@ namespace TCP_Server.Actions
             MessageSent.Set();
         }
 
-        private void OnStartMenuAction(ICommunication communication, DataPackage data)
+        private void OnStartGameAction(ICommunication communication, DataPackage data)
         {
             var backgroundworker = new BackgroundWorker();
 
             backgroundworker.DoWork += (obj, ea) => _game.Init();
-            backgroundworker.RunWorkerAsync();
 
-            var dataPackage = new DataPackage
+            if (_server.isLobbyComplete())
             {
+                backgroundworker.RunWorkerAsync();
 
-                Header = ProtocolActionEnum.UpdateView,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                var dataPackage = new DataPackage
                 {
-                    _mainMenuOuput = _game.State.MainMenuOuput,
-                    _additionalInformation = _game.State.AdditionalInformation,
-                    _error = _game.State.Error,
-                    _lastinput = _game.State.Lastinput
-                })
-            };
-            dataPackage.Size = dataPackage.ToByteArray().Length;
 
-            _game.State.ClearProperties();
+                    Header = ProtocolActionEnum.UpdateView,
+                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                    {
+                        _mainMenuOuput = "Choose a rule./n Ruleslist:/n /classic",
+                        _error = _game.State.Error,
+                        _lastinput = _game.State.Lastinput
+                    })
+                };
+                dataPackage.Size = dataPackage.ToByteArray().Length;
 
-            communication.Send(dataPackage);
+                _game.State.ClearProperties();
+
+                communication.Send(dataPackage);
+
+            }
+            else
+            {
+                var dataPackage = new DataPackage
+                {
+
+                    Header = ProtocolActionEnum.UpdateView,
+                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                    {
+                        _SmallUpdate = "Not enough Players to start the game "
+                    })
+                };
+                dataPackage.Size = dataPackage.ToByteArray().Length;
+
+                communication.Send(dataPackage);
+            }
         }
 
         private void OnClassicAction(ICommunication communication, DataPackage data)
@@ -165,30 +184,6 @@ namespace TCP_Server.Actions
 
             _game.State.SetInput("/classic");
 
-            var dataPackage = new DataPackage
-            {
-
-                Header = ProtocolActionEnum.UpdateView,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                {
-                    _mainMenuOuput = _game.State.MainMenuOuput,
-                    _additionalInformation = _game.State.AdditionalInformation,
-                    _error = _game.State.Error,
-                    _lastinput = _game.State.Lastinput
-                })
-            };
-            dataPackage.Size = dataPackage.ToByteArray().Length;
-
-            _game.State.ClearProperties();
-
-            communication.Send(dataPackage);
-        }
-
-        private void OnStartGameAction(ICommunication communication, DataPackage data)
-        {
-            if (_server.isLobbyComplete())
-            {
-                
                 var dataPackage = new DataPackage
                 {
 
@@ -208,14 +203,14 @@ namespace TCP_Server.Actions
                 _game.State.ClearProperties();
 
                 communication.Send(dataPackage);
-            }
+            
         }
 
         private void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
             //game steuern 
 
-            //if fertig oder nur ein Zug
+            //if Game finished oder nur ein Zug
 
             var turnPackage = new DataPackage
             {

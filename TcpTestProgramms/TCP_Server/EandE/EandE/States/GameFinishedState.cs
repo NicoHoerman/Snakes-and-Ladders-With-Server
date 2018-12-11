@@ -23,7 +23,6 @@ namespace EandE_ServerModel.EandE.States
         public string Finishskull2 { get; set; } = string.Empty;
        
         public string MainMenuOuput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string AdditionalInformation { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string Lastinput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string Error { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string GameInfoOuptput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

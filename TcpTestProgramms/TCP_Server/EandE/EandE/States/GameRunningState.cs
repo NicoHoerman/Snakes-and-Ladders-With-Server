@@ -30,7 +30,6 @@ namespace EandE_ServerModel.EandE.States
         public string HelpOutput { get; set; } = string.Empty;
 
         public string MainMenuOuput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string AdditionalInformation { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string Finishinfo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string Finishskull1 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string Finishskull2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

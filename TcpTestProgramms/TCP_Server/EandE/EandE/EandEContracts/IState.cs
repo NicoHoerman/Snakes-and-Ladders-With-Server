@@ -9,7 +9,6 @@ namespace EandE_ServerModel.EandE.EandEContracts
 
         string Input { get; set; }
         string MainMenuOuput { get; set; }
-        string AdditionalInformation { get; set; }
         string Lastinput { get; set; }
         string Error { get; set; }
         string GameInfoOuptput { get; set; }
