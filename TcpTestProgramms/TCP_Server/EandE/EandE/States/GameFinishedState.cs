@@ -31,6 +31,7 @@ namespace EandE_ServerModel.EandE.States
         public string AfterBoardOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string AfterTurnOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string HelpOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Input { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
 
         public GameFinishedState(IGame game, ISourceWrapper sourceWrapper, DataProvider dataProvider, int winner)
@@ -91,6 +92,11 @@ namespace EandE_ServerModel.EandE.States
             Finishinfo = _finishinfo;
             Finishskull1 = _finishskull1;
             Finishskull2 = _finishskull2;
+        }
+
+        public void SetInput(string input)
+        {
+            throw new NotImplementedException();
         }
     }
 }

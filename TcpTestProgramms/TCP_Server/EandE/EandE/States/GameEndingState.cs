@@ -23,6 +23,7 @@ namespace EandE_ServerModel.EandE.States
         public string Finishinfo { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public string Finishskull1 { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public string Finishskull2 { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public string Input { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         #endregion
         public void ClearProperties()
         {
@@ -33,6 +34,11 @@ namespace EandE_ServerModel.EandE.States
         {
             _game.ClosingGame();
 
+        }
+
+        public void SetInput(string input)
+        {
+            throw new System.NotImplementedException();
         }
     }
 

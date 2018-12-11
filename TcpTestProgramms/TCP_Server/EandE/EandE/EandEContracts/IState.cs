@@ -5,7 +5,9 @@ namespace EandE_ServerModel.EandE.EandEContracts
     {
         void Execute();
         void ClearProperties();
+        void SetInput(string input);
 
+        string Input { get; set; }
         string MainMenuOuput { get; set; }
         string AdditionalInformation { get; set; }
         string Lastinput { get; set; }

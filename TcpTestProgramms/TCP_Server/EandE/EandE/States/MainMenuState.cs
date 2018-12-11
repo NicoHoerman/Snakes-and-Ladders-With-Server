@@ -23,6 +23,8 @@ namespace EandE_ServerModel.EandE.States
         private string _lastInput = string.Empty;
         private string _additionalInformation = string.Empty;
         private string _mainMenuOutput = string.Empty;
+        public string Input { get; set; } = string.Empty;
+        
 
         #region Properties
         public string MainMenuOuput { get; set; } = string.Empty;
@@ -90,11 +92,15 @@ namespace EandE_ServerModel.EandE.States
 
                     _sourceWrapper.WriteOutput(0, 15, "Type an Command: ", ConsoleColor.DarkGray);
                     Console.SetCursorPosition(17, 15);
-                    var input = _sourceWrapper.ReadInput();
+                    while(Input == string.Empty)
+                    {
 
-                    _lastInput = input;
-                    rulesname = input;
-                    parser.Execute(input);
+                    }
+
+                    _lastInput = Input;
+                    rulesname = Input;
+                    parser.Execute(Input);
+                    Input = string.Empty;
              
                 }
                 while (gameNotStarted)
@@ -104,10 +110,14 @@ namespace EandE_ServerModel.EandE.States
 
                     _sourceWrapper.WriteOutput(0, 17, "Type an Command: ", ConsoleColor.DarkGray);
                     Console.SetCursorPosition(17, 17);
-                    var input = _sourceWrapper.ReadInput();
+                    while (Input == string.Empty)
+                    {
 
-                    _lastInput = input;
-                    parser.Execute(input);
+                    }
+
+                    _lastInput = Input;
+                    parser.Execute(Input);
+                    Input = string.Empty;
                 }
             }
         }
@@ -187,5 +197,9 @@ namespace EandE_ServerModel.EandE.States
                 _error = "Interal error.";
         }
 
+        public void SetInput(string input)
+        {
+            Input = input;
+        }
     }
 }
