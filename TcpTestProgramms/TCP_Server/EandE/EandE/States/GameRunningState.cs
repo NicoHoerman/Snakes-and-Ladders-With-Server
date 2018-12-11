@@ -2,6 +2,7 @@
 using EandE_ServerModel.EandE.GameAndLogic;
 using EandE_ServerModel.EandE.StuffFromEandE;
 using System;
+using TCP_Server.Actions;
 
 namespace EandE_ServerModel.EandE.States
 {
@@ -29,11 +30,11 @@ namespace EandE_ServerModel.EandE.States
         public string AfterTurnOutput { get; set; } = string.Empty;
         public string HelpOutput { get; set; } = string.Empty;
 
-        public string MainMenuOuput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Finishinfo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Finishskull1 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Finishskull2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Input { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string MainMenuOuput { get; set; } = string.Empty;
+        public string Finishinfo { get; set; } = string.Empty;
+        public string Finishskull1 { get; set; } = string.Empty;
+        public string Finishskull2 { get; set; } = string.Empty;
+        public string Input { get; set; } = string.Empty;
         #endregion
 
         public GameRunningState(IGame game, ISourceWrapper sourceWrapper, DataProvider dataProvider, Logic logic)
@@ -56,38 +57,26 @@ namespace EandE_ServerModel.EandE.States
             parser.AddCommand("/help", OnHelpCommand);
             parser.AddCommand("/closegame", OnCloseGameCommand);
             parser.AddCommand("/rolldice", OnRollDiceCommand);
-            parser.SetErrorAction(OnErrorCommand);
 
             _gameInfoOutput = _dataProvider.GetText("gameinfo");
             _afterBoardOutput = string.Format(
                 _dataProvider.GetText("afterboardinfo"), 
                 _dataProvider.GetNumberLiteral(_logic.CurrentPlayerID));
+            
 
             while (isRunning)
             {
                 _boardOutput = _game.Board.CreateOutput();
-                UpdateOutput();
                 SaveProperties(_lastInput,_error,_gameInfoOutput,_boardOutput,_helpOutput,_afterTurnOutput,_afterBoardOutput);
-                _error = string.Empty;
-                _helpOutput = string.Empty;
-                _afterTurnOutput = string.Empty;
+                ServerActions.StateSwitched.Set();
+                while (Input.Length != 0) 
+                {
+                }
+                parser.Execute(Input);
 
-                _sourceWrapper.WriteOutput(0, 21, "Type an Command: ", ConsoleColor.DarkGray);
-                Console.SetCursorPosition(17, 21);
-                var input = _sourceWrapper.ReadInput();
-                parser.Execute(input);
-
-                _afterBoardOutput = string.Format(
-                    _dataProvider.GetText("afterboardinfo"),
-                    _dataProvider.GetNumberLiteral(_logic.CurrentPlayerID));
-
-                _lastInput = input;
+                
+                _lastInput = Input;
             }
-        }
-
-        private void OnErrorCommand(string token)
-        {
-            _error = "Unknown command.";
         }
 
         private void OnRollDiceCommand()
@@ -105,40 +94,6 @@ namespace EandE_ServerModel.EandE.States
         private void OnHelpCommand()
         {
             _helpOutput = "Commands are" + "\n" + "/closegame" + "\n" + "/rolldice";
-        }
-
-        private void UpdateOutput()
-        {
-            _sourceWrapper.Clear();
-            //Game Info
-            _sourceWrapper.WriteOutput(0, 0, _gameInfoOutput, ConsoleColor.DarkCyan);
-            
-            //Board Display
-            _sourceWrapper.WriteOutput(40, 10, _boardOutput, ConsoleColor.Gray);
-            
-            //After Board Info 
-            _sourceWrapper.WriteOutput(0, 16, _afterBoardOutput, ConsoleColor.DarkCyan);
-
-
-            //After Turn Info
-            if(_afterTurnOutput.Length != 0)
-            {
-                _sourceWrapper.WriteOutput(0, 23, _afterTurnOutput, ConsoleColor.DarkCyan);
-
-            }
-
-
-            //Help Info 
-            if (_helpOutput.Length != 0)
-                _sourceWrapper.WriteOutput(30, 2, _helpOutput, ConsoleColor.Yellow);
-
-
-            //Last Input and Error
-            if (_error.Length != 0)
-            {
-                _sourceWrapper.WriteOutput(0, 18, _lastInput, ConsoleColor.DarkRed);
-                _sourceWrapper.WriteOutput(0, 19, _error, ConsoleColor.Red);
-            }
         }
 
         //Undertakes diffrent Actions, depending on the TurnState returned by MakeTurn()
@@ -202,7 +157,7 @@ namespace EandE_ServerModel.EandE.States
 
         public void SetInput(string input)
         {
-            throw new NotImplementedException();
+            Input = input;
         }
     }
 }

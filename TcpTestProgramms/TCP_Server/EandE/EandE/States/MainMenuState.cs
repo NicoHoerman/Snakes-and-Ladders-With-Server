@@ -4,6 +4,7 @@ using EandE_ServerModel.EandE.StuffFromEandE;
 using EandE_ServerModel.EandE.XML_Config;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace EandE_ServerModel.EandE.States
 {
@@ -16,12 +17,7 @@ namespace EandE_ServerModel.EandE.States
         private readonly DataProvider _dataProvider;
 
         private bool inMenu;
-        private bool ruleNotSet = true;
-        private bool gameNotStarted = true;
 
-        private string _error = string.Empty;
-        private string _lastInput = string.Empty;
-        private string _additionalInformation = string.Empty;
         private string _mainMenuOutput = string.Empty;
         public string Input { get; set; } = string.Empty;
         
@@ -31,14 +27,14 @@ namespace EandE_ServerModel.EandE.States
         public string Lastinput { get; set; } = string.Empty;
         public string Error { get; set; } = string.Empty;
 
-        public string GameInfoOuptput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string BoardOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string AfterBoardOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string AfterTurnOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string HelpOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Finishinfo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Finishskull1 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Finishskull2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string GameInfoOuptput { get; set; } = string.Empty;
+        public string BoardOutput { get; set; } = string.Empty;
+        public string AfterBoardOutput { get; set; } = string.Empty;
+        public string AfterTurnOutput { get; set; } = string.Empty;
+        public string HelpOutput { get; set; } = string.Empty;
+        public string Finishinfo { get; set; } = string.Empty;
+        public string Finishskull1 { get; set; } = string.Empty;
+        public string Finishskull2 { get; set; } = string.Empty;
         #endregion
 
         private Dictionary<string, Func<IGame,IConfigurationProvider, IRules>> _rulesFactory = new Dictionary<string, Func<IGame, IConfigurationProvider, IRules>>
@@ -47,6 +43,7 @@ namespace EandE_ServerModel.EandE.States
         //    { "fancy", (g) => new FancyRules(g) },
         };
         private string rulesname;
+        public static ManualResetEvent StateFinished = new ManualResetEvent(false);
 
 
         public MainMenuState(
@@ -75,37 +72,22 @@ namespace EandE_ServerModel.EandE.States
             {
                 Console.BackgroundColor = ConsoleColor.Black;
                 var parser = new Parse();
-                parser.AddCommand("/startgame", OnStartGameCommand);
                 parser.AddCommand("/closegame", OnCloseGameCommand);
                 parser.AddCommand("/classic", OnClassicCommand);
-                parser.SetErrorAction(OnErrorCommand);
 
                 _mainMenuOutput = _dataProvider.GetText("mainmenuinfo");
 
-               
-                while (ruleNotSet)
+                while (Input == string.Empty)
                 {
-                    /*UpdateOutput();
-                    SaveProperties(_error,_lastInput,_mainMenuOutput);
-                    _error = string.Empty;
-
-                    _sourceWrapper.WriteOutput(0, 15, "Type an Command: ", ConsoleColor.DarkGray);
-    */                
-                    Console.SetCursorPosition(17, 15);
-                    while(Input == string.Empty)
-                    {
-
-                    }
-
-                    _lastInput = Input;
-                    rulesname = Input;
-                    parser.Execute(Input);
-                    Input = string.Empty;
-                    inMenu = false;
-                    gameNotStarted = false;
-                    _game.SwitchState(new GameStartingState(_game));
 
                 }
+
+                rulesname = Input;
+                parser.Execute(Input);
+                Input = string.Empty;
+                inMenu = false;
+                StateFinished.Set();
+                _game.SwitchState(new GameStartingState(_game));
             }
         }
 
@@ -123,28 +105,8 @@ namespace EandE_ServerModel.EandE.States
             MainMenuOuput = string.Empty;
         }
 
-        private void OnErrorCommand(string token)
-        {
-            _error = "Invalid input";
-            return;
-        }
-
-        private void OnStartGameCommand()
-        {
-            if(ruleNotSet)
-                _error = "Please choose a rule first";
-            else
-            {
-                inMenu = false;
-                gameNotStarted = false;
-                _game.SwitchState(new GameStartingState(_game));
-            }
-        }
-
         private void OnCloseGameCommand()
         {
-            ruleNotSet = false;
-            gameNotStarted = false;
             inMenu = false;
             _game.SwitchState(new GameEndingState(_game));
         }
@@ -154,32 +116,13 @@ namespace EandE_ServerModel.EandE.States
             CreateNewRulesInGame(rulesname);
         }
 
-        private void UpdateOutput()
-        {
-            _sourceWrapper.Clear();
-            _sourceWrapper.WriteOutput(0,0,_mainMenuOutput, ConsoleColor.DarkCyan);
-            _sourceWrapper.WriteOutput(0, 12, string.Empty);
-
-            if (_additionalInformation.Length != 0)
-                _sourceWrapper.WriteOutput(0, 15, _additionalInformation, ConsoleColor.DarkCyan);
-
-            if (_error.Length != 0)
-            {
-                _sourceWrapper.WriteOutput(0, 12, "Last Input: " + _lastInput, ConsoleColor.DarkRed);
-                _sourceWrapper.WriteOutput(0, 13, "Last Error: " + _error, ConsoleColor.Red);
-            }
-        }
-
+        
         private void CreateNewRulesInGame(string rulesname)
         {
             if (_rulesFactory.TryGetValue(rulesname.Substring(1, rulesname.Length - 1), out var createdRule))
             {
                 _game.SwitchRules(createdRule(_game, _configurationProvider));
-                ruleNotSet = false;
-                _additionalInformation = "Ruleset chosen.\nYou can now start the game.";
             }
-            else
-                _error = "Interal error.";
         }
 
         public void SetInput(string input)
