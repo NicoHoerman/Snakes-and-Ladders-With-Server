@@ -16,8 +16,8 @@ namespace TCP_Server
 {
     public class Server
     {
-        private const string SERVER_IP_WLAN_NICO = "172.22.21.132";
-        private const string SERVER_IP_LAN_NICO = "172.22.21.207";
+        private const string SERVER_IP_WLAN_NICO = "";
+        private const string SERVER_IP_LAN_NICO = "172.22.23.88";
         private const string SERVER_IP_LAN_LEON = "172.22.23.87";
         private const string SERVER_IP_NETWORK = "194.205.205.2";
         
@@ -40,7 +40,7 @@ namespace TCP_Server
 
             _serverInfo._communications = new List<ICommunication>();
 
-            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_LEON), 8080);
+            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_NICO), 8080);
             
         }
 

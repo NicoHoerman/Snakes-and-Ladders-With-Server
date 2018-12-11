@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using EandE_ServerModel.EandE.EandEContracts;
+using EandE_ServerModel.EandE.GameAndLogic;
+using Newtonsoft.Json;
 using Shared.Communications;
 using Shared.Contract;
 using Shared.Contracts;
@@ -20,11 +22,12 @@ namespace TCP_Server.Actions
 
         private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
         private Server _server;
+        private ServerInfo _ServerInfo;
+        private IGame _game; 
 
         public static ManualResetEvent verificationVariableSet = new ManualResetEvent(false);
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
 
-        ServerInfo _ServerInfo;
         public ClientConnectionAttempt _ConnectionStatus = ClientConnectionAttempt.NotSet;
 
         public ServerActions(ServerInfo serverInfo,Server server)
@@ -40,6 +43,7 @@ namespace TCP_Server.Actions
 
             _server = server;
             _ServerInfo = serverInfo;
+            _game = new Game();
         }
 
         public void ExecuteDataActionFor(ICommunication communication, DataPackage data)
@@ -185,7 +189,10 @@ namespace TCP_Server.Actions
 
         private void OnStartGameAction(ICommunication communication, DataPackage data)
         {
-            throw new NotImplementedException();
+            if (_server.isLobbyComplete())
+            {
+                _game.Init();
+            }
         }
 
 

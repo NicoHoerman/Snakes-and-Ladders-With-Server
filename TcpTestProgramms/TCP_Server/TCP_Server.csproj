@@ -46,6 +46,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EandE\EandE\ClassicEandE\ClassicBoard.cs" />
+    <Compile Include="EandE\EandE\ClassicEandE\ClassicEel.cs" />
+    <Compile Include="EandE\EandE\ClassicEandE\ClassicEscalator.cs" />
+    <Compile Include="EandE\EandE\ClassicEandE\ClassicPawn.cs" />
+    <Compile Include="EandE\EandE\ClassicEandE\ClassicRules.cs" />
+    <Compile Include="EandE\EandE\EandEContracts\IBoard.cs" />
+    <Compile Include="EandE\EandE\EandEContracts\IConfigurationProvider.cs" />
+    <Compile Include="EandE\EandE\EandEContracts\IEntity.cs" />
+    <Compile Include="EandE\EandE\EandEContracts\IGame.cs" />
+    <Compile Include="EandE\EandE\EandEContracts\IPawn.cs" />
+    <Compile Include="EandE\EandE\EandEContracts\IRules.cs" />
+    <Compile Include="EandE\EandE\EandEContracts\ISourceWrapper.cs" />
+    <Compile Include="EandE\EandE\EandEContracts\IState.cs" />
+    <Compile Include="EandE\EandE\GameAndLogic\Game.cs" />
+    <Compile Include="EandE\EandE\GameAndLogic\Logic.cs" />
+    <Compile Include="EandE\EandE\GameAndLogic\TurnState.cs" />
+    <Compile Include="EandE\EandE\States\GameEndingState.cs" />
+    <Compile Include="EandE\EandE\States\GameFinishedState.cs" />
+    <Compile Include="EandE\EandE\States\GameRunningState.cs" />
+    <Compile Include="EandE\EandE\States\GameStartingState.cs" />
+    <Compile Include="EandE\EandE\States\MainMenuState.cs" />
+    <Compile Include="EandE\EandE\StuffFromEandE\DataProvider.cs" />
+    <Compile Include="EandE\EandE\StuffFromEandE\Parse.cs" />
+    <Compile Include="EandE\EandE\StuffFromEandE\SourceWrapper.cs" />
+    <Compile Include="EandE\EandE\XML_Config\ConfigurationProvider.cs" />
+    <Compile Include="EandE\EandE\XML_Config\XElementExtension.cs" />
     <Compile Include="Enum\ClientConnectionAttempt.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,6 +98,11 @@
       <Project>{bb376ce1-3b8e-46af-98d7-29b8fd060503}</Project>
       <Name>Wrapper</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="EandE\EandE\XML_Config\Configurations.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
