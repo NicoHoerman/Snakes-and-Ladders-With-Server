@@ -28,6 +28,7 @@ namespace TCP_Server.Actions
 
         public static ManualResetEvent verificationVariableSet = new ManualResetEvent(false);
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
+        public static ManualResetEvent StateSwitched = new ManualResetEvent(false);
 
         public ClientConnectionAttempt _ConnectionStatus = ClientConnectionAttempt.NotSet;
 
@@ -178,37 +179,10 @@ namespace TCP_Server.Actions
 
             _game.State.SetInput("/classic");
 
-            Thread.Sleep(5000);
+            StateSwitched.WaitOne();
+            StateSwitched.Reset();
 
-                var dataPackage = new DataPackage
-                {
-
-                    Header = ProtocolActionEnum.UpdateView,
-                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                    {
-                        _gameInfoOuptput = _game.State.GameInfoOuptput,
-                        _boardOutput = _game.State.BoardOutput,
-                        _error = _game.State.Error,
-                        _lastinput = _game.State.Lastinput,
-                        _afterBoardOutput = _game.State.AfterBoardOutput,
-                        _afterTurnOutput = _game.State.AfterTurnOutput
-                    })
-                };
-                dataPackage.Size = dataPackage.ToByteArray().Length;
-
-                _game.State.ClearProperties();
-
-                communication.Send(dataPackage);
-            
-        }
-
-        private void OnRollDiceAction(ICommunication communication, DataPackage data)
-        {
-            //game steuern 
-
-            //if Game finished oder nur ein Zug
-
-            var turnPackage = new DataPackage
+            var dataPackage = new DataPackage
             {
 
                 Header = ProtocolActionEnum.UpdateView,
@@ -222,30 +196,67 @@ namespace TCP_Server.Actions
                     _afterTurnOutput = _game.State.AfterTurnOutput
                 })
             };
-            turnPackage.Size = turnPackage.ToByteArray().Length;
+            dataPackage.Size = dataPackage.ToByteArray().Length;
 
-            communication.Send(turnPackage);
+            _game.State.ClearProperties();
 
-            var gameEndedPackage = new DataPackage
+            communication.Send(dataPackage);
+            
+        }
+
+        private void OnRollDiceAction(ICommunication communication, DataPackage data)
+        {
+            _game.State.SetInput("/rolldice");
+
+            if(_game.State.ToString() == "GameRunningstate")
             {
-                Header = ProtocolActionEnum.UpdateView,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                var turnPackage = new DataPackage
                 {
-                    _finishinfo = _game.State.Finishinfo,
-                    _finishskull1 = _game.State.Finishskull1,
-                    _finishskull2 = _game.State.Finishskull2
-                })
-            };
-            gameEndedPackage.Size = gameEndedPackage.ToByteArray().Length;
 
-            communication.Send(gameEndedPackage);
+                    Header = ProtocolActionEnum.UpdateView,
+                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                    {
+                        _gameInfoOuptput = _game.State.GameInfoOuptput,
+                        _boardOutput = _game.State.BoardOutput,
+                        _error = _game.State.Error,
+                        _lastinput = _game.State.Lastinput,
+                        _afterBoardOutput = _game.State.AfterBoardOutput,
+                        _afterTurnOutput = _game.State.AfterTurnOutput
+                    })
+                };
+                    turnPackage.Size = turnPackage.ToByteArray().Length;
 
+                    communication.Send(turnPackage);
+
+            }
+            else if(_game.State.ToString() == "GameFinishedstate")
+            {
+                var gameEndedPackage = new DataPackage
+                {
+                    Header = ProtocolActionEnum.UpdateView,
+                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                    {
+                        _finishinfo = _game.State.Finishinfo,
+                        _finishskull1 = _game.State.Finishskull1,
+                        _finishskull2 = _game.State.Finishskull2
+                    })
+                };
+                gameEndedPackage.Size = gameEndedPackage.ToByteArray().Length;
+
+                communication.Send(gameEndedPackage);
+            }
+            else
+            {
+                throw new Exception();
+            }
         }
 
     private void OnGetHelpAction(ICommunication communication, DataPackage data)
         {
             
             var clientId = CreateProtocol<PROT_HELPTEXT>(data);
+
+            _game.State.SetInput("/help");
 
             if (communication.IsMaster)
             {
@@ -262,6 +273,7 @@ namespace TCP_Server.Actions
             }
             else
             {
+
                 var dataPackage = new DataPackage
                 {
                     Header = ProtocolActionEnum.HelpText,
@@ -278,6 +290,7 @@ namespace TCP_Server.Actions
 
         private void OnCloseGameAction(ICommunication communication, DataPackage data)
         {
+            _game.State.SetInput("/closegame");
             communication.Stop();
             _server.communicationsToRemove.Add(communication);
             _server.RemoveFromLobby();

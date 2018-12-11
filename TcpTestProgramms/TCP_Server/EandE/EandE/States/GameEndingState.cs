@@ -11,18 +11,18 @@ namespace EandE_ServerModel.EandE.States
             _game = game;
         }
         #region Properties
-        public string MainMenuOuput { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string Lastinput { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string Error { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string GameInfoOuptput { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string BoardOutput { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string AfterBoardOutput { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string AfterTurnOutput { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string Finishinfo { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string Finishskull1 { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string Finishskull2 { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string Input { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string HelpOutput { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public string MainMenuOuput { get; set; } = string.Empty;
+        public string Lastinput { get; set; } = string.Empty;
+        public string Error { get; set; } = string.Empty;
+        public string GameInfoOuptput { get; set; } = string.Empty;
+        public string BoardOutput  { get; set; } = string.Empty;
+        public string AfterBoardOutput { get; set; } = string.Empty;
+        public string AfterTurnOutput { get; set; } = string.Empty;
+        public string Finishinfo { get; set; } = string.Empty;
+        public string Finishskull1 { get; set; } = string.Empty;
+        public string Finishskull2 { get; set; } = string.Empty;
+        public string Input { get; set; } = string.Empty;
+        public string HelpOutput { get; set; } = string.Empty;
         #endregion
         public void ClearProperties()
         {
@@ -37,7 +37,6 @@ namespace EandE_ServerModel.EandE.States
 
         public void SetInput(string input)
         {
-            throw new System.NotImplementedException();
         }
     }
 

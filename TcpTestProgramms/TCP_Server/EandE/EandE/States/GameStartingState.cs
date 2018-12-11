@@ -6,18 +6,18 @@ namespace EandE_ServerModel.EandE.States
     {
         private readonly IGame _game;
         #region Properties
-        public string MainMenuOuput { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string Lastinput { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string Error { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string GameInfoOuptput { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string BoardOutput { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string AfterBoardOutput { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string AfterTurnOutput { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string HelpOutput { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string Finishinfo { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string Finishskull1 { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string Finishskull2 { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public string Input { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public string MainMenuOuput { get; set; } 
+        public string Lastinput { get; set; }
+        public string Error { get; set; }
+        public string GameInfoOuptput { get; set; }
+        public string BoardOutput { get; set; }
+        public string AfterBoardOutput { get; set; }
+        public string AfterTurnOutput { get; set; }
+        public string HelpOutput { get; set; }
+        public string Finishinfo { get; set; }
+        public string Finishskull1 { get; set; }
+        public string Finishskull2 { get; set; }
+        public string Input { get; set; }
         #endregion
         public GameStartingState(IGame game) 
         {
@@ -32,12 +32,10 @@ namespace EandE_ServerModel.EandE.States
 
         public void ClearProperties()
         {
-            throw new System.NotImplementedException();
         }
 
         public void SetInput(string input)
         {
-            throw new System.NotImplementedException();
         }
     }
 }

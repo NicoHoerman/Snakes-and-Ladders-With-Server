@@ -22,15 +22,15 @@ namespace EandE_ServerModel.EandE.States
         public string Finishskull1 { get; set; } = string.Empty;
         public string Finishskull2 { get; set; } = string.Empty;
        
-        public string MainMenuOuput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Lastinput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Error { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string GameInfoOuptput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string BoardOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string AfterBoardOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string AfterTurnOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string HelpOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Input { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string MainMenuOuput { get; set; } = string.Empty;
+        public string Lastinput { get; set; } = string.Empty;
+        public string Error { get; set; } = string.Empty;
+        public string GameInfoOuptput { get; set; } = string.Empty;
+        public string BoardOutput { get; set; } = string.Empty;
+        public string AfterBoardOutput { get; set; } = string.Empty;
+        public string AfterTurnOutput { get; set; } = string.Empty;
+        public string HelpOutput { get; set; } = string.Empty;
+        public string Input { get; set; } = string.Empty;
         #endregion
 
         public GameFinishedState(IGame game, ISourceWrapper sourceWrapper, DataProvider dataProvider, int winner)
@@ -59,23 +59,11 @@ namespace EandE_ServerModel.EandE.States
             while (isFinished)
             {
                 SaveProperties(_finishinfo,Finishskull1,Finishskull2);
-                _sourceWrapper.Clear();
-                _sourceWrapper.WriteOutput(35, 0, _finishinfo, ConsoleColor.Green);
-                _sourceWrapper.WriteOutput(0, 0, _finishskull1);
-                _sourceWrapper.WriteOutput(35, 5, _finishskull2);
-                _sourceWrapper.WriteOutput(73, 0, _finishskull1);
-
-                _sourceWrapper.WriteOutput(35, 3, "Press any Key to leave", ConsoleColor.DarkGreen);
-                Console.SetCursorPosition(57, 3);
-                var input = _sourceWrapper.ReadKey();
-                 if(input != null)
+                if(Input != null)
                 {
                     isFinished = false;
                     _game.SwitchState(new MainMenuState(_game));
                 }
-
-                
-
             }
         }
 
@@ -95,7 +83,7 @@ namespace EandE_ServerModel.EandE.States
 
         public void SetInput(string input)
         {
-            throw new NotImplementedException();
+            Input = input;
         }
     }
 }
