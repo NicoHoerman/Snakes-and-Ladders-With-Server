@@ -8,10 +8,10 @@ using Wrapper.Implementation;
 
 namespace Wrapper.View
 {
-    public class BoardOutputView : IUpdateOutputView
+    public class LobbyInfoDisplayView : IUpdateOutputView
     {
-        public const int DEFAULT_POSITION_X = 20;
-        public const int DEFAULT_POSITION_Y = 10;
+        public const int DEFAULT_POSITION_X = 0;
+        public const int DEFAULT_POSITION_Y = 3;
 
         private readonly IOutputWrapper _outputWrapper;
         private int _posX;
@@ -20,13 +20,13 @@ namespace Wrapper.View
         private string _content;
         public bool viewEnabled { get; set; }
 
-        public BoardOutputView(IOutputWrapper outputWrapper, int posX, int posY)
+        public LobbyInfoDisplayView(IOutputWrapper outputWrapper, int posX, int posY)
         {
             _outputWrapper = outputWrapper;
             _posX = posX;
             _posY = posY;
         }
-        public BoardOutputView()
+        public LobbyInfoDisplayView()
             : this(new OutputWrapper(), DEFAULT_POSITION_X, DEFAULT_POSITION_Y)
         { }
 
@@ -36,7 +36,7 @@ namespace Wrapper.View
         }
         public void Show()
         {
-            _outputWrapper.WriteOutput(_posX, _posY, _content, ConsoleColor.White);
+            _outputWrapper.WriteOutput(_posX, _posY, _content, ConsoleColor.DarkYellow);
         }
     }
 }

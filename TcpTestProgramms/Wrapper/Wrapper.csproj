@@ -63,6 +63,7 @@
     <Compile Include="View\HelpOutputView.cs" />
     <Compile Include="View\InfoOutputView.cs" />
     <Compile Include="View\InputView.cs" />
+    <Compile Include="View\LobbyInfoDisplayView.cs" />
     <Compile Include="View\MainMenuOutputView.cs" />
     <Compile Include="View\ServerTableView.cs" />
     <Compile Include="View\GameView.cs" />

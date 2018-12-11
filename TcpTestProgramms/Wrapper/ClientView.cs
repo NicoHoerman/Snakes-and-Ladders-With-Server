@@ -7,14 +7,13 @@
         InfoOutput,
         MasterCommands,
         HelpOutput,
-        Input,
-        Game,
-        AdditionalInformation,
+        Input,          
         Board,
         GameInfo,
         TurnInfo,
         AfterTurnOutput,
-        MenuOutput
+        MenuOutput,
+        LobbyInfoDisplay
     }
 
 

@@ -86,7 +86,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _SmallUpdate = $"Lobby {servername} Player [{currentplayer}/{maxplayer}]"
+                        _lobbyDisplay = $"Lobby {servername} Player [{currentplayer}/{maxplayer}]"
                     })
                 };
                 lobbyUpdatePackage.Size = lobbyUpdatePackage.ToByteArray().Length;
@@ -151,10 +151,9 @@ namespace TCP_Server.Actions
                 };
                 dataPackage.Size = dataPackage.ToByteArray().Length;
 
-                _game.State.ClearProperties();
-
                 communication.Send(dataPackage);
 
+                _game.State.ClearProperties();
             }
             else
             {
