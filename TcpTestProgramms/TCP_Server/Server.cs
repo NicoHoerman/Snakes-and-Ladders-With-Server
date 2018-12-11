@@ -1,4 +1,5 @@
-﻿using Shared.Communications;
+﻿using EandE_ServerModel.EandE.GameAndLogic;
+using Shared.Communications;
 using Shared.Contract;
 using System;
 using System.Collections.Generic;
@@ -31,17 +32,18 @@ namespace TCP_Server
         private ServerActions _ActionsHandler;
         private UdpBroadcast _udpServer;
         private TcpClient _client;
+        public Game _game;
 
         public Server(ServerInfo serverInfo,UdpBroadcast udpBroadcast)
         {
+            _game = new Game();
             _serverInfo = serverInfo;
             _udpServer = udpBroadcast;
-            _ActionsHandler = new ServerActions(_serverInfo,this);
+            _ActionsHandler = new ServerActions(_serverInfo,this,_game);
 
             _serverInfo._communications = new List<ICommunication>();
 
-            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_NICO), 8080);
-            
+            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_LEON), 8080);
         }
 
         public void CLientConnection(TcpListener listener)
@@ -142,6 +144,11 @@ namespace TCP_Server
 
             backgroundworker2.DoWork += (obj, ea) => CLientConnection(_listener);
             backgroundworker2.RunWorkerAsync();
+
+            var backgroundworker3 = new BackgroundWorker();
+
+            backgroundworker3.DoWork += (obj, ea) => _game.Init();
+            backgroundworker3.RunWorkerAsync();
 
             while (isRunning)
             {

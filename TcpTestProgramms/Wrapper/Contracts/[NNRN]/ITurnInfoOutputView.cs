@@ -8,6 +8,6 @@ namespace Wrapper.Contracts
 {
     public interface ITurnInfoOutputView : IView
     {
-        void SetUpdateContent(string content)
+        void SetUpdateContent(string content);
     }
 }

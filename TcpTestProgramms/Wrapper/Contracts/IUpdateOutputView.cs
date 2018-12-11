@@ -8,6 +8,6 @@ namespace Wrapper.Contracts
 {
     public interface IUpdateOutputView : IView
     {
-        void SetUpdateContent(string updateContent);
+        void SetUpdateContent(string content);
     }
 }

@@ -24,14 +24,14 @@ namespace TCP_Server.Actions
         private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
         private Server _server;
         private ServerInfo _ServerInfo;
-        private IGame _game; 
+        private Game _game; 
 
         public static ManualResetEvent verificationVariableSet = new ManualResetEvent(false);
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
 
         public ClientConnectionAttempt _ConnectionStatus = ClientConnectionAttempt.NotSet;
 
-        public ServerActions(ServerInfo serverInfo,Server server)
+        public ServerActions(ServerInfo serverInfo,Server server,Game game)
         {
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>
             {
@@ -39,14 +39,13 @@ namespace TCP_Server.Actions
                 { ProtocolActionEnum.GetHelp,   OnGetHelpAction },
                 { ProtocolActionEnum.StartGame, OnStartGameAction },
                 { ProtocolActionEnum.CloseGame, OnCloseGameAction },
-                { ProtocolActionEnum.OnConnection, OnConnectionAction },
-                { ProtocolActionEnum.OnStartMenu, OnStartMenuAction },
+                { ProtocolActionEnum.OnConnection, OnConnectionAction },          
                 { ProtocolActionEnum.Classic, OnClassicAction }
             };
 
             _server = server;
             _ServerInfo = serverInfo;
-            _game = new Game();
+            _game = game;
         }
 
        
@@ -136,14 +135,9 @@ namespace TCP_Server.Actions
 
         private void OnStartGameAction(ICommunication communication, DataPackage data)
         {
-            var backgroundworker = new BackgroundWorker();
-
-            backgroundworker.DoWork += (obj, ea) => _game.Init();
-
+            
             if (_server.isLobbyComplete())
             {
-                backgroundworker.RunWorkerAsync();
-
                 var dataPackage = new DataPackage
                 {
 
@@ -183,6 +177,8 @@ namespace TCP_Server.Actions
         {
 
             _game.State.SetInput("/classic");
+
+            Thread.Sleep(5000);
 
                 var dataPackage = new DataPackage
                 {

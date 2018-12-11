@@ -89,47 +89,43 @@ namespace TCP_Client.Actions
 
         private void OnUpdateAction(DataPackage data)
         {
-            var updatedView = MapProtocolToDto<UpdateDTO>(data);         
-            
-            if(updatedView._SmallUpdate.Length != 0)
+            var updatedView = MapProtocolToDto<UpdateDTO>(data);
+           
+            if(!(updatedView._SmallUpdate == null || updatedView._SmallUpdate.Length == 0))
             {
                 _smallUpdateOutputView.viewEnabled = true;
                 _smallUpdateOutputView.SetUpdateContent(updatedView._SmallUpdate);
             }                  
-            if(updatedView._boardOutput.Length != 0)
+            if(!(updatedView._boardOutput == null || updatedView._boardOutput.Length == 0))
             {
                 _boardOutputView.viewEnabled = true;
                 _boardOutputView.SetUpdateContent(updatedView._boardOutput);
             }      
-            if(updatedView._error.Length != 0)
+            if(!(updatedView._error == null || updatedView._error.Length == 0))
             {
                 _errorView.viewEnabled = true;
                 _errorView.SetContent(updatedView._lastinput, updatedView._error);
             }
-            if(updatedView._gameInfoOutput.Length != 0)
+            if(!(updatedView._gameInfoOutput == null || updatedView._gameInfoOutput.Length == 0))
             {
                 _gameInfoOutputView.viewEnabled = true;
                 _gameInfoOutputView.SetUpdateContent(updatedView._gameInfoOutput);
             }
-            if(updatedView._turnInfoOutput.Length != 0)
+            if(!(updatedView._turnInfoOutput == null || updatedView._turnInfoOutput.Length == 0))
             {
                 _turnInfoOutputView.viewEnabled = true;
                 _turnInfoOutputView.SetUpdateContent(updatedView._turnInfoOutput);
             }
-            if(updatedView._afterTurnOutput.Length != 0)
+            if(!(updatedView._afterTurnOutput == null || updatedView._afterTurnOutput.Length == 0))
             {
                 _afterTurnOutputView.viewEnabled = true;
                 _afterTurnOutputView.SetUpdateContent(updatedView._afterTurnOutput);
             }
-            if(updatedView._mainMenuOutput.Length != 0)
+            if(!(updatedView._mainMenuOutput == null || updatedView._mainMenuOutput.Length == 0))
             {
                 _mainMenuOutputView.viewEnabled = true;
                 _mainMenuOutputView.SetUpdateContent(updatedView._mainMenuOutput);
-            }
-            if(updatedView._finishinfo.Length != 0)
-            {
-
-            }
+            }           
             
         }
 

@@ -85,11 +85,12 @@ namespace EandE_ServerModel.EandE.States
                
                 while (ruleNotSet)
                 {
-                    UpdateOutput();
+                    /*UpdateOutput();
                     SaveProperties(_error,_lastInput,_mainMenuOutput);
                     _error = string.Empty;
 
                     _sourceWrapper.WriteOutput(0, 15, "Type an Command: ", ConsoleColor.DarkGray);
+    */                
                     Console.SetCursorPosition(17, 15);
                     while(Input == string.Empty)
                     {
@@ -100,7 +101,10 @@ namespace EandE_ServerModel.EandE.States
                     rulesname = Input;
                     parser.Execute(Input);
                     Input = string.Empty;
-             
+                    inMenu = false;
+                    gameNotStarted = false;
+                    _game.SwitchState(new GameStartingState(_game));
+
                 }
             }
         }

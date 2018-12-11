@@ -32,7 +32,7 @@ namespace TCP_Client.Actions
         private readonly IErrorView _errorView;
         private readonly IHelpOutputView _helpOutputView;
         public readonly IInputView _inputView;
-        private readonly IServerTableView _serverTableView;
+        private readonly IUpdateOutputView _serverTableView;
         private readonly IUpdateOutputView _infoOutputView;
         private Client _client;
         
@@ -48,7 +48,7 @@ namespace TCP_Client.Actions
             _errorView = views[ClientView.Error] as IErrorView; // Potential null exception error.
             _helpOutputView = views[ClientView.HelpOutput] as IHelpOutputView; //Potenzieller Null Ausnahmen Fehler
             _inputView = views[ClientView.Input] as IInputView;
-            _serverTableView = views[ClientView.ServerTable] as IServerTableView;
+            _serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
             _infoOutputView = views[ClientView.InfoOutput] as IUpdateOutputView;
             _OutputWrapper = new OutputWrapper();
 
@@ -279,13 +279,13 @@ namespace TCP_Client.Actions
             }
         }
 
-        public void OnClassicCommand(string input, ICommunication communication)
+        public void OnClassicAction(string input, ICommunication communication)
         {
             if (isConnected)
             {
                 var dataPackage = new DataPackage
                 {
-                    Header = ProtocolActionEnum.StartGame,
+                    Header = ProtocolActionEnum.Classic,
                     Payload = JsonConvert.SerializeObject(new PROT_STARTGAME
                     {
 
