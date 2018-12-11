@@ -4,6 +4,7 @@ using EandE_ServerModel.EandE.StuffFromEandE;
 using EandE_ServerModel.EandE.XML_Config;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace EandE_ServerModel.EandE.States
 {
@@ -42,6 +43,7 @@ namespace EandE_ServerModel.EandE.States
         //    { "fancy", (g) => new FancyRules(g) },
         };
         private string rulesname;
+        public static ManualResetEvent StateFinished = new ManualResetEvent(false);
 
 
         public MainMenuState(
@@ -84,6 +86,7 @@ namespace EandE_ServerModel.EandE.States
                 parser.Execute(Input);
                 Input = string.Empty;
                 inMenu = false;
+                StateFinished.Set();
                 _game.SwitchState(new GameStartingState(_game));
             }
         }

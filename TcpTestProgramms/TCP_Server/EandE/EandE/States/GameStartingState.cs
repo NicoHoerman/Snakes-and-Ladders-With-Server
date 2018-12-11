@@ -26,6 +26,8 @@ namespace EandE_ServerModel.EandE.States
 
         public void Execute()
         {
+            MainMenuState.StateFinished.WaitOne();
+            MainMenuState.StateFinished.Reset();
             _game.InitializeGame();
             _game.SwitchState(new GameRunningState(_game));
         }
