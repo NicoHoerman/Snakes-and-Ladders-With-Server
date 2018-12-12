@@ -23,7 +23,7 @@ namespace TCP_Client.Actions
         private readonly IUpdateOutputView _serverTableView;
         private readonly IUpdateOutputView _commandListOutputView;
         private readonly IUpdateOutputView _smallUpdateOutputView;
-        
+        private readonly IUpdateOutputView _infoOutputView;
         private readonly IUpdateOutputView _boardOutputView;
         private readonly IErrorView _errorView;
         private readonly IUpdateOutputView _gameInfoOutputView;
@@ -31,6 +31,9 @@ namespace TCP_Client.Actions
         private readonly IUpdateOutputView _afterTurnOutputView;
         private readonly IUpdateOutputView _mainMenuOutputView;
         private readonly IUpdateOutputView _lobbyInfoDisplayView;
+        private readonly IUpdateOutputView _finishInfoView;
+        private readonly IUpdateOutputView _finishSkull1View;
+        private readonly IUpdateOutputView _finishSkull2View;
 
         private readonly Client _client;
 
@@ -43,8 +46,7 @@ namespace TCP_Client.Actions
             _client = client;
             _views = views;
             _serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
-            _commandListOutputView = views[ClientView.CommandList] as IUpdateOutputView;
-            _smallUpdateOutputView = views[ClientView.InfoOutput] as IUpdateOutputView;          
+            _commandListOutputView = views[ClientView.CommandList] as IUpdateOutputView;                   
             _boardOutputView = views[ClientView.Board] as IUpdateOutputView;
             _errorView = views[ClientView.Error] as IErrorView;
             _gameInfoOutputView = views[ClientView.GameInfo] as IUpdateOutputView;
@@ -52,6 +54,10 @@ namespace TCP_Client.Actions
             _afterTurnOutputView = views[ClientView.AfterTurnOutput] as IUpdateOutputView;
             _mainMenuOutputView = views[ClientView.MenuOutput] as IUpdateOutputView;
             _lobbyInfoDisplayView = views[ClientView.LobbyInfoDisplay] as IUpdateOutputView;
+            _infoOutputView = views[ClientView.InfoOutput] as IUpdateOutputView;
+            _finishInfoView = views[ClientView.FinishInfo] as IUpdateOutputView;
+            _finishSkull1View = views[ClientView.FinishSkull1] as IUpdateOutputView;
+            _finishSkull2View = views[ClientView.FinishSkull2] as IUpdateOutputView;
 
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage>>
             {
@@ -134,6 +140,27 @@ namespace TCP_Client.Actions
                 _commandListOutputView.viewEnabled = true;
                 _commandListOutputView.SetUpdateContent(updatedView._commandList);
             }
+            if(!(updatedView._infoOutput == null || updatedView._infoOutput.Length == 0))
+            {
+                _infoOutputView.viewEnabled = true;
+                _infoOutputView.SetUpdateContent(updatedView._infoOutput);
+            }
+            if(!(updatedView._finishinfo == null || updatedView._finishinfo.Length == 0))
+            {
+                _finishInfoView.viewEnabled = true;
+                _finishInfoView.SetUpdateContent(updatedView._finishinfo);
+            }
+            if(!(updatedView._finishskull1 == null || updatedView._finishskull1.Length == 0))
+            {
+                _finishSkull1View.viewEnabled = true;
+                _finishSkull1View.SetUpdateContent(updatedView._finishskull1);
+            }
+            if(!(updatedView._finishskull2 == null || updatedView._finishskull2.Length == 0))
+            {
+                _finishSkull2View.viewEnabled = true;
+                _finishSkull2View.SetUpdateContent(updatedView._finishskull2);
+            }
+
         }
 
         private List<IPEndPoint> _ServerEndpoints = new List<IPEndPoint>(); 
@@ -188,8 +215,8 @@ namespace TCP_Client.Actions
 
         {
             var accept = MapProtocolToDto<AcceptDTO>(data);
-            _smallUpdateOutputView.viewEnabled = true;
-            _smallUpdateOutputView.SetUpdateContent(accept._SmallUpdate);
+            _infoOutputView.viewEnabled = true;
+            _infoOutputView.SetUpdateContent(accept._SmallUpdate);
         }
 
         private void OnDeclineAction(DataPackage data)
@@ -197,8 +224,8 @@ namespace TCP_Client.Actions
             _client._InputHandler.Declined = true;
             _client._InputHandler.isConnected = false;
             var decline = MapProtocolToDto<DeclineDTO>(data);
-            _smallUpdateOutputView.viewEnabled = true;
-            _smallUpdateOutputView.SetUpdateContent(decline._SmallUpdate);
+            _infoOutputView.viewEnabled = true;
+            _infoOutputView.SetUpdateContent(decline._SmallUpdate);
    
         }
         #endregion

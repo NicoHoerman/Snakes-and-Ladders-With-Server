@@ -59,6 +59,9 @@
     <Compile Include="View\ErrorView.cs" />
     <Compile Include="Contracts\IErrorView.cs" />
     <Compile Include="Contracts\IView.cs" />
+    <Compile Include="View\FinishInfoOutputView.cs" />
+    <Compile Include="View\FinishSkull1View.cs" />
+    <Compile Include="View\FinishSkull2View.cs" />
     <Compile Include="View\GameInfoOutputView.cs" />
     <Compile Include="View\CommandListOutputView.cs" />
     <Compile Include="View\InfoOutputView.cs" />

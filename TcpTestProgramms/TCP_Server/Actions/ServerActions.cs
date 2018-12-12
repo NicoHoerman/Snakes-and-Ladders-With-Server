@@ -90,7 +90,7 @@ namespace TCP_Server.Actions
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
                         _lobbyDisplay = $"Current Lobby: {servername} | Players: [{currentplayer}/{maxplayer}]",
-                        _commandList = "/search\n/startgame\n/closegame\n/someCommand"
+                        _commandList = "Commands:\n/search\n/startgame\n/closegame\n/someCommand"
                         
                     })
                 };
@@ -113,7 +113,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _SmallUpdate = "A player got declined"                                               
+                        _infoOutput = "A player got declined"                                               
                     })
                 };
                 updatePackage.Size = updatePackage.ToByteArray().Length;
@@ -168,7 +168,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _SmallUpdate = "Not enough Players to start the game "
+                        _infoOutput = "Not enough Players to start the game "
                     })
                 };
                 dataPackage.Size = dataPackage.ToByteArray().Length;

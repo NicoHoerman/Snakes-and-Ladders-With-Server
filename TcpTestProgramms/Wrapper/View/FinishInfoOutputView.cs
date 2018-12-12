@@ -8,10 +8,10 @@ using Wrapper.Implementation;
 
 namespace Wrapper.View
 {
-    public class AfterTurnOutputView : IUpdateOutputView
+    public class FinishInfoOutputView : IUpdateOutputView
     {
-        public const int DEFAULT_POSITION_X = 27;
-        public const int DEFAULT_POSITION_Y = 20;
+        public const int DEFAULT_POSITION_X = 30;
+        public const int DEFAULT_POSITION_Y = 0;
 
         private readonly IOutputWrapper _outputWrapper;
         private int _posX;
@@ -20,13 +20,13 @@ namespace Wrapper.View
         private string _content;
         public bool viewEnabled { get; set; }
 
-        public AfterTurnOutputView(IOutputWrapper outputWrapper, int posX, int posY)
+        public FinishInfoOutputView(IOutputWrapper outputWrapper, int posX, int posY)
         {
             _outputWrapper = outputWrapper;
             _posX = posX;
             _posY = posY;
         }
-        public AfterTurnOutputView()
+        public FinishInfoOutputView()
             : this(new OutputWrapper(), DEFAULT_POSITION_X, DEFAULT_POSITION_Y)
         { }
 

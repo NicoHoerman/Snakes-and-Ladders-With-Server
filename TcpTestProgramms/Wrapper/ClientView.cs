@@ -12,7 +12,10 @@
         TurnInfo,
         AfterTurnOutput,
         MenuOutput,
-        LobbyInfoDisplay
+        LobbyInfoDisplay,
+        FinishInfo,
+        FinishSkull1,
+        FinishSkull2
     }
 
 
