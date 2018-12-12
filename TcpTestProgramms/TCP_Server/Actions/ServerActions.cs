@@ -197,9 +197,9 @@ namespace TCP_Server.Actions
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;
 
-            _game.State.ClearProperties();
-
             communication.Send(dataPackage);
+
+            _game.State.ClearProperties();
             
         }
 
@@ -228,7 +228,7 @@ namespace TCP_Server.Actions
                     communication.Send(turnPackage);
 
             }
-            else if(_game.State.ToString() == "GameFinishedstate")
+            else if(_game.State.ToString() == "GameFinishedsState")
             {
                 var gameEndedPackage = new DataPackage
                 {
