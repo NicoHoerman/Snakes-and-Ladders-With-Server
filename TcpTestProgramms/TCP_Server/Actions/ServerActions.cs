@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Threading;
 using TCP_Server.Enum;
 using TCP_Server.PROTOCOLS;
+using Wrapper;
 
 
 namespace TCP_Server.Actions
@@ -25,6 +26,7 @@ namespace TCP_Server.Actions
         private Server _server;
         private ServerInfo _ServerInfo;
         private Game _game;
+        private ViewDictionary _viewDictionary;
 
         public static ManualResetEvent verificationVariableSet = new ManualResetEvent(false);
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
@@ -35,6 +37,7 @@ namespace TCP_Server.Actions
 
         public ServerActions(ServerInfo serverInfo, Server server, Game game)
         {
+            
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>
             {
                 { ProtocolActionEnum.RollDice,  OnRollDiceAction },
@@ -88,7 +91,9 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _lobbyDisplay = $"Lobby {servername} Player [{currentplayer}/{maxplayer}]"
+                        _lobbyDisplay = $"Lobby {servername} Player [{currentplayer}/{maxplayer}]",
+                        _commandList = "Commands:\n/search\n/startgame\n/closegame\n/someCommand"
+                        
                     })
                 };
                 lobbyUpdatePackage.Size = lobbyUpdatePackage.ToByteArray().Length;
@@ -110,7 +115,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _SmallUpdate = "A player got declined"
+                        _infoOutput = "A player got declined"
                     })
                 };
                 updatePackage.Size = updatePackage.ToByteArray().Length;
@@ -147,7 +152,7 @@ namespace TCP_Server.Actions
                         Header = ProtocolActionEnum.UpdateView,
                         Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                         {
-                            _mainMenuOutput = "Choose a rule.\n Ruleslist:\n /classic",
+                            _mainMenuOutput = "Choose a rule.\nRuleslist:\n/classic",
                             _error = _game.State.Error,
                             _lastinput = _game.State.Lastinput
                         })
@@ -162,7 +167,7 @@ namespace TCP_Server.Actions
                         Header = ProtocolActionEnum.UpdateView,
                         Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                         {
-                            _SmallUpdate = "Master is starting the Game"
+                            _infoOutput = "Master is starting the Game"
                         })
                     };
                     playerDataPackage.Size = playerDataPackage.ToByteArray().Length;
@@ -183,7 +188,7 @@ namespace TCP_Server.Actions
                         Header = ProtocolActionEnum.UpdateView,
                         Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                         {
-                            _SmallUpdate = "Not enough Players to start the game "
+                            _infoOutput = "Not enough Players to start the game "
                         })
                     };
                     dataPackage.Size = dataPackage.ToByteArray().Length;
@@ -199,7 +204,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _SmallUpdate = "Only the Master can start the Game"
+                        _infoOutput = "Only the Master can start the Game"
                     })
                 };
                 dataPackage.Size = dataPackage.ToByteArray().Length;
@@ -250,7 +255,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _SmallUpdate = "Only the Master can set the rules"
+                        _infoOutput = "Only the Master can set the rules"
                     })
                 };
                 dataPackage.Size = dataPackage.ToByteArray().Length;
@@ -271,47 +276,51 @@ namespace TCP_Server.Actions
                 TurnFinished.Reset();
 
                 var test = _game.State.ToString();
-                if (test == "EandE_ServerModel.EandE.States.GameRunningState")
+            if (test == "EandE_ServerModel.EandE.States.GameRunningState")
+            {
+                var turnPackage = new DataPackage
                 {
-                    var turnPackage = new DataPackage
+
+                    Header = ProtocolActionEnum.UpdateView,
+                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
+                        _gameInfoOuptput = _game.State.GameInfoOuptput,
+                        _boardOutput = _game.State.BoardOutput,
+                        _error = _game.State.Error,
+                        _lastinput = _game.State.Lastinput,
+                        _afterBoardOutput = _game.State.AfterBoardOutput,
+                        _afterTurnOutput = _game.State.AfterTurnOutput
+                    })
+                };
+                turnPackage.Size = turnPackage.ToByteArray().Length;
 
-                        Header = ProtocolActionEnum.UpdateView,
-                        Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                        {
-                            _gameInfoOuptput = _game.State.GameInfoOuptput,
-                            _boardOutput = _game.State.BoardOutput,
-                            _error = _game.State.Error,
-                            _lastinput = _game.State.Lastinput,
-                            _afterBoardOutput = _game.State.AfterBoardOutput,
-                            _afterTurnOutput = _game.State.AfterTurnOutput
-                        })
-                    };
-                    turnPackage.Size = turnPackage.ToByteArray().Length;
+                communication.Send(turnPackage);
 
-                    communication.Send(turnPackage);
 
-                }
-                else if (_game.State.ToString() == "GameFinishedState")
+                if (_game.State.ToString() == "GameFinishedState")
                 {
-                    var gameEndedPackage = new DataPackage
                     {
-                        Header = ProtocolActionEnum.UpdateView,
-                        Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                        var gameEndedPackage = new DataPackage
                         {
-                            _finishinfo = _game.State.Finishinfo,
-                            _finishskull1 = _game.State.Finishskull1,
-                            _finishskull2 = _game.State.Finishskull2
-                        })
-                    };
-                    gameEndedPackage.Size = gameEndedPackage.ToByteArray().Length;
+                            Header = ProtocolActionEnum.UpdateView,
+                            Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                            {
+                                _finishinfo = _game.State.Finishinfo,
+                                _finishskull1 = _game.State.Finishskull1,
+                                _finishskull2 = _game.State.Finishskull2
+                            })
+                        };
+                        gameEndedPackage.Size = gameEndedPackage.ToByteArray().Length;
 
-                    communication.Send(gameEndedPackage);
+                        communication.Send(gameEndedPackage);
+                    }
+
                 }
-                else
-                {
-                    throw new Exception();
-                }
+            }
+            else
+            {
+                throw new Exception();
+            }
             /* }
              else
              {

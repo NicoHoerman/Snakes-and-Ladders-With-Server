@@ -23,33 +23,18 @@ namespace TCP_Client
         public InputAction _InputHandler;
         private OutputWrapper _OutputWrapper;
         private ViewUpdater _ViewUpdater;
-
-        public Dictionary<ClientView, IView> _views = new Dictionary<ClientView, IView>
-        {
-            { ClientView.Error, new ErrorView() },
-            { ClientView.ServerTable, new ServerTableView() },
-            { ClientView.InfoOutput, new InfoOutputView() },
-            { ClientView.CommandList, new CommandListOutputView() },
-            { ClientView.Input, new InputView() },
-            { ClientView.MenuOutput, new MainMenuOutputView() },
-            { ClientView.TurnInfo, new TurnInfoOutputView() },
-            { ClientView.GameInfo, new GameInfoOutputView() },
-            { ClientView.AfterTurnOutput, new AfterTurnOutputView() },
-            { ClientView.Board, new BoardOutputView() },
-            { ClientView.LobbyInfoDisplay, new LobbyInfoDisplayView() },
-            { ClientView.FinishInfo, new FinishInfoOutputView() },
-            { ClientView.FinishSkull1, new FinishSkull1View() },
-            { ClientView.FinishSkull2, new FinishSkull2View() }
-        };
+        private ViewDictionary _viewDictionary;
+        
 
         //<Constructors>
         public Client(ICommunication communication)
         {
+            _viewDictionary = new ViewDictionary();
             _communication = communication;
-            _ActionHandler = new ProtocolAction(_views, this);
-            _InputHandler = new InputAction(_ActionHandler, _views,this);
+            _ActionHandler = new ProtocolAction(_viewDictionary._views, this);
+            _InputHandler = new InputAction(_ActionHandler, _viewDictionary._views,this);
             _OutputWrapper = new OutputWrapper();
-            _ViewUpdater = new ViewUpdater(_views);
+            _ViewUpdater = new ViewUpdater(_viewDictionary._views);
         }
 
         public Client()
