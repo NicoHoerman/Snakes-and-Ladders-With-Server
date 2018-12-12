@@ -10,7 +10,7 @@ namespace TCP_Server.PROTOCOLS
         public string _error;
         public string _gameInfoOuptput;
         public string _boardOutput;
-        public string _afterBoardOutput;
+        public string _turnInfoOutput;
         public string _afterTurnOutput;
         public string _finishinfo;
         public string _finishskull1;

@@ -14,10 +14,10 @@ namespace EandE_ServerModel.EandE.EandEContracts
         string Error { get; set; }
         string GameInfoOuptput { get; set; }
         string BoardOutput { get; set; }
-        string AfterBoardOutput { get; set; }
+        string TurnInfoOutput { get; set; }
         string AfterTurnOutput { get; set; }
         string HelpOutput { get; set; }
-        string Finishinfo { get; set; }
+        string FinishInfo { get; set; }
         string Finishskull1 { get; set; }
         string Finishskull2 { get; set; }
     }

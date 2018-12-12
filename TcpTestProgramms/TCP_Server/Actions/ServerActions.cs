@@ -92,9 +92,9 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _lobbyDisplay = $"Lobby {servername} Player [{currentplayer}/{maxplayer}]",
-                        _commandList = "Commands:\n/search\n/startgame\n/closegame\n/someCommand"
-                        
+                        _lobbyDisplay = $"Current Lobby: {servername}. Players [{currentplayer}/{maxplayer}]",
+                        _commandList = "Commands:\n/search(only available when not connected to a server)\n/startgame\n/closegame\n/someCommand"
+
                     })
                 };
                 lobbyUpdatePackage.Size = lobbyUpdatePackage.ToByteArray().Length;
@@ -238,8 +238,9 @@ namespace TCP_Server.Actions
                         _boardOutput = _game.State.BoardOutput,
                         _error = _game.State.Error,
                         _lastinput = _game.State.Lastinput,
-                        _afterBoardOutput = _game.State.AfterBoardOutput,
-                        _afterTurnOutput = _game.State.AfterTurnOutput
+                        _turnInfoOutput = _game.State.TurnInfoOutput,
+                        _afterTurnOutput = _game.State.AfterTurnOutput,
+                        
                     })
                 };
                 dataPackage.Size = dataPackage.ToByteArray().Length;
@@ -299,8 +300,9 @@ namespace TCP_Server.Actions
                         _boardOutput = _game.State.BoardOutput,
                         _error = _game.State.Error,
                         _lastinput = _game.State.Lastinput,
-                        _afterBoardOutput = _game.State.AfterBoardOutput,
-                        _afterTurnOutput = _game.State.AfterTurnOutput
+                        _turnInfoOutput = _game.State.TurnInfoOutput,
+                        _afterTurnOutput = _game.State.AfterTurnOutput,
+                        
                     })
                 };
                 turnPackage.Size = turnPackage.ToByteArray().Length;
@@ -316,7 +318,7 @@ namespace TCP_Server.Actions
                             Header = ProtocolActionEnum.UpdateView,
                             Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                             {
-                                _finishinfo = _game.State.Finishinfo,
+                                _finishinfo = _game.State.FinishInfo,
                                 _finishskull1 = _game.State.Finishskull1,
                                 _finishskull2 = _game.State.Finishskull2
                             })
