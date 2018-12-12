@@ -1,6 +1,7 @@
 ﻿using EandE_ServerModel.EandE.EandEContracts;
 using EandE_ServerModel.EandE.StuffFromEandE;
 using System;
+using System.Diagnostics;
 
 namespace EandE_ServerModel.EandE.States
 {
@@ -31,6 +32,7 @@ namespace EandE_ServerModel.EandE.States
         public string AfterTurnOutput { get; set; } = string.Empty;
         public string HelpOutput { get; set; } = string.Empty;
         public string Input { get; set; } = string.Empty;
+        public int CurrentPlayer { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
 
         public GameFinishedState(IGame game, ISourceWrapper sourceWrapper, DataProvider dataProvider, int winner)
@@ -56,10 +58,12 @@ namespace EandE_ServerModel.EandE.States
             _finishskull2 = string.Format(
                 _dataProvider.GetText("finishskull2"));
 
+            SaveProperties(_finishinfo,Finishskull1,Finishskull2);
             while (isFinished)
             {
-                SaveProperties(_finishinfo,Finishskull1,Finishskull2);
-                if(Input != null)
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                if (stopwatch.ElapsedMilliseconds < 5000)
                 {
                     isFinished = false;
                     _game.SwitchState(new MainMenuState(_game));

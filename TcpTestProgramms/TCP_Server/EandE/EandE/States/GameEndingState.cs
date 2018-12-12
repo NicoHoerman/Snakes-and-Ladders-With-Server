@@ -23,6 +23,7 @@ namespace EandE_ServerModel.EandE.States
         public string Finishskull2 { get; set; } = string.Empty;
         public string Input { get; set; } = string.Empty;
         public string HelpOutput { get; set; } = string.Empty;
+        public int CurrentPlayer { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         #endregion
         public void ClearProperties()
         {

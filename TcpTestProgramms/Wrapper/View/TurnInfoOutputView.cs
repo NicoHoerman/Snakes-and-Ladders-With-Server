@@ -12,7 +12,7 @@ namespace Wrapper.View
     public class TurnInfoOutputView : IUpdateOutputView
     {
         public const int DEFAULT_POSITION_X = 0;
-        public const int DEFAULT_POSITION_Y = 12;
+        public const int DEFAULT_POSITION_Y = 20;
 
         private readonly IOutputWrapper _outputWrapper;
         private int _posX;

@@ -29,6 +29,7 @@ namespace EandE_ServerModel.EandE.States
         public string AfterBoardOutput { get; set; } = string.Empty;
         public string AfterTurnOutput { get; set; } = string.Empty;
         public string HelpOutput { get; set; } = string.Empty;
+        public int CurrentPlayer { get; set; }
 
         public string MainMenuOuput { get; set; } = string.Empty;
         public string Finishinfo { get; set; } = string.Empty;
@@ -67,7 +68,7 @@ namespace EandE_ServerModel.EandE.States
             while (isRunning)
             {
                 _boardOutput = _game.Board.CreateOutput();
-                SaveProperties(_lastInput,_error,_gameInfoOutput,_boardOutput,_helpOutput,_afterTurnOutput,_afterBoardOutput);
+                SaveProperties(_lastInput,_error,_gameInfoOutput,_boardOutput,_helpOutput,_afterTurnOutput,_afterBoardOutput,_logic.CurrentPlayerID);
                 ServerActions.StateSwitched.Set();
                 if(_lastInput== "/rolldice")
                 ServerActions.TurnFinished.Set();
@@ -146,7 +147,7 @@ namespace EandE_ServerModel.EandE.States
             HelpOutput = string.Empty;
         }
 
-        private void SaveProperties(string _lastInput, string _error, string _gameInfoOutput, string _boardOutput, string _helpOutput, string _afterTurnOutput, string _afterBoardOutput)
+        private void SaveProperties(string _lastInput, string _error, string _gameInfoOutput, string _boardOutput, string _helpOutput, string _afterTurnOutput, string _afterBoardOutput,int _currentPlayer)
         {
             Lastinput = _lastInput;
             Error = _error;
@@ -155,6 +156,7 @@ namespace EandE_ServerModel.EandE.States
             AfterBoardOutput = _afterBoardOutput;
             AfterTurnOutput = _afterTurnOutput;
             HelpOutput = _helpOutput;
+            CurrentPlayer = _currentPlayer;
 
         }
 

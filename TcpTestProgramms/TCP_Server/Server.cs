@@ -174,8 +174,11 @@ namespace TCP_Server
                     {
                         if (communication.IsDataAvailable())
                         {
-                            var data = communication.Receive();
-                            Task.Run(() => _ActionsHandler.ExecuteDataActionFor(communication, data));
+                            if (!(_game.State.ToString() == "EandE_ServerModel.EandE.States.GameFinishedState"))
+                            {
+                                var data = communication.Receive();
+                                Task.Run(() => _ActionsHandler.ExecuteDataActionFor(communication, data));
+                            }
                         }
                     }
                 });
