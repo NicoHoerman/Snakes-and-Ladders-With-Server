@@ -34,6 +34,7 @@ namespace TCP_Client.Actions
         private readonly IUpdateOutputView _finishInfoView;
         private readonly IUpdateOutputView _finishSkull1View;
         private readonly IUpdateOutputView _finishSkull2View;
+        
 
         private readonly Client _client;
 
@@ -147,6 +148,8 @@ namespace TCP_Client.Actions
             }
             if(!(updatedView._finishinfo == null || updatedView._finishinfo.Length == 0))
             {
+                DisableViews(); 
+                
                 _finishInfoView.viewEnabled = true;
                 _finishInfoView.SetUpdateContent(updatedView._finishinfo);
             }
@@ -227,6 +230,18 @@ namespace TCP_Client.Actions
             _infoOutputView.viewEnabled = true;
             _infoOutputView.SetUpdateContent(decline._SmallUpdate);
    
+        }
+        public void DisableViews()
+        {
+            _commandListOutputView.viewEnabled = false;
+            _errorView.viewEnabled = false;
+            _gameInfoOutputView.viewEnabled = false;
+            _infoOutputView.viewEnabled = false;
+            _mainMenuOutputView.viewEnabled = false;
+            _boardOutputView.viewEnabled = false;
+            _afterTurnOutputView.viewEnabled = false;
+            _lobbyInfoDisplayView.viewEnabled = false;
+            _turnInfoOutputView.viewEnabled = false;
         }
         #endregion
 
