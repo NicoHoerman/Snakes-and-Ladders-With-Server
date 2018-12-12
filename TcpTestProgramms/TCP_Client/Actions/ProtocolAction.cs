@@ -21,7 +21,7 @@ namespace TCP_Client.Actions
         private Dictionary<ClientView, IView> _views;
 
         private readonly IUpdateOutputView _serverTableView;
-        private readonly IUpdateOutputView _helpOutputView;
+        private readonly IUpdateOutputView _commandListOutputView;
         private readonly IUpdateOutputView _smallUpdateOutputView;
         
         private readonly IUpdateOutputView _boardOutputView;
@@ -43,7 +43,7 @@ namespace TCP_Client.Actions
             _client = client;
             _views = views;
             _serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
-            _helpOutputView = views[ClientView.HelpOutput] as IUpdateOutputView;
+            _commandListOutputView = views[ClientView.CommandList] as IUpdateOutputView;
             _smallUpdateOutputView = views[ClientView.InfoOutput] as IUpdateOutputView;          
             _boardOutputView = views[ClientView.Board] as IUpdateOutputView;
             _errorView = views[ClientView.Error] as IErrorView;
@@ -85,7 +85,7 @@ namespace TCP_Client.Actions
             var helpText = MapProtocolToDto<HelpTextDTO>(data);
             
             
-            _helpOutputView.SetUpdateContent(helpText._HelpText);
+            //_helpOutputView.SetUpdateContent(helpText._HelpText);
             
         }
 
@@ -128,6 +128,11 @@ namespace TCP_Client.Actions
             {
                 _afterTurnOutputView.viewEnabled = true;
                 _afterTurnOutputView.SetUpdateContent(updatedView._afterTurnOutput);
+            }
+            if(!(updatedView._commandList == null || updatedView._commandList.Length == 0))
+            {
+                _commandListOutputView.viewEnabled = true;
+                _commandListOutputView.SetUpdateContent(updatedView._commandList);
             }
         }
 

@@ -10,8 +10,8 @@ namespace Wrapper.View
 {
     public class InfoOutputView : IUpdateOutputView
     {
-        public const int DEFAULT_POSITION_X = 70;
-        public const int DEFAULT_POSITION_Y = 0;
+        public const int DEFAULT_POSITION_X = 0;
+        public const int DEFAULT_POSITION_Y = 3;
 
         private readonly IOutputWrapper _outputWrapper;
         private int _posX;

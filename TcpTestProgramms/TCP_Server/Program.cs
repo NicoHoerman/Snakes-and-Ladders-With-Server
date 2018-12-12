@@ -9,7 +9,7 @@ namespace TCP_Server
     
         static void Main(string[] args)
         {
-            var serverInfo = new ServerInfo("Server_Nico",1,8080);
+            var serverInfo = new ServerInfo("Multithreading LUL",1,8080);
 
             Console.WriteLine("Listening for Clients...");
             var udpserver = new UdpBroadcast(serverInfo);

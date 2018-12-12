@@ -9,38 +9,38 @@ using System.Threading;
 
 namespace Wrapper.View
 {
-    public class HelpOutputView : IUpdateOutputView
+    public class CommandListOutputView : IUpdateOutputView
     {
-        public const int DEFAULT_POSITION_X = 70;
-        public const int DEFAULT_POSITION_Y = 20;
-        private string _help = string.Empty;
+        public const int DEFAULT_POSITION_X = 60;
+        public const int DEFAULT_POSITION_Y = 0;
+        private string _content = string.Empty;
         private readonly IOutputWrapper _outputWrapper;
         private int _posX;
         private int _posY;
 
-        public bool viewEnabled { get ; set ; }
+        public bool viewEnabled { get; set; } = false;
 
-        public HelpOutputView(IOutputWrapper outputWrapper, int posX, int posY)
+        public CommandListOutputView(IOutputWrapper outputWrapper, int posX, int posY)
         {
             _outputWrapper = outputWrapper;
             _posX = posX;
             _posY = posY;
         }
 
-        public HelpOutputView()
+        public CommandListOutputView()
             : this(new OutputWrapper(), DEFAULT_POSITION_X, DEFAULT_POSITION_Y)
         { }
 
-        public void SetUpdateContent(string help)
+        public void SetUpdateContent(string content)
         {
-            _help = help;
+            _content = content;
             //set
         }
 
         public void Show()
         {
             
-            _outputWrapper.WriteOutput(_posX, _posY, _help, ConsoleColor.Yellow);
+            _outputWrapper.WriteOutput(_posX, _posY, _content, ConsoleColor.Yellow);
         }
     }
 }

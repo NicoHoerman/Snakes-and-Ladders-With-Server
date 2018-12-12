@@ -60,7 +60,7 @@
     <Compile Include="Contracts\IErrorView.cs" />
     <Compile Include="Contracts\IView.cs" />
     <Compile Include="View\GameInfoOutputView.cs" />
-    <Compile Include="View\HelpOutputView.cs" />
+    <Compile Include="View\CommandListOutputView.cs" />
     <Compile Include="View\InfoOutputView.cs" />
     <Compile Include="View\InputView.cs" />
     <Compile Include="View\LobbyInfoDisplayView.cs" />

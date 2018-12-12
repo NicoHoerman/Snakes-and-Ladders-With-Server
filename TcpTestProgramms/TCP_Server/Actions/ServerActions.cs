@@ -66,6 +66,7 @@ namespace TCP_Server.Actions
             servername = _ServerInfo._LobbyName;
             currentplayer = _ServerInfo._CurrentPlayerCount;
             maxplayer = _ServerInfo._MaxPlayerCount;
+            
 
             verificationVariableSet.WaitOne();
             verificationVariableSet.Reset();
@@ -88,7 +89,9 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _lobbyDisplay = $"Lobby {servername} Player [{currentplayer}/{maxplayer}]"
+                        _lobbyDisplay = $"Current Lobby: {servername} | Players: [{currentplayer}/{maxplayer}]",
+                        _commandList = "/search\n/startgame\n/closegame\n/someCommand"
+                        
                     })
                 };
                 lobbyUpdatePackage.Size = lobbyUpdatePackage.ToByteArray().Length;
@@ -146,7 +149,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _mainMenuOutput = "Choose a rule.\n Ruleslist:\n /classic",
+                        _mainMenuOutput = "Choose a rule.\nRuleslist:\n/classic",
                         _error = _game.State.Error,
                         _lastinput = _game.State.Lastinput
                     })

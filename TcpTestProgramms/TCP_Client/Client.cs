@@ -29,7 +29,7 @@ namespace TCP_Client
             { ClientView.Error, new ErrorView() },
             { ClientView.ServerTable, new ServerTableView() },
             { ClientView.InfoOutput, new InfoOutputView() },
-            { ClientView.HelpOutput, new HelpOutputView() },
+            { ClientView.CommandList, new CommandListOutputView() },
             { ClientView.Input, new InputView() },
             { ClientView.MenuOutput, new MainMenuOutputView() },
             { ClientView.TurnInfo, new TurnInfoOutputView() },

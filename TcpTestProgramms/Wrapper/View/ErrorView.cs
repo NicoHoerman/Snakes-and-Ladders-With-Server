@@ -6,8 +6,8 @@ namespace Wrapper.View
 {
     public class ErrorView : IErrorView
     {
-        public const int DEFAULT_POSITION_X = 70;
-        public const int DEFAULT_POSITION_Y = 10;
+        public const int DEFAULT_POSITION_X = 0;
+        public const int DEFAULT_POSITION_Y = 27;
 
         private readonly IOutputWrapper _outputWrapper;
         private int _posX;

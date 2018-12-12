@@ -30,7 +30,7 @@ namespace TCP_Client.Actions
         private Dictionary<ClientView, IView> _views;
 
         private readonly IErrorView _errorView;
-        private readonly IUpdateOutputView _helpOutputView;
+        private readonly IUpdateOutputView _commandListOutputView;
         public readonly IInputView _inputView;
         private readonly IUpdateOutputView _serverTableView;
         private readonly IUpdateOutputView _infoOutputView;
@@ -46,7 +46,7 @@ namespace TCP_Client.Actions
             _ActionHandler = protocolAction;
             _views = views;
             _errorView = views[ClientView.Error] as IErrorView; // Potential null exception error.
-            _helpOutputView = views[ClientView.HelpOutput] as IUpdateOutputView; //Potenzieller Null Ausnahmen Fehler
+            _commandListOutputView = views[ClientView.CommandList] as IUpdateOutputView; //Potenzieller Null Ausnahmen Fehler
             _inputView = views[ClientView.Input] as IInputView;
             _serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
             _infoOutputView = views[ClientView.InfoOutput] as IUpdateOutputView;
@@ -105,13 +105,13 @@ namespace TCP_Client.Actions
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
-            if (_helpOutputView.viewEnabled)
+            if (_commandListOutputView.viewEnabled)
             {
-                _helpOutputView.viewEnabled = false;
+                _commandListOutputView.viewEnabled = false;
             }
-            else if(!_helpOutputView.viewEnabled)
+            else if(!_commandListOutputView.viewEnabled)
             {
-                _helpOutputView.viewEnabled = true;
+                _commandListOutputView.viewEnabled = true;
             }
                             
 
