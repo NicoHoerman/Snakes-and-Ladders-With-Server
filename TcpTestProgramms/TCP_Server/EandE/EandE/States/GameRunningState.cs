@@ -69,13 +69,16 @@ namespace EandE_ServerModel.EandE.States
                 _boardOutput = _game.Board.CreateOutput();
                 SaveProperties(_lastInput,_error,_gameInfoOutput,_boardOutput,_helpOutput,_afterTurnOutput,_afterBoardOutput);
                 ServerActions.StateSwitched.Set();
-                while (Input.Length != 0) 
+                if(_lastInput== "/rolldice")
+                ServerActions.TurnFinished.Set();
+                while (Input.Length == 0) 
                 {
                 }
                 parser.Execute(Input);
 
                 
                 _lastInput = Input;
+                Input = string.Empty;
             }
         }
 
