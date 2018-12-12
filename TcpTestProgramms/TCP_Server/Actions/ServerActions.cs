@@ -227,6 +227,7 @@ namespace TCP_Server.Actions
                 StateSwitched.WaitOne();
                 StateSwitched.Reset();
 
+
                 var dataPackage = new DataPackage
                 {
 
