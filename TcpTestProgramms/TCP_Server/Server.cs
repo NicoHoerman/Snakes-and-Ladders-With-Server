@@ -43,7 +43,7 @@ namespace TCP_Server
 
             _serverInfo._communications = new List<ICommunication>();
 
-            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_LEON), 8080);
+            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_NICO), 8080);
         }
 
         public void CLientConnection(TcpListener listener)
@@ -152,7 +152,8 @@ namespace TCP_Server
 
             while (isRunning)
             {
-
+                var input = Console.ReadLine();
+                ShutdownServer(input);
             }
 
         }
@@ -205,6 +206,16 @@ namespace TCP_Server
         public void RemoveFromList()
         {
             communicationsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
+        }
+
+        private void ShutdownServer(string input)
+        {
+            if (input == "x")
+            {
+                _game.State.SetInput("/closegame");
+                isRunning = false; 
+            }
+
         }
 
     }

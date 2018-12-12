@@ -21,12 +21,13 @@ namespace TCP_Server.Actions
         private string servername = string.Empty;
         private int currentplayer;
         private int maxplayer;
+        private bool gameStarted = false;
+        private bool ruleSet = false;
 
         private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
         private Server _server;
         private ServerInfo _ServerInfo;
         private Game _game;
-        private ViewDictionary _viewDictionary;
 
         public static ManualResetEvent verificationVariableSet = new ManualResetEvent(false);
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
@@ -179,6 +180,7 @@ namespace TCP_Server.Actions
                     }
 
                     _game.State.ClearProperties();
+                    gameStarted = true;
                 }
                 else
                 {
@@ -214,6 +216,10 @@ namespace TCP_Server.Actions
         }
         private void OnClassicAction(ICommunication communication, DataPackage data)
         {
+            if (!gameStarted)
+            {
+                return;
+            }
             if (communication.IsMaster)
             {
                 _game.State.SetInput("/classic");
@@ -245,7 +251,7 @@ namespace TCP_Server.Actions
                         _ServerInfo._communications[i].Send(dataPackage);
                 }
 
-
+                ruleSet = true;
             }
             else
             {
@@ -266,6 +272,10 @@ namespace TCP_Server.Actions
 
         private void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
+            if (!ruleSet)
+            {
+                return;
+            }
             int currentCommunication = _ServerInfo._communications.FindIndex(x => x == communication)+1;
 
            // if (_game.State.CurrentPlayer ==  currentCommunication)
@@ -379,7 +389,6 @@ namespace TCP_Server.Actions
 
         private void OnCloseGameAction(ICommunication communication, DataPackage data)
         {
-            _game.State.SetInput("/closegame");
             communication.Stop();
             _server.communicationsToRemove.Add(communication);
             _server.RemoveFromLobby();

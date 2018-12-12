@@ -35,7 +35,7 @@ namespace EandE_ServerModel.EandE.States
         public string Finishinfo { get; set; } = string.Empty;
         public string Finishskull1 { get; set; } = string.Empty;
         public string Finishskull2 { get; set; } = string.Empty;
-        public int CurrentPlayer { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int CurrentPlayer { get; set; }
         #endregion
 
         private Dictionary<string, Func<IGame,IConfigurationProvider, IRules>> _rulesFactory = new Dictionary<string, Func<IGame, IConfigurationProvider, IRules>>
@@ -80,15 +80,12 @@ namespace EandE_ServerModel.EandE.States
 
                 while (Input == string.Empty)
                 {
-
                 }
 
                 rulesname = Input;
                 parser.Execute(Input);
                 Input = string.Empty;
-                inMenu = false;
-                StateFinished.Set();
-                _game.SwitchState(new GameStartingState(_game));
+                
             }
         }
 
@@ -115,6 +112,9 @@ namespace EandE_ServerModel.EandE.States
         private void OnClassicCommand()
         {
             CreateNewRulesInGame(rulesname);
+            inMenu = false;
+            StateFinished.Set();
+            _game.SwitchState(new GameStartingState(_game));
         }
 
         

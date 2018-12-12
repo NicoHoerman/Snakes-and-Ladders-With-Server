@@ -66,7 +66,8 @@ namespace EandE_ServerModel.EandE.States
                 if (stopwatch.ElapsedMilliseconds < 5000)
                 {
                     isFinished = false;
-                    _game.SwitchState(new MainMenuState(_game));
+                    _game.SwitchState(new GameEndingState(_game));
+                    _game.Init();
                 }
             }
         }
