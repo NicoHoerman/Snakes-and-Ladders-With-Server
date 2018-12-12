@@ -34,6 +34,7 @@ namespace TCP_Client.Actions
         public readonly IInputView _inputView;
         private readonly IUpdateOutputView _serverTableView;
         private readonly IUpdateOutputView _infoOutputView;
+        private readonly IUpdateOutputView _mainMenuOutputView;
         private Client _client;
         
         private OutputWrapper _OutputWrapper;  
@@ -50,6 +51,8 @@ namespace TCP_Client.Actions
             _inputView = views[ClientView.Input] as IInputView;
             _serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
             _infoOutputView = views[ClientView.InfoOutput] as IUpdateOutputView;
+            _mainMenuOutputView = views[ClientView.MenuOutput] as IUpdateOutputView;
+
             _OutputWrapper = new OutputWrapper();
 
             _inputActions = new Dictionary<string, Action<string,ICommunication>>
@@ -283,6 +286,8 @@ namespace TCP_Client.Actions
         {
             if (isConnected)
             {
+                _mainMenuOutputView.viewEnabled = false;
+
                 var dataPackage = new DataPackage
                 {
                     Header = ProtocolActionEnum.Classic,

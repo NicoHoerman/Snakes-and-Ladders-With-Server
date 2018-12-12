@@ -22,7 +22,6 @@ namespace TCP_Client.Actions
 
         private readonly IUpdateOutputView _serverTableView;
         private readonly IUpdateOutputView _commandListOutputView;
-        private readonly IUpdateOutputView _smallUpdateOutputView;
         private readonly IUpdateOutputView _infoOutputView;
         private readonly IUpdateOutputView _boardOutputView;
         private readonly IErrorView _errorView;
