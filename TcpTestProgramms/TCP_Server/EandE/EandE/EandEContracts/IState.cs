@@ -7,6 +7,7 @@ namespace EandE_ServerModel.EandE.EandEContracts
         void ClearProperties();
         void SetInput(string input);
 
+        int CurrentPlayer { get; set; }
         string Input { get; set; }
         string MainMenuOuput { get; set; }
         string Lastinput { get; set; }

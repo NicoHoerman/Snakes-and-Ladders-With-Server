@@ -24,7 +24,7 @@ namespace TCP_Server.Actions
         private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
         private Server _server;
         private ServerInfo _ServerInfo;
-        private Game _game; 
+        private Game _game;
 
         public static ManualResetEvent verificationVariableSet = new ManualResetEvent(false);
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
@@ -33,7 +33,7 @@ namespace TCP_Server.Actions
 
         public ClientConnectionAttempt _ConnectionStatus = ClientConnectionAttempt.NotSet;
 
-        public ServerActions(ServerInfo serverInfo,Server server,Game game)
+        public ServerActions(ServerInfo serverInfo, Server server, Game game)
         {
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>
             {
@@ -41,7 +41,7 @@ namespace TCP_Server.Actions
                 { ProtocolActionEnum.GetHelp,   OnGetHelpAction },
                 { ProtocolActionEnum.StartGame, OnStartGameAction },
                 { ProtocolActionEnum.CloseGame, OnCloseGameAction },
-                { ProtocolActionEnum.OnConnection, OnConnectionAction },          
+                { ProtocolActionEnum.OnConnection, OnConnectionAction },
                 { ProtocolActionEnum.Classic, OnClassicAction }
             };
 
@@ -50,7 +50,7 @@ namespace TCP_Server.Actions
             _game = game;
         }
 
-       
+
 
         public void ExecuteDataActionFor(ICommunication communication, DataPackage data)
         {
@@ -110,15 +110,15 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _SmallUpdate = "A player got declined"                                               
+                        _SmallUpdate = "A player got declined"
                     })
                 };
                 updatePackage.Size = updatePackage.ToByteArray().Length;
                 //a send that sends to everyone except the current comunication
-                for(int i=0;i<= _ServerInfo._communications.Count-1; i++)
+                for (int i = 0; i <= _ServerInfo._communications.Count - 1; i++)
                 {
-                    if(!(_ServerInfo._communications[i] == communication))
-                    _ServerInfo._communications[i].Send(updatePackage);
+                    if (!(_ServerInfo._communications[i] == communication))
+                        _ServerInfo._communications[i].Send(updatePackage);
                 }
                 //communication.Stop();
                 //_server.communicationsToRemove.Add(communication);
@@ -128,7 +128,7 @@ namespace TCP_Server.Actions
                 throw new InvalidOperationException();
 
             _ConnectionStatus = ClientConnectionAttempt.NotSet;
-            
+
             dataPackage.Size = dataPackage.ToByteArray().Length;
             Thread.Sleep(10);
             communication.Send(dataPackage);
@@ -137,25 +137,42 @@ namespace TCP_Server.Actions
 
         private void OnStartGameAction(ICommunication communication, DataPackage data)
         {
-            
-            if (_server.isLobbyComplete())
+            if (communication.IsMaster)
             {
-                var dataPackage = new DataPackage
+                if (_server.isLobbyComplete())
                 {
-
-                    Header = ProtocolActionEnum.UpdateView,
-                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                    var dataPackage = new DataPackage
                     {
-                        _mainMenuOutput = "Choose a rule.\n Ruleslist:\n /classic",
-                        _error = _game.State.Error,
-                        _lastinput = _game.State.Lastinput
-                    })
-                };
-                dataPackage.Size = dataPackage.ToByteArray().Length;
 
-                communication.Send(dataPackage);
+                        Header = ProtocolActionEnum.UpdateView,
+                        Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                        {
+                            _mainMenuOutput = "Choose a rule.\n Ruleslist:\n /classic",
+                            _error = _game.State.Error,
+                            _lastinput = _game.State.Lastinput
+                        })
+                    };
+                    dataPackage.Size = dataPackage.ToByteArray().Length;
 
-                _game.State.ClearProperties();
+                    communication.Send(dataPackage);
+
+                    _game.State.ClearProperties();
+                }
+                else
+                {
+                    var dataPackage = new DataPackage
+                    {
+
+                        Header = ProtocolActionEnum.UpdateView,
+                        Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                        {
+                            _SmallUpdate = "Not enough Players to start the game "
+                        })
+                    };
+                    dataPackage.Size = dataPackage.ToByteArray().Length;
+
+                    communication.Send(dataPackage);
+                }
             }
             else
             {
@@ -165,7 +182,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _SmallUpdate = "Not enough Players to start the game "
+                        _SmallUpdate = "Only the Master can start the Game"
                     })
                 };
                 dataPackage.Size = dataPackage.ToByteArray().Length;
@@ -173,47 +190,16 @@ namespace TCP_Server.Actions
                 communication.Send(dataPackage);
             }
         }
-
         private void OnClassicAction(ICommunication communication, DataPackage data)
         {
-
-            _game.State.SetInput("/classic");
-
-            StateSwitched.WaitOne();
-            StateSwitched.Reset();
-
-            var dataPackage = new DataPackage
+            if (communication.IsMaster)
             {
+                _game.State.SetInput("/classic");
 
-                Header = ProtocolActionEnum.UpdateView,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                {
-                    _gameInfoOuptput = _game.State.GameInfoOuptput,
-                    _boardOutput = _game.State.BoardOutput,
-                    _error = _game.State.Error,
-                    _lastinput = _game.State.Lastinput,
-                    _afterBoardOutput = _game.State.AfterBoardOutput,
-                    _afterTurnOutput = _game.State.AfterTurnOutput
-                })
-            };
-            dataPackage.Size = dataPackage.ToByteArray().Length;
+                StateSwitched.WaitOne();
+                StateSwitched.Reset();
 
-            _game.State.ClearProperties();
-
-            communication.Send(dataPackage);
-            
-        }
-
-        private void OnRollDiceAction(ICommunication communication, DataPackage data)
-        {
-            _game.State.SetInput("/rolldice");
-            TurnFinished.WaitOne();
-            TurnFinished.Reset();
-
-            var test = _game.State.ToString();
-            if (test == "EandE_ServerModel.EandE.States.GameRunningState")
-            {
-                var turnPackage = new DataPackage
+                var dataPackage = new DataPackage
                 {
 
                     Header = ProtocolActionEnum.UpdateView,
@@ -227,52 +213,121 @@ namespace TCP_Server.Actions
                         _afterTurnOutput = _game.State.AfterTurnOutput
                     })
                 };
+                dataPackage.Size = dataPackage.ToByteArray().Length;
+
+                _game.State.ClearProperties();
+
+                communication.Send(dataPackage);
+
+            }
+            else
+            {
+                var dataPackage = new DataPackage
+                {
+
+                    Header = ProtocolActionEnum.UpdateView,
+                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                    {
+                        _SmallUpdate = "Only the Master can start the Game"
+                    })
+                };
+                dataPackage.Size = dataPackage.ToByteArray().Length;
+
+                communication.Send(dataPackage);
+            }
+        }
+
+        private void OnRollDiceAction(ICommunication communication, DataPackage data)
+        {
+            int currentCommunication = _ServerInfo._communications.FindIndex(x => x == communication)+1;
+
+            if (_game.State.CurrentPlayer ==  currentCommunication)
+            {
+
+                _game.State.SetInput("/rolldice");
+                TurnFinished.WaitOne();
+                TurnFinished.Reset();
+
+                var test = _game.State.ToString();
+                if (test == "EandE_ServerModel.EandE.States.GameRunningState")
+                {
+                    var turnPackage = new DataPackage
+                    {
+
+                        Header = ProtocolActionEnum.UpdateView,
+                        Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                        {
+                            _gameInfoOuptput = _game.State.GameInfoOuptput,
+                            _boardOutput = _game.State.BoardOutput,
+                            _error = _game.State.Error,
+                            _lastinput = _game.State.Lastinput,
+                            _afterBoardOutput = _game.State.AfterBoardOutput,
+                            _afterTurnOutput = _game.State.AfterTurnOutput
+                        })
+                    };
                     turnPackage.Size = turnPackage.ToByteArray().Length;
 
                     communication.Send(turnPackage);
 
-            }
-            else if(_game.State.ToString() == "GameFinishedState")
-            {
-                var gameEndedPackage = new DataPackage
+                }
+                else if (_game.State.ToString() == "GameFinishedState")
                 {
-                    Header = ProtocolActionEnum.UpdateView,
-                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                    var gameEndedPackage = new DataPackage
                     {
-                        _finishinfo = _game.State.Finishinfo,
-                        _finishskull1 = _game.State.Finishskull1,
-                        _finishskull2 = _game.State.Finishskull2
-                    })
-                };
-                gameEndedPackage.Size = gameEndedPackage.ToByteArray().Length;
+                        Header = ProtocolActionEnum.UpdateView,
+                        Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                        {
+                            _finishinfo = _game.State.Finishinfo,
+                            _finishskull1 = _game.State.Finishskull1,
+                            _finishskull2 = _game.State.Finishskull2
+                        })
+                    };
+                    gameEndedPackage.Size = gameEndedPackage.ToByteArray().Length;
 
-                communication.Send(gameEndedPackage);
+                    communication.Send(gameEndedPackage);
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             else
             {
-                throw new Exception();
+                var dataPackage = new DataPackage
+                {
+
+                    Header = ProtocolActionEnum.UpdateView,
+                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                    {
+                        _SmallUpdate = "Not your Turn"
+                    })
+                };
+                dataPackage.Size = dataPackage.ToByteArray().Length;
+
+                communication.Send(dataPackage);
             }
+
         }
 
-    private void OnGetHelpAction(ICommunication communication, DataPackage data)
+        private void OnGetHelpAction(ICommunication communication, DataPackage data)
         {
-            
+
             var clientId = CreateProtocol<PROT_HELPTEXT>(data);
 
             _game.State.SetInput("/help");
 
             if (communication.IsMaster)
             {
-            var dataPackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.HelpText,
-                Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
+                var dataPackage = new DataPackage
                 {
-                    _HelpText = _game.State.HelpOutput
-                })
-            };
-            dataPackage.Size = dataPackage.ToByteArray().Length;
-            communication.Send(dataPackage);
+                    Header = ProtocolActionEnum.HelpText,
+                    Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
+                    {
+                        _HelpText = _game.State.HelpOutput
+                    })
+                };
+                dataPackage.Size = dataPackage.ToByteArray().Length;
+                communication.Send(dataPackage);
             }
             else
             {

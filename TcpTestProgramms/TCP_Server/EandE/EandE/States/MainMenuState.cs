@@ -35,6 +35,7 @@ namespace EandE_ServerModel.EandE.States
         public string Finishinfo { get; set; } = string.Empty;
         public string Finishskull1 { get; set; } = string.Empty;
         public string Finishskull2 { get; set; } = string.Empty;
+        public int CurrentPlayer { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
 
         private Dictionary<string, Func<IGame,IConfigurationProvider, IRules>> _rulesFactory = new Dictionary<string, Func<IGame, IConfigurationProvider, IRules>>

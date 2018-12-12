@@ -31,6 +31,7 @@ namespace EandE_ServerModel.EandE.States
         public string AfterTurnOutput { get; set; } = string.Empty;
         public string HelpOutput { get; set; } = string.Empty;
         public string Input { get; set; } = string.Empty;
+        public int CurrentPlayer { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
 
         public GameFinishedState(IGame game, ISourceWrapper sourceWrapper, DataProvider dataProvider, int winner)
