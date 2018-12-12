@@ -29,6 +29,7 @@ namespace TCP_Server.Actions
         public static ManualResetEvent verificationVariableSet = new ManualResetEvent(false);
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
         public static ManualResetEvent StateSwitched = new ManualResetEvent(false);
+        public static ManualResetEvent TurnFinished = new ManualResetEvent(false);
 
         public ClientConnectionAttempt _ConnectionStatus = ClientConnectionAttempt.NotSet;
 
@@ -206,6 +207,9 @@ namespace TCP_Server.Actions
         private void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
             _game.State.SetInput("/rolldice");
+            TurnFinished.WaitOne();
+            TurnFinished.Reset();
+
             var test = _game.State.ToString();
             if (test == "EandE_ServerModel.EandE.States.GameRunningState")
             {
