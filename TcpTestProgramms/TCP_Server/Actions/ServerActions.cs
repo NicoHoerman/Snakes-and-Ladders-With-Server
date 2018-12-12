@@ -263,8 +263,8 @@ namespace TCP_Server.Actions
         {
             int currentCommunication = _ServerInfo._communications.FindIndex(x => x == communication)+1;
 
-            if (_game.State.CurrentPlayer ==  currentCommunication)
-            {
+           // if (_game.State.CurrentPlayer ==  currentCommunication)
+            //{
 
                 _game.State.SetInput("/rolldice");
                 TurnFinished.WaitOne();
@@ -312,22 +312,22 @@ namespace TCP_Server.Actions
                 {
                     throw new Exception();
                 }
-            }
-            else
-            {
-                var dataPackage = new DataPackage
-                {
+            /* }
+             else
+             {
+                 var dataPackage = new DataPackage
+                 {
 
-                    Header = ProtocolActionEnum.UpdateView,
-                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                    {
-                        _SmallUpdate = "Not your Turn"
-                    })
-                };
-                dataPackage.Size = dataPackage.ToByteArray().Length;
+                     Header = ProtocolActionEnum.UpdateView,
+                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                     {
+                         _SmallUpdate = "Not your Turn"
+                     })
+                 };
+                 dataPackage.Size = dataPackage.ToByteArray().Length;
 
-                communication.Send(dataPackage);
-            }
+                 communication.Send(dataPackage);
+             }*/
 
         }
 
