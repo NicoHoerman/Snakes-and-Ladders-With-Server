@@ -201,7 +201,7 @@ namespace TCP_Client.Actions
 
             for (int index = 0; index < _serverDictionary.Count; index++)
                 outputFormat.Append(string.Format("{3,2}  [{0,1}/{1,1}]   {2,20}\n", _CurrentPlayerCount[index],
-                    _MaxPlayerCount[index], _Servernames[index],(index+1)));
+                    _MaxPlayerCount[index], _Servernames[index].PadRight(20),(index+1)));
 
             _serverTable = outputFormat.ToString();
             _serverTableView.SetUpdateContent(_serverTable);

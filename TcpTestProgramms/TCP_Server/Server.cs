@@ -152,7 +152,8 @@ namespace TCP_Server
 
             while (isRunning)
             {
-
+                var input = Console.ReadLine();
+                ShutdownServer(input);
             }
 
         }
@@ -205,6 +206,16 @@ namespace TCP_Server
         public void RemoveFromList()
         {
             communicationsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
+        }
+
+        private void ShutdownServer(string input)
+        {
+            if (input == "x")
+            {
+                _game.State.SetInput("/closegame");
+                isRunning = false; 
+            }
+
         }
 
     }
