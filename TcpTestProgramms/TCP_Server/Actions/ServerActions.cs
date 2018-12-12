@@ -141,7 +141,7 @@ namespace TCP_Server.Actions
             {
                 if (_server.isLobbyComplete())
                 {
-                    var dataPackage = new DataPackage
+                    var masterDataPackage = new DataPackage
                     {
 
                         Header = ProtocolActionEnum.UpdateView,
@@ -152,9 +152,26 @@ namespace TCP_Server.Actions
                             _lastinput = _game.State.Lastinput
                         })
                     };
-                    dataPackage.Size = dataPackage.ToByteArray().Length;
+                    masterDataPackage.Size = masterDataPackage.ToByteArray().Length;
 
-                    communication.Send(dataPackage);
+                    communication.Send(masterDataPackage);
+
+                    var playerDataPackage = new DataPackage
+                    {
+
+                        Header = ProtocolActionEnum.UpdateView,
+                        Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                        {
+                            _SmallUpdate = "Master is starting the Game"
+                        })
+                    };
+                    playerDataPackage.Size = playerDataPackage.ToByteArray().Length;
+
+                    for (int i = 0; i <= _ServerInfo._communications.Count - 1; i++)
+                    {
+                        if (!(_ServerInfo._communications[i] == communication))
+                            _ServerInfo._communications[i].Send(playerDataPackage);
+                    }
 
                     _game.State.ClearProperties();
                 }
@@ -217,7 +234,12 @@ namespace TCP_Server.Actions
 
                 _game.State.ClearProperties();
 
-                communication.Send(dataPackage);
+
+                for (int i = 0; i <= _ServerInfo._communications.Count - 1; i++)
+                {
+                        _ServerInfo._communications[i].Send(dataPackage);
+                }
+
 
             }
             else
@@ -228,7 +250,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _SmallUpdate = "Only the Master can start the Game"
+                        _SmallUpdate = "Only the Master can set the rules"
                     })
                 };
                 dataPackage.Size = dataPackage.ToByteArray().Length;
