@@ -225,6 +225,7 @@ namespace TCP_Client.Actions
         {
             _client._InputHandler.Declined = true;
             _client._InputHandler.isConnected = false;
+
             var decline = MapProtocolToDto<DeclineDTO>(data);
             _infoOutputView.viewEnabled = true;
             _infoOutputView.SetUpdateContent(decline._SmallUpdate);
