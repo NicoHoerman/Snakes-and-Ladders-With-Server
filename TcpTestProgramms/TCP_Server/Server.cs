@@ -41,11 +41,11 @@ namespace TCP_Server
             _game = new Game();
             _serverInfo = serverInfo;
             _udpServer = udpBroadcast;
-            _ActionsHandler = new ServerActions(_serverInfo,this,_game);
+            _ActionsHandler = new ServerActions(_serverInfo,this,_game,communicationsToRemove);
 
             _serverInfo._communications = new List<ICommunication>();
 
-            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_NICO), 8080);
+            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_LEON), 8080);
         }
 
         public void CLientConnection(TcpListener listener)
@@ -155,7 +155,7 @@ namespace TCP_Server
             var backgroundworkerDataExe = new BackgroundWorker();
 
             backgroundworkerDataExe.DoWork += (obj, ea) => ExecuteData();
-            backgroundworkerDataExe.RunWorkerAsync();
+            //backgroundworkerDataExe.RunWorkerAsync();
 
             while (isRunning)
             {
@@ -187,7 +187,7 @@ namespace TCP_Server
                                 var data = communication.Receive();
                                 communicationsQueue.Add(communication);
                                 dataQueue.Add(data);
-                                //Task.Run(() => _ActionsHandler.ExecuteDataActionFor(communication, data));
+                                Task.Run(() => _ActionsHandler.ExecuteDataActionFor(communication, data));
                             }
                         }
                     }
@@ -234,7 +234,8 @@ namespace TCP_Server
                 //var dataAvailable = dataQueue.Any() && communicationsQueue.Any();
                 if (!(dataQueue.Count == 0 & communicationsQueue.Count == 0))
                 {
-                    _ActionsHandler.ExecuteDataActionFor(communicationsQueue.First(), dataQueue.First());
+
+                    _ActionsHandler.ExecuteDataActionFor(communicationsQueue[0], dataQueue.First());
                     communicationsQueue.RemoveAt(0);
                     dataQueue.RemoveAt(0);
                 }

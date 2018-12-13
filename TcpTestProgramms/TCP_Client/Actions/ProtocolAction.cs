@@ -19,7 +19,7 @@ namespace TCP_Client.Actions
         public Dictionary<ProtocolActionEnum, Action<DataPackage>> _protocolActions;
         public Dictionary<int, BroadcastDTO> _serverDictionary = new Dictionary<int, BroadcastDTO>();
         private Dictionary<ClientView, IView> _views;
-
+        #region ViewInitialization
         private readonly IUpdateOutputView _serverTableView;
         private readonly IUpdateOutputView _commandListOutputView;
         private readonly IUpdateOutputView _infoOutputView;
@@ -34,7 +34,7 @@ namespace TCP_Client.Actions
         private readonly IUpdateOutputView _finishSkull1View;
         private readonly IUpdateOutputView _finishSkull2View;
         public readonly IUpdateOutputView _enterToRefreshView;
-        
+        #endregion
 
         private readonly Client _client;
 
@@ -46,6 +46,7 @@ namespace TCP_Client.Actions
         {
             _client = client;
             _views = views;
+            #region ViewConstructing
             _serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
             _commandListOutputView = views[ClientView.CommandList] as IUpdateOutputView;                   
             _boardOutputView = views[ClientView.Board] as IUpdateOutputView;
@@ -60,7 +61,7 @@ namespace TCP_Client.Actions
             _finishSkull1View = views[ClientView.FinishSkull1] as IUpdateOutputView;
             _finishSkull2View = views[ClientView.FinishSkull2] as IUpdateOutputView;
             _enterToRefreshView = views[ClientView.EnterToRefresh] as IUpdateOutputView;
-
+            #endregion
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage>>
             {
                 { ProtocolActionEnum.HelpText, OnHelpTextAction},

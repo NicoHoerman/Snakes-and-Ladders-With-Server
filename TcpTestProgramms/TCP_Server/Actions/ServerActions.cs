@@ -24,6 +24,7 @@ namespace TCP_Server.Actions
         private bool gameStarted = false;
         private bool ruleSet = false;
 
+        private List<ICommunication> _communicationsToRemove;
         private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
         private Server _server;
         private ServerInfo _ServerInfo;
@@ -36,7 +37,7 @@ namespace TCP_Server.Actions
 
         public ClientConnectionAttempt _ConnectionStatus = ClientConnectionAttempt.NotSet;
 
-        public ServerActions(ServerInfo serverInfo, Server server, Game game)
+        public ServerActions(ServerInfo serverInfo, Server server, Game game, List<ICommunication> communicationsToRemove)
         {
             
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>
@@ -49,6 +50,7 @@ namespace TCP_Server.Actions
                 { ProtocolActionEnum.Classic, OnClassicAction }
             };
 
+            _communicationsToRemove = communicationsToRemove;
             _server = server;
             _ServerInfo = serverInfo;
             _game = game;
@@ -93,8 +95,9 @@ namespace TCP_Server.Actions
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
                         _lobbyDisplay = $"Current Lobby: {servername}. Players [{currentplayer}/{maxplayer}]",
-                        _commandList = "Commands:\n/search (only available when not connected to a server)\n/startgame\n/closegame\n/rolldice\n/someCommand"
-
+                        _commandList = "Commands:\n/search (only available when not connected to a server)\n/startgame\n/closegame\n/rolldice\n/someCommand",
+                        _infoOutput = $"Player {currentplayer} joined the lobby."
+                       
                     })
                 };
                 lobbyUpdatePackage.Size = lobbyUpdatePackage.ToByteArray().Length;
@@ -143,6 +146,23 @@ namespace TCP_Server.Actions
 
         private void OnStartGameAction(ICommunication communication, DataPackage data)
         {
+            if (_communicationsToRemove.Count != 0)
+                _communicationsToRemove.ForEach(com =>
+                {
+                    var dataPackage = new DataPackage
+                    {
+
+                        Header = ProtocolActionEnum.UpdateView,
+                        Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                        {
+                            _infoOutput = $"Player {currentplayer} left the game."
+                        })
+                    };
+                    dataPackage.Size = dataPackage.ToByteArray().Length;
+
+                    communication.Send(dataPackage);
+                });
+
             if (communication.IsMaster)
             {
                 if (_server.isLobbyComplete())
@@ -216,6 +236,23 @@ namespace TCP_Server.Actions
         }
         private void OnClassicAction(ICommunication communication, DataPackage data)
         {
+            if (_communicationsToRemove.Count != 0)
+                _communicationsToRemove.ForEach(com =>
+                {
+                    var dataPackage = new DataPackage
+                    {
+
+                        Header = ProtocolActionEnum.UpdateView,
+                        Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                        {
+                            _infoOutput = $"Player {currentplayer} left the game."
+                        })
+                    };
+                    dataPackage.Size = dataPackage.ToByteArray().Length;
+
+                    communication.Send(dataPackage);
+                });
+
             if (!gameStarted)
             {
                 return;
@@ -274,10 +311,26 @@ namespace TCP_Server.Actions
 
         private void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
+            if(_communicationsToRemove.Count != 0)
+                _communicationsToRemove.ForEach(com =>
+                {
+                    var dataPackage = new DataPackage
+                    {
+
+                        Header = ProtocolActionEnum.UpdateView,
+                        Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                        {
+                            _infoOutput = $"Player {currentplayer} left the game."
+                        })
+                    };
+                    dataPackage.Size = dataPackage.ToByteArray().Length;
+
+                    communication.Send(dataPackage);
+                });
+
             if (!ruleSet)
-            {
                 return;
-            }
+                           
             int currentCommunication = _ServerInfo._communications.FindIndex(x => x == communication)+1;
 
             if (_game.State.CurrentPlayer ==  currentCommunication)
@@ -334,7 +387,7 @@ namespace TCP_Server.Actions
             {
                 throw new Exception();
             }
-             }
+            }
              else
              {
                  var dataPackage = new DataPackage
@@ -392,6 +445,17 @@ namespace TCP_Server.Actions
 
         private void OnCloseGameAction(ICommunication communication, DataPackage data)
         {
+            var dataPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.UpdateView,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                {
+                    _infoOutput = $"Player {currentplayer} left the lobby."
+                })
+            };
+            dataPackage.Size = dataPackage.ToByteArray().Length;
+            communication.Send(dataPackage);
+            /////////////////////////////////
             communication.Stop();
             _server.communicationsToRemove.Add(communication);
             _server.RemoveFromLobby();
