@@ -8,7 +8,7 @@ namespace TCP_Server.PROTOCOLS
         public string _additionalInformation;
         public string _lastinput;
         public string _error;
-        public string _gameInfoOuptput;
+        public string _gameInfoOutput;
         public string _boardOutput;
         public string _turnInfoOutput;
         public string _afterTurnOutput;

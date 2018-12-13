@@ -93,7 +93,7 @@ namespace TCP_Server.Actions
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
                         _lobbyDisplay = $"Current Lobby: {servername}. Players [{currentplayer}/{maxplayer}]",
-                        _commandList = "Commands:\n/search(only available when not connected to a server)\n/startgame\n/closegame\n/rolldice\n/someCommand"
+                        _commandList = "Commands:\n/search (only available when not connected to a server)\n/startgame\n/closegame\n/rolldice\n/someCommand"
 
                     })
                 };
@@ -234,7 +234,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _gameInfoOuptput = _game.State.GameInfoOuptput,
+                        _gameInfoOutput = _game.State.GameInfoOuptput,
                         _boardOutput = _game.State.BoardOutput,
                         _error = _game.State.Error,
                         _lastinput = _game.State.Lastinput,
@@ -296,7 +296,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
-                        _gameInfoOuptput = _game.State.GameInfoOuptput,
+                        _gameInfoOutput = _game.State.GameInfoOuptput,
                         _boardOutput = _game.State.BoardOutput,
                         _error = _game.State.Error,
                         _lastinput = _game.State.Lastinput,

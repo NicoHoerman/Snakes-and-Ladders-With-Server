@@ -169,6 +169,11 @@ namespace TCP_Client.Actions
                 _enterToRefreshView.viewEnabled = true;
                 _enterToRefreshView.SetUpdateContent(updatedView._enterToRefresh);
             }
+            if(!(updatedView._gameInfoOutput == null || updatedView._gameInfoOutput.Length == 0))
+            {
+                _gameInfoOutputView.viewEnabled = true;
+                _gameInfoOutputView.SetUpdateContent(updatedView._gameInfoOutput);
+            }
 
         }
 
@@ -240,6 +245,7 @@ namespace TCP_Client.Actions
         }
         public void DisableViews()
         {
+            
             _commandListOutputView.viewEnabled = false;
             _errorView.viewEnabled = false;
             _gameInfoOutputView.viewEnabled = false;
