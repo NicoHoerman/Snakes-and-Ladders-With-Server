@@ -83,6 +83,11 @@ namespace EandE_ServerModel.EandE.States
 
                 _lastInput = Input;
                 Input = string.Empty;
+                if (!isRunning)
+                {
+                    _boardOutput = _game.Board.CreateOutput();
+                    SaveProperties(_lastInput, _error, _gameInfoOutput, _boardOutput, _helpOutput, _afterTurnOutput, _afterBoardOutput, _logic.CurrentPlayerID);
+                }
             }
         }
 

@@ -8,10 +8,10 @@ using Wrapper.Implementation;
 
 namespace Wrapper.View
 {
-    public class GameInfoOutputView : IUpdateOutputView
+    public class EnterToRefreshView : IUpdateOutputView
     {
         public const int DEFAULT_POSITION_X = 0;
-        public const int DEFAULT_POSITION_Y = 11;
+        public const int DEFAULT_POSITION_Y = 2;
 
         private readonly IOutputWrapper _outputWrapper;
         private int _posX;
@@ -20,13 +20,13 @@ namespace Wrapper.View
         private string _content;
         public bool viewEnabled { get; set; }
 
-        public GameInfoOutputView(IOutputWrapper outputWrapper, int posX, int posY)
+        public EnterToRefreshView(IOutputWrapper outputWrapper, int posX, int posY)
         {
             _outputWrapper = outputWrapper;
             _posX = posX;
             _posY = posY;
         }
-        public GameInfoOutputView()
+        public EnterToRefreshView()
             : this(new OutputWrapper(), DEFAULT_POSITION_X, DEFAULT_POSITION_Y)
         { }
 
@@ -36,7 +36,7 @@ namespace Wrapper.View
         }
         public void Show()
         {
-            _outputWrapper.WriteOutput(_posX, _posY, _content, ConsoleColor.Green);
+            _outputWrapper.WriteOutput(_posX, _posY, _content, ConsoleColor.DarkCyan);
         }
     }
 }

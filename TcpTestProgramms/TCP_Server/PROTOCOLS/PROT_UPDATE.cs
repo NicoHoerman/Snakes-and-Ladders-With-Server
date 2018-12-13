@@ -18,5 +18,6 @@ namespace TCP_Server.PROTOCOLS
         public string _lobbyDisplay;
         public string _commandList;
         public string _infoOutput;
+        public string _enterToRefresh;
     }
 }

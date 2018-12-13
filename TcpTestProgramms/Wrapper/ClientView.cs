@@ -15,7 +15,8 @@
         LobbyInfoDisplay,
         FinishInfo,
         FinishSkull1,
-        FinishSkull2
+        FinishSkull2,
+        EnterToRefresh
     }
 
 

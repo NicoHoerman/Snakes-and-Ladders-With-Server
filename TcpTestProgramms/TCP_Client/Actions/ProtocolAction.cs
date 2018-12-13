@@ -33,6 +33,7 @@ namespace TCP_Client.Actions
         private readonly IUpdateOutputView _finishInfoView;
         private readonly IUpdateOutputView _finishSkull1View;
         private readonly IUpdateOutputView _finishSkull2View;
+        public readonly IUpdateOutputView _enterToRefreshView;
         
 
         private readonly Client _client;
@@ -58,6 +59,7 @@ namespace TCP_Client.Actions
             _finishInfoView = views[ClientView.FinishInfo] as IUpdateOutputView;
             _finishSkull1View = views[ClientView.FinishSkull1] as IUpdateOutputView;
             _finishSkull2View = views[ClientView.FinishSkull2] as IUpdateOutputView;
+            _enterToRefreshView = views[ClientView.EnterToRefresh] as IUpdateOutputView;
 
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage>>
             {
@@ -162,6 +164,11 @@ namespace TCP_Client.Actions
                 _finishSkull2View.viewEnabled = true;
                 _finishSkull2View.SetUpdateContent(updatedView._finishskull2);
             }
+            if(!(updatedView._enterToRefresh == null || updatedView._enterToRefresh.Length == 0))
+            {
+                _enterToRefreshView.viewEnabled = true;
+                _enterToRefreshView.SetUpdateContent(updatedView._enterToRefresh);
+            }
 
         }
 
@@ -242,6 +249,7 @@ namespace TCP_Client.Actions
             _afterTurnOutputView.viewEnabled = false;
             _lobbyInfoDisplayView.viewEnabled = false;
             _turnInfoOutputView.viewEnabled = false;
+            _enterToRefreshView.viewEnabled = false;
         }
         #endregion
 

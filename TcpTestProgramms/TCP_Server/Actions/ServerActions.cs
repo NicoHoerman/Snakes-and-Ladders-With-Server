@@ -93,7 +93,7 @@ namespace TCP_Server.Actions
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
                         _lobbyDisplay = $"Current Lobby: {servername}. Players [{currentplayer}/{maxplayer}]",
-                        _commandList = "Commands:\n/search(only available when not connected to a server)\n/startgame\n/closegame\n/someCommand"
+                        _commandList = "Commands:\n/search(only available when not connected to a server)\n/startgame\n/closegame\n/rolldice\n/someCommand"
 
                     })
                 };

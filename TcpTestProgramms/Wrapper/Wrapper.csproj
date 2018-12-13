@@ -57,6 +57,7 @@
     <Compile Include="ViewDictionary.cs" />
     <Compile Include="View\AfterTurnOutputView.cs" />
     <Compile Include="View\BoardOutputView.cs" />
+    <Compile Include="View\EnterToRefreshView.cs" />
     <Compile Include="View\ErrorView.cs" />
     <Compile Include="Contracts\IErrorView.cs" />
     <Compile Include="Contracts\IView.cs" />

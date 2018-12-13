@@ -11,7 +11,7 @@ namespace Wrapper.View
     public class AfterTurnOutputView : IUpdateOutputView
     {
         public const int DEFAULT_POSITION_X = 27;
-        public const int DEFAULT_POSITION_Y = 20;
+        public const int DEFAULT_POSITION_Y = 23;
 
         private readonly IOutputWrapper _outputWrapper;
         private int _posX;

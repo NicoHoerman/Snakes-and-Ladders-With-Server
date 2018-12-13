@@ -11,7 +11,7 @@ namespace Wrapper.View
     public class LobbyInfoDisplayView : IUpdateOutputView
     {
         public const int DEFAULT_POSITION_X = 0;
-        public const int DEFAULT_POSITION_Y = 5;
+        public const int DEFAULT_POSITION_Y = 7;
 
         private readonly IOutputWrapper _outputWrapper;
         private int _posX;

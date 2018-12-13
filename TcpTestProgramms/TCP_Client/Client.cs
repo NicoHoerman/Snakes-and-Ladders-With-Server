@@ -35,6 +35,9 @@ namespace TCP_Client
             _InputHandler = new InputAction(_ActionHandler, _viewDictionary._views,this);
             _OutputWrapper = new OutputWrapper();
             _ViewUpdater = new ViewUpdater(_viewDictionary._views);
+            _ActionHandler._enterToRefreshView.viewEnabled = true;
+            _ActionHandler._enterToRefreshView.SetUpdateContent("Press enter to refresh\nafter you typed a command.");
+
         }
 
         public Client()
