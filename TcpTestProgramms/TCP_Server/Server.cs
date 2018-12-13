@@ -202,8 +202,6 @@ namespace TCP_Server
                 Thread.Sleep(1);
             }
         }
-
-
         
         public void RemoveFromLobby()
         {

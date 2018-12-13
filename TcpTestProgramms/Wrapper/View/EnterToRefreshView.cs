@@ -16,12 +16,12 @@ namespace Wrapper.View
         private readonly IOutputWrapper _outputWrapper;
         private int _posX;
         private int _posY;
-
+        
         private string _content;
         public bool viewEnabled { get; set; }
 
         public EnterToRefreshView(IOutputWrapper outputWrapper, int posX, int posY)
-        {
+        {            
             _outputWrapper = outputWrapper;
             _posX = posX;
             _posY = posY;
@@ -31,7 +31,7 @@ namespace Wrapper.View
         { }
 
         public void SetUpdateContent(string content)
-        {
+        {            
             _content = content;
         }
         public void Show()

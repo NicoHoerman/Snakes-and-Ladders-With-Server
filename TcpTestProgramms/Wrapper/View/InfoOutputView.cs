@@ -16,12 +16,14 @@ namespace Wrapper.View
         private readonly IOutputWrapper _outputWrapper;
         private int _posX;
         private int _posY;
-        private string _info;
+        private string _content;
+        private List<string> infoList;
 
         public bool viewEnabled { get; set; }
 
         public InfoOutputView(IOutputWrapper outputWrapper, int posX, int posY)
         {
+            infoList = new List<string>();
             _outputWrapper = outputWrapper;
             _posX = posX;
             _posY = posY;
@@ -34,14 +36,32 @@ namespace Wrapper.View
 
         public void SetUpdateContent(string content)
         {
+            int x = 0;
 
-            _info = content;
+            if(content != string.Empty)
+                do
+                {
+                    infoList.Add(content);
+
+                    if(infoList[x] != string.Empty)
+                    {
+                        _content = infoList[x];
+                        x++;                   
+                    }
+                
+                }
+                while (infoList.Count <= 4);
+
+            infoList.RemoveAt(0);
+
+            //(_info = content;
             //set
         }
 
         public void Show()
         {
-            _outputWrapper.WriteOutput(_posX, _posY, _info, ConsoleColor.Magenta);
+            _outputWrapper.WriteOutput(_posX, _posY, _content, ConsoleColor.Magenta);
+            _posY++;
         }
     }
 }
