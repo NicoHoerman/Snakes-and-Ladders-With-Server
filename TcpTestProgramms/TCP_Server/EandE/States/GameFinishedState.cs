@@ -63,7 +63,7 @@ namespace EandE_ServerModel.EandE.States
             {
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
-                if (stopwatch.ElapsedMilliseconds < 5000)
+                if (stopwatch.ElapsedMilliseconds < 10000)
                 {
                     isFinished = false;
                     _game.SwitchState(new GameEndingState(_game));

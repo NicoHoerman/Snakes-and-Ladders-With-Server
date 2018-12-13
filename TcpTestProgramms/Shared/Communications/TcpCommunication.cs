@@ -1,4 +1,4 @@
-﻿using Shared.Contract;
+﻿ using Shared.Contract;
 using Shared.Enums;
 using System;
 using System.Collections.Generic;

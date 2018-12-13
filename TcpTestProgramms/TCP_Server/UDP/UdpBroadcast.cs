@@ -87,7 +87,7 @@ namespace TCP_Server.UDP
                 Header = ProtocolActionEnum.Broadcast,
                 Payload = JsonConvert.SerializeObject(new PROT_BROADCAST
                 {
-                    _Server_ip = SERVER_IP_LAN_LEON,
+                    _Server_ip = SERVER_IP_LAN_NICO,
                     _Server_name = serverInfo._LobbyName,
                     _CurrentPlayerCount = serverInfo._CurrentPlayerCount,
                     _MaxPlayerCount = serverInfo._MaxPlayerCount,
