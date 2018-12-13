@@ -23,7 +23,6 @@ namespace EandE_ServerModel.EandE.StuffFromEandE
                 "gameinfo",
                 "Game started\n" +
                 "Rules: Classic\n" +
-                "/help for Commands\n" +
                 "\n" +
                 "\n" +
                 "Symbols:\n" +

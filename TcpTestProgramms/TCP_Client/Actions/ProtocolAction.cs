@@ -169,11 +169,7 @@ namespace TCP_Client.Actions
                 _enterToRefreshView.viewEnabled = true;
                 _enterToRefreshView.SetUpdateContent(updatedView._enterToRefresh);
             }
-            if(!(updatedView._gameInfoOutput == null || updatedView._gameInfoOutput.Length == 0))
-            {
-                _gameInfoOutputView.viewEnabled = true;
-                _gameInfoOutputView.SetUpdateContent(updatedView._gameInfoOutput);
-            }
+            
 
         }
 
