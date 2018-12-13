@@ -2,6 +2,7 @@
 using EandE_ServerModel.EandE.StuffFromEandE;
 using System;
 using System.Diagnostics;
+using TCP_Server.Actions;
 
 namespace EandE_ServerModel.EandE.States
 {
@@ -58,12 +59,14 @@ namespace EandE_ServerModel.EandE.States
             _finishskull2 = string.Format(
                 _dataProvider.GetText("finishskull2"));
 
-            SaveProperties(_finishinfo,Finishskull1,Finishskull2);
+            SaveProperties(_finishinfo,_finishskull1,_finishskull2);
+
+            ServerActions.EndscreenSet.Set();
             while (isFinished)
             {
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
-                if (stopwatch.ElapsedMilliseconds < 10000)
+                if (stopwatch.ElapsedMilliseconds > 100000)
                 {
                     isFinished = false;
                     _game.SwitchState(new GameEndingState(_game));

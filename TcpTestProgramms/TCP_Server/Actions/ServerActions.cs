@@ -1,5 +1,6 @@
 ﻿using EandE_ServerModel.EandE.EandEContracts;
 using EandE_ServerModel.EandE.GameAndLogic;
+using EandE_ServerModel.EandE.States;
 using Newtonsoft.Json;
 using Shared.Communications;
 using Shared.Contract;
@@ -33,6 +34,7 @@ namespace TCP_Server.Actions
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
         public static ManualResetEvent StateSwitched = new ManualResetEvent(false);
         public static ManualResetEvent TurnFinished = new ManualResetEvent(false);
+        public static ManualResetEvent EndscreenSet = new ManualResetEvent(false);
 
         public ClientConnectionAttempt _ConnectionStatus = ClientConnectionAttempt.NotSet;
 
@@ -143,6 +145,8 @@ namespace TCP_Server.Actions
 
         private void OnStartGameAction(ICommunication communication, DataPackage data)
         {
+            if (ruleSet)
+                return;
             if (communication.IsMaster)
             {
                 if (_server.isLobbyComplete())
@@ -280,9 +284,8 @@ namespace TCP_Server.Actions
             }
             int currentCommunication = _ServerInfo._communications.FindIndex(x => x == communication)+1;
 
-            if (_game.State.CurrentPlayer ==  currentCommunication)
-            {
-
+            //if (_game.State.CurrentPlayer ==  currentCommunication)
+            //{
                 _game.State.SetInput("/rolldice");
                 TurnFinished.WaitOne();
                 TurnFinished.Reset();
@@ -309,9 +312,13 @@ namespace TCP_Server.Actions
 
                 communication.Send(turnPackage);
 
+                if(!GameRunningState.isRunning)
+                GameRunningState.GameFinished.Set();
 
-                if (_game.State.ToString() == "GameFinishedState")
+                if (_game.State.ToString() == "EandE_ServerModel.EandE.States.GameFinishedState")
                 {
+                    EndscreenSet.WaitOne();
+                    EndscreenSet.Reset();
                     {
                         var gameEndedPackage = new DataPackage
                         {
@@ -332,9 +339,9 @@ namespace TCP_Server.Actions
             }
             else
             {
-                throw new Exception();
+                return;
             }
-             }
+             /*}
              else
              {
                  var dataPackage = new DataPackage
@@ -349,7 +356,7 @@ namespace TCP_Server.Actions
                  dataPackage.Size = dataPackage.ToByteArray().Length;
 
                  communication.Send(dataPackage);
-             }
+             }*/
 
         }
 

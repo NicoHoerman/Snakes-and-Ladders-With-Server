@@ -2,6 +2,7 @@
 using EandE_ServerModel.EandE.GameAndLogic;
 using EandE_ServerModel.EandE.StuffFromEandE;
 using System;
+using System.Threading;
 using TCP_Server.Actions;
 
 namespace EandE_ServerModel.EandE.States
@@ -12,7 +13,7 @@ namespace EandE_ServerModel.EandE.States
         private readonly ISourceWrapper _sourceWrapper;
         private readonly DataProvider _dataProvider;
         private readonly Logic _logic;
-        public bool isRunning;
+        static public bool isRunning;
         private string _error = string.Empty;
         private string _gameInfoOutput = string.Empty;
         private string _boardOutput = string.Empty;
@@ -37,6 +38,8 @@ namespace EandE_ServerModel.EandE.States
         public string Finishskull2 { get; set; } = string.Empty;
         public string Input { get; set; } = string.Empty;
         #endregion
+
+        public static ManualResetEvent GameFinished = new ManualResetEvent(false);
 
         public GameRunningState(IGame game, ISourceWrapper sourceWrapper, DataProvider dataProvider, Logic logic)
         {
@@ -63,31 +66,31 @@ namespace EandE_ServerModel.EandE.States
             _afterBoardOutput = string.Format(
                 _dataProvider.GetText("afterboardinfo"), 
                 _dataProvider.GetNumberLiteral(_logic.CurrentPlayerID));
-            
+            _boardOutput = _game.Board.CreateOutput();
 
             while (isRunning)
             {
-                _boardOutput = _game.Board.CreateOutput();
-                SaveProperties(_lastInput,_error,_gameInfoOutput,_boardOutput,_helpOutput,_afterTurnOutput,_afterBoardOutput,_logic.CurrentPlayerID);
                 ServerActions.StateSwitched.Set();
-                if(_lastInput== "/rolldice")
-                ServerActions.TurnFinished.Set();
+                SaveProperties(_lastInput,_error,_gameInfoOutput,_boardOutput,_helpOutput,_afterTurnOutput,_afterBoardOutput,_logic.CurrentPlayerID);
+                
                 while (Input.Length == 0) 
                 {
                 }
                 parser.Execute(Input);
 
+                _boardOutput = _game.Board.CreateOutput();
+                SaveProperties(_lastInput, _error, _gameInfoOutput, _boardOutput, _helpOutput, _afterTurnOutput, _afterBoardOutput, _logic.CurrentPlayerID);
+
                 _afterBoardOutput = string.Format(
                 _dataProvider.GetText("afterboardinfo"),
                 _dataProvider.GetNumberLiteral(_logic.CurrentPlayerID));
 
+
                 _lastInput = Input;
                 Input = string.Empty;
-                if (!isRunning)
-                {
-                    _boardOutput = _game.Board.CreateOutput();
-                    SaveProperties(_lastInput, _error, _gameInfoOutput, _boardOutput, _helpOutput, _afterTurnOutput, _afterBoardOutput, _logic.CurrentPlayerID);
-                }
+                if (_lastInput == "/rolldice")
+                    ServerActions.TurnFinished.Set();
+
             }
         }
 
@@ -100,6 +103,7 @@ namespace EandE_ServerModel.EandE.States
         private void OnCloseGameCommand()
         {
             isRunning = false;
+                
             _game.SwitchState(new GameEndingState(_game));
         }
 
@@ -120,6 +124,15 @@ namespace EandE_ServerModel.EandE.States
             if (turnstate == TurnState.GameFinished)
             {
                 isRunning = false;
+                _boardOutput = _game.Board.CreateOutput();
+
+                _afterBoardOutput = "End";
+                SaveProperties(_lastInput, _error, _gameInfoOutput, _boardOutput, _helpOutput, _afterTurnOutput, _afterBoardOutput, _logic.CurrentPlayerID);
+
+                ServerActions.TurnFinished.Set();
+
+                GameFinished.WaitOne();
+                GameFinished.Reset();
                 _game.SwitchState(new GameFinishedState(_game,lastPlayer));
             }
             else if (turnstate == TurnState.PlayerExceedsBoard)

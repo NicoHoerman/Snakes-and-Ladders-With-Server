@@ -155,7 +155,7 @@ namespace TCP_Server
             var backgroundworkerDataExe = new BackgroundWorker();
 
             backgroundworkerDataExe.DoWork += (obj, ea) => ExecuteData();
-            backgroundworkerDataExe.RunWorkerAsync();
+           // backgroundworkerDataExe.RunWorkerAsync();
 
             while (isRunning)
             {
@@ -182,13 +182,13 @@ namespace TCP_Server
                     {
                         if (communication.IsDataAvailable())
                         {
-                            if (!(_game.State.ToString() == "EandE_ServerModel.EandE.States.GameFinishedState"))
-                            {
+                            //if (!(_game.State.ToString() == "EandE_ServerModel.EandE.States.GameFinishedState"))
+                            //{
                                 var data = communication.Receive();
                                 communicationsQueue.Add(communication);
                                 dataQueue.Add(data);
-                                //Task.Run(() => _ActionsHandler.ExecuteDataActionFor(communication, data));
-                            }
+                                Task.Run(() => _ActionsHandler.ExecuteDataActionFor(communication, data));
+                            //}
                         }
                     }
                 });
