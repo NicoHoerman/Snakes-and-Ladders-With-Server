@@ -24,6 +24,8 @@ namespace TCP_Server
         
         private bool isRunning;
         public List<ICommunication> communicationsToRemove = new List<ICommunication>();
+        public List<DataPackage> dataQueue = new List<DataPackage>();
+        public List<ICommunication> communicationsQueue = new List<ICommunication>();
        
         public static ManualResetEvent tcpClientConnected = new ManualResetEvent(false);
         
@@ -135,20 +137,25 @@ namespace TCP_Server
         {
             isRunning = true;
 
-            var backgroundworker = new BackgroundWorker();
+            var backgroundworkerUpdate = new BackgroundWorker();
 
-            backgroundworker.DoWork += (obj, ea) => CheckForUpdates();
-            backgroundworker.RunWorkerAsync();
+            backgroundworkerUpdate.DoWork += (obj, ea) => CheckForUpdates();
+            backgroundworkerUpdate.RunWorkerAsync();
 
-            var backgroundworker2 = new BackgroundWorker();
+            var backgroundworkerConnection = new BackgroundWorker();
 
-            backgroundworker2.DoWork += (obj, ea) => CLientConnection(_listener);
-            backgroundworker2.RunWorkerAsync();
+            backgroundworkerConnection.DoWork += (obj, ea) => CLientConnection(_listener);
+            backgroundworkerConnection.RunWorkerAsync();
 
-            var backgroundworker3 = new BackgroundWorker();
+            var backgroundworkerGame = new BackgroundWorker();
 
-            backgroundworker3.DoWork += (obj, ea) => _game.Init();
-            backgroundworker3.RunWorkerAsync();
+            backgroundworkerGame.DoWork += (obj, ea) => _game.Init();
+            backgroundworkerGame.RunWorkerAsync();
+
+            var backgroundworkerDataExe = new BackgroundWorker();
+
+            backgroundworkerDataExe.DoWork += (obj, ea) => ExecuteData();
+            backgroundworkerDataExe.RunWorkerAsync();
 
             while (isRunning)
             {
@@ -178,7 +185,9 @@ namespace TCP_Server
                             if (!(_game.State.ToString() == "EandE_ServerModel.EandE.States.GameFinishedState"))
                             {
                                 var data = communication.Receive();
-                                Task.Run(() => _ActionsHandler.ExecuteDataActionFor(communication, data));
+                                communicationsQueue.Add(communication);
+                                dataQueue.Add(data);
+                                //Task.Run(() => _ActionsHandler.ExecuteDataActionFor(communication, data));
                             }
                         }
                     }
@@ -216,6 +225,20 @@ namespace TCP_Server
                 isRunning = false; 
             }
 
+        }
+
+        private void ExecuteData()
+        {
+            while (isRunning)
+            {
+                //var dataAvailable = dataQueue.Any() && communicationsQueue.Any();
+                if (!(dataQueue.Count == 0 & communicationsQueue.Count == 0))
+                {
+                    _ActionsHandler.ExecuteDataActionFor(communicationsQueue.First(), dataQueue.First());
+                    communicationsQueue.RemoveAt(0);
+                    dataQueue.RemoveAt(0);
+                }
+            }
         }
 
     }
