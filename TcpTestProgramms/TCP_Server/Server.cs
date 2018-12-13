@@ -43,7 +43,7 @@ namespace TCP_Server
 
             _serverInfo._communications = new List<ICommunication>();
 
-            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_LEON), 8080);
+            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_NICO), 8080);
         }
 
         public void CLientConnection(TcpListener listener)
