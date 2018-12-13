@@ -313,7 +313,8 @@ namespace TCP_Server.Actions
                 communication.Send(turnPackage);
 
                 if(!GameRunningState.isRunning)
-                GameRunningState.GameFinished.Set();
+                    GameRunningState.GameFinished.Set();
+
 
                 if (_game.State.ToString() == "EandE_ServerModel.EandE.States.GameFinishedState")
                 {
