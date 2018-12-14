@@ -159,8 +159,8 @@ namespace TCP_Server
 
             while (isRunning)
             {
-                var input = Console.ReadLine();
-                ShutdownServer(input);
+                //var input = Console.ReadLine();
+                //ShutdownServer(input);
             }
 
         }

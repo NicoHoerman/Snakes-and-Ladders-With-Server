@@ -315,7 +315,7 @@ namespace TCP_Server.Actions
                 if(!GameRunningState.isRunning)
                     GameRunningState.GameFinished.Set();
 
-
+                Thread.Sleep(100);
                 if (_game.State.ToString() == "EandE_ServerModel.EandE.States.GameFinishedState")
                 {
                     EndscreenSet.WaitOne();
