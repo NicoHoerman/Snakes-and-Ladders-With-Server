@@ -3,6 +3,13 @@ using EandE_ServerModel.EandE.StuffFromEandE;
 using System;
 using System.Diagnostics;
 using TCP_Server.Actions;
+using Shared.Contracts;
+using Shared.Contract;
+using TCP_Server.PROTOCOLS;
+using TCP_Server.Enum;
+using Shared.Communications;
+using Shared.Enums;
+using Newtonsoft.Json;
 
 namespace EandE_ServerModel.EandE.States
 {
@@ -70,6 +77,7 @@ namespace EandE_ServerModel.EandE.States
                 {
                     isFinished = false;
                     _game.SwitchState(new GameEndingState(_game));
+
                     _game.Init();
                 }
             }
@@ -92,6 +100,22 @@ namespace EandE_ServerModel.EandE.States
         public void SetInput(string input)
         {
             Input = input;
+        }
+
+        public void reactivateViews(ICommunication communication)
+        {
+            var reactivationPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.UpdateView,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                {
+                    _boardOutput = "x"  
+                })
+            };
+
+            reactivationPackage.Size = reactivationPackage.ToByteArray().Length;
+
+            communication.Send(reactivationPackage);
         }
     }
 }

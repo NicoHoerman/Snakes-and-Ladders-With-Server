@@ -29,6 +29,7 @@ namespace TCP_Server.Actions
         private Server _server;
         private ServerInfo _ServerInfo;
         private Game _game;
+        private GameFinishedState finishedState;
 
         public static ManualResetEvent verificationVariableSet = new ManualResetEvent(false);
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
@@ -40,7 +41,8 @@ namespace TCP_Server.Actions
 
         public ServerActions(ServerInfo serverInfo, Server server, Game game)
         {
-            
+            finishedState = new GameFinishedState(game, currentplayer);
+
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>
             {
                 { ProtocolActionEnum.RollDice,  OnRollDiceAction },
@@ -334,6 +336,10 @@ namespace TCP_Server.Actions
                         gameEndedPackage.Size = gameEndedPackage.ToByteArray().Length;
 
                         communication.Send(gameEndedPackage);
+
+                        finishedState.reactivateViews(communication);
+                        _game.State.ClearProperties();
+
                     }
 
                 }

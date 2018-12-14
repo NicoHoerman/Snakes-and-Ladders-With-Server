@@ -11,6 +11,8 @@ using Wrapper.Implementation;
 using Wrapper.Contracts;
 using Wrapper.View;
 using Wrapper;
+using System.Threading;
+
 
 namespace TCP_Client.Actions
 {
@@ -169,6 +171,15 @@ namespace TCP_Client.Actions
                 _enterToRefreshView.viewEnabled = true;
                 _enterToRefreshView.SetUpdateContent(updatedView._enterToRefresh);
             }
+            Thread.Sleep(100);
+            if(updatedView._boardOutput == "x")
+            {
+                _finishInfoView.viewEnabled = false;
+                _finishSkull1View.viewEnabled = false;
+                _finishSkull2View.viewEnabled = false;
+                EnableViews();
+                updatedView._boardOutput = string.Empty;
+            }
             
 
         }
@@ -252,6 +263,20 @@ namespace TCP_Client.Actions
             _lobbyInfoDisplayView.viewEnabled = false;
             _turnInfoOutputView.viewEnabled = false;
             _enterToRefreshView.viewEnabled = false;
+        }
+
+        public void EnableViews()
+        {
+            _commandListOutputView.viewEnabled = true;
+            _errorView.viewEnabled = true;
+            
+            _infoOutputView.viewEnabled = true;
+            _mainMenuOutputView.viewEnabled = true;
+         
+            
+            _lobbyInfoDisplayView.viewEnabled = true;
+            
+            _enterToRefreshView.viewEnabled = true;
         }
         #endregion
 
