@@ -1,5 +1,6 @@
 ﻿using EandE_ServerModel.EandE.EandEContracts;
 using EandE_ServerModel.EandE.GameAndLogic;
+using EandE_ServerModel.EandE.States;
 using Newtonsoft.Json;
 using Shared.Communications;
 using Shared.Contract;
@@ -24,22 +25,24 @@ namespace TCP_Server.Actions
         private bool gameStarted = false;
         private bool ruleSet = false;
 
-        private List<ICommunication> _communicationsToRemove;
         private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
         private Server _server;
         private ServerInfo _ServerInfo;
         private Game _game;
+        private GameFinishedState finishedState;
 
         public static ManualResetEvent verificationVariableSet = new ManualResetEvent(false);
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
         public static ManualResetEvent StateSwitched = new ManualResetEvent(false);
         public static ManualResetEvent TurnFinished = new ManualResetEvent(false);
+        public static ManualResetEvent EndscreenSet = new ManualResetEvent(false);
 
         public ClientConnectionAttempt _ConnectionStatus = ClientConnectionAttempt.NotSet;
 
-        public ServerActions(ServerInfo serverInfo, Server server, Game game, List<ICommunication> communicationsToRemove)
+        public ServerActions(ServerInfo serverInfo, Server server, Game game)
         {
-            
+            finishedState = new GameFinishedState(game, currentplayer);
+
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>
             {
                 { ProtocolActionEnum.RollDice,  OnRollDiceAction },
@@ -50,7 +53,6 @@ namespace TCP_Server.Actions
                 { ProtocolActionEnum.Classic, OnClassicAction }
             };
 
-            _communicationsToRemove = communicationsToRemove;
             _server = server;
             _ServerInfo = serverInfo;
             _game = game;
@@ -95,9 +97,8 @@ namespace TCP_Server.Actions
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
                         _lobbyDisplay = $"Current Lobby: {servername}. Players [{currentplayer}/{maxplayer}]",
-                        _commandList = "Commands:\n/search (only available when not connected to a server)\n/startgame\n/closegame\n/rolldice\n/someCommand",
-                        _infoOutput = $"Player {currentplayer} joined the lobby."
-                       
+                        _commandList = "Commands:\n/search (only available when not connected to a server)\n/startgame\n/closegame\n/rolldice\n/someCommand"
+
                     })
                 };
                 lobbyUpdatePackage.Size = lobbyUpdatePackage.ToByteArray().Length;
@@ -146,23 +147,8 @@ namespace TCP_Server.Actions
 
         private void OnStartGameAction(ICommunication communication, DataPackage data)
         {
-            if (_communicationsToRemove.Count != 0)
-                _communicationsToRemove.ForEach(com =>
-                {
-                    var dataPackage = new DataPackage
-                    {
-
-                        Header = ProtocolActionEnum.UpdateView,
-                        Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                        {
-                            _infoOutput = $"Player {currentplayer} left the game."
-                        })
-                    };
-                    dataPackage.Size = dataPackage.ToByteArray().Length;
-
-                    communication.Send(dataPackage);
-                });
-
+            if (ruleSet)
+                return;
             if (communication.IsMaster)
             {
                 if (_server.isLobbyComplete())
@@ -236,23 +222,6 @@ namespace TCP_Server.Actions
         }
         private void OnClassicAction(ICommunication communication, DataPackage data)
         {
-            if (_communicationsToRemove.Count != 0)
-                _communicationsToRemove.ForEach(com =>
-                {
-                    var dataPackage = new DataPackage
-                    {
-
-                        Header = ProtocolActionEnum.UpdateView,
-                        Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                        {
-                            _infoOutput = $"Player {currentplayer} left the game."
-                        })
-                    };
-                    dataPackage.Size = dataPackage.ToByteArray().Length;
-
-                    communication.Send(dataPackage);
-                });
-
             if (!gameStarted)
             {
                 return;
@@ -311,31 +280,14 @@ namespace TCP_Server.Actions
 
         private void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
-            if(_communicationsToRemove.Count != 0)
-                _communicationsToRemove.ForEach(com =>
-                {
-                    var dataPackage = new DataPackage
-                    {
-
-                        Header = ProtocolActionEnum.UpdateView,
-                        Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                        {
-                            _infoOutput = $"Player {currentplayer} left the game."
-                        })
-                    };
-                    dataPackage.Size = dataPackage.ToByteArray().Length;
-
-                    communication.Send(dataPackage);
-                });
-
             if (!ruleSet)
+            {
                 return;
-                           
+            }
             int currentCommunication = _ServerInfo._communications.FindIndex(x => x == communication)+1;
 
-            if (_game.State.CurrentPlayer ==  currentCommunication)
-            {
-
+            //if (_game.State.CurrentPlayer ==  currentCommunication)
+            //{
                 _game.State.SetInput("/rolldice");
                 TurnFinished.WaitOne();
                 TurnFinished.Reset();
@@ -362,9 +314,14 @@ namespace TCP_Server.Actions
 
                 communication.Send(turnPackage);
 
+                if(!GameRunningState.isRunning)
+                    GameRunningState.GameFinished.Set();
 
-                if (_game.State.ToString() == "GameFinishedState")
+                Thread.Sleep(100);
+                if (_game.State.ToString() == "EandE_ServerModel.EandE.States.GameFinishedState")
                 {
+                    EndscreenSet.WaitOne();
+                    EndscreenSet.Reset();
                     {
                         var gameEndedPackage = new DataPackage
                         {
@@ -379,15 +336,19 @@ namespace TCP_Server.Actions
                         gameEndedPackage.Size = gameEndedPackage.ToByteArray().Length;
 
                         communication.Send(gameEndedPackage);
+
+                        finishedState.reactivateViews(communication);
+                        _game.State.ClearProperties();
+
                     }
 
                 }
             }
             else
             {
-                throw new Exception();
+                return;
             }
-            }
+             /*}
              else
              {
                  var dataPackage = new DataPackage
@@ -402,7 +363,7 @@ namespace TCP_Server.Actions
                  dataPackage.Size = dataPackage.ToByteArray().Length;
 
                  communication.Send(dataPackage);
-             }
+             }*/
 
         }
 
@@ -445,17 +406,6 @@ namespace TCP_Server.Actions
 
         private void OnCloseGameAction(ICommunication communication, DataPackage data)
         {
-            var dataPackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.UpdateView,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                {
-                    _infoOutput = $"Player {currentplayer} left the lobby."
-                })
-            };
-            dataPackage.Size = dataPackage.ToByteArray().Length;
-            communication.Send(dataPackage);
-            /////////////////////////////////
             communication.Stop();
             _server.communicationsToRemove.Add(communication);
             _server.RemoveFromLobby();
