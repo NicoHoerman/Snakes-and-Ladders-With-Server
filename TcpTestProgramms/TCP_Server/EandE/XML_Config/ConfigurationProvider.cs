@@ -19,7 +19,7 @@ namespace EandE_ServerModel.EandE.XML_Config
         }
 
         public ConfigurationProvider()
-            : this(@".\XML_Config\Configurations.xml")
+            : this(@".\EandE\XML_Config\Configurations.xml")
         { }
 
 

@@ -113,13 +113,13 @@ namespace Shared.Communications
         {
             try
             {
-                    var bytesToSend = data.ToByteArray();
+                    var bytesToSend = data.ToByteArrayUTF();
                     _nwStream.Write(bytesToSend, 0, bytesToSend.Length);
             }
 
             catch
             {
-                
+                throw new Exception();
             }
 
         }
@@ -223,7 +223,7 @@ namespace Shared.Communications
                     //wird aus dem MemoryStream rausgelesen
                     _localBuffer.Read(bytesToRead, 0, sizeOfPayload);
                     //aus byte mach String
-                    package.Payload = Encoding.ASCII.GetString(bytesToRead, 0, bytesToRead.Length);
+                    package.Payload = Encoding.UTF8.GetString(bytesToRead, 0, bytesToRead.Length);
 
                     lock (_lock)
                         //fertiges package wird an die Queue gehängt

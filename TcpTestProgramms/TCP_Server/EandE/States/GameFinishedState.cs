@@ -21,7 +21,7 @@ namespace EandE_ServerModel.EandE.States
         
 
         public bool isFinished;
-        public string _finishinfo =string.Empty;
+        public string _finishinfo = string.Empty;
         private string _finishskull1 = string.Empty;
         private string _finishskull2 = string.Empty;
         public int _winner;
