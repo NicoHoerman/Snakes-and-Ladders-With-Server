@@ -50,7 +50,7 @@ namespace TCP_Server.Actions
                 { ProtocolActionEnum.StartGame, OnStartGameAction },
                 { ProtocolActionEnum.CloseGame, OnCloseGameAction },
                 { ProtocolActionEnum.OnConnection, OnConnectionAction },
-                { ProtocolActionEnum.Classic, OnClassicAction }
+                { ProtocolActionEnum.Rule, OnRuleAction }
             };
 
             _server = server;
@@ -220,7 +220,7 @@ namespace TCP_Server.Actions
                 communication.Send(dataPackage);
             }
         }
-        private void OnClassicAction(ICommunication communication, DataPackage data)
+        private void OnRuleAction(ICommunication communication, DataPackage data)
         {
             if (!gameStarted)
             {
@@ -336,6 +336,8 @@ namespace TCP_Server.Actions
                         gameEndedPackage.Size = gameEndedPackage.ToByteArrayUTF().Length;
 
                         communication.Send(gameEndedPackage);
+
+                        Thread.Sleep(5000);
 
                         finishedState.reactivateViews(communication);
                         _game.State.ClearProperties();

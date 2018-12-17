@@ -290,7 +290,7 @@ namespace TCP_Client.Actions
 
                 var dataPackage = new DataPackage
                 {
-                    Header = ProtocolActionEnum.Classic,
+                    Header = ProtocolActionEnum.Rule,
                     Payload = JsonConvert.SerializeObject(new PROT_STARTGAME
                     {
 

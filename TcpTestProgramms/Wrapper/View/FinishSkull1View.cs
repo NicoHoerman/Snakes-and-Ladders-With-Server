@@ -36,7 +36,7 @@ namespace Wrapper.View
         }
         public void Show()
         {
-            _outputWrapper.WriteOutput(_posX, _posY, _content, ConsoleColor.DarkYellow);
+            _outputWrapper.WriteOutput(_posX, _posY, _content, ConsoleColor.DarkRed);
         }
     }
 }

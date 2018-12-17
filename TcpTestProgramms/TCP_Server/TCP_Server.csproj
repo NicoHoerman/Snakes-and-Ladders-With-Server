@@ -75,13 +75,13 @@
     <Compile Include="Enum\ClientConnectionAttempt.cs" />
     <Compile Include="PackageProcessing.cs" />
     <Compile Include="PackageQueue.cs" />
-    <Compile Include="PackageReceiver.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PROTOCOLS\PROT_ACCEPT.cs" />
     <Compile Include="PROTOCOLS\PROT_BROADCAST.cs" />
     <Compile Include="PROTOCOLS\PROT_DECLINE.cs" />
     <Compile Include="PROTOCOLS\PROT_HELPTEXT.cs" />
+    <Compile Include="PROTOCOLS\PROT_RESTART.cs" />
     <Compile Include="PROTOCOLS\PROT_UPDATE.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Actions\ServerActions.cs" />

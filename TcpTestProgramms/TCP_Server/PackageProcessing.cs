@@ -34,7 +34,6 @@ namespace TCP_Server
                 var package = _queue.WaitForNextPackage();
                 Console.WriteLine($"Processing package number {package.Id}");
                 _actionHandler.ExecuteDataActionFor(package.communication,package.data);
-                Thread.Sleep(1000);
             }
         }
 

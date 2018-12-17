@@ -153,13 +153,12 @@ namespace TCP_Server
 
             var backgroundworkerGame = new BackgroundWorker();
 
-            backgroundworkerGame.DoWork += (obj, ea) => _game.Init();
+            backgroundworkerGame.DoWork += (obj, ea) => RunGame();
             backgroundworkerGame.RunWorkerAsync();
 
             while (isRunning)
             {
-                //var input = Console.ReadLine();
-                //ShutdownServer(input);
+                
             }
 
         }
@@ -177,20 +176,14 @@ namespace TCP_Server
                         communication.Stop();
                         communicationsToRemove.Add(communication);
                     }
-                    else
+                    else if (communication.IsDataAvailable())
                     {
-                        if (communication.IsDataAvailable())
-                        {
-                            if (!(_game.State.ToString() == "EandE_ServerModel.EandE.States.GameFinishedState"))
-                            {
-                                var data = communication.Receive();
-                                var communicationPackage = new CommunicationPackage(communication,data);
-                                _queue.Push(communicationPackage);
+                        var data = communication.Receive();
+                        var communicationPackage = new CommunicationPackage(communication,data);
+                        _queue.Push(communicationPackage);
 
-                                // Old Method
-                                //Task.Run(() => _ActionsHandler.ExecuteDataActionFor(communication, data));
-                            }
-                        }
+                        // Old Method
+                        //Task.Run(() => _ActionsHandler.ExecuteDataActionFor(communication, data));
                     }
                 });
 
@@ -220,12 +213,17 @@ namespace TCP_Server
 
         private void ShutdownServer(string input)
         {
-            if (input == "x")
-            {
                 _game.State.SetInput("/closegame");
                 isRunning = false; 
-            }
-
         }
+
+        private void RunGame()
+        {
+            while (isRunning)
+            {
+                _game.Init();
+            }
+        }
+
     }
 }

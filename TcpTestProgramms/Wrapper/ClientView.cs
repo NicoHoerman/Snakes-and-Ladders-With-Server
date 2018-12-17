@@ -16,6 +16,7 @@
         FinishInfo,
         FinishSkull1,
         FinishSkull2,
+        FinishSkull3,
         EnterToRefresh
     }
 

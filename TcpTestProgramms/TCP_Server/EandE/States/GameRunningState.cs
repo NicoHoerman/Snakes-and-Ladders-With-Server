@@ -126,7 +126,7 @@ namespace EandE_ServerModel.EandE.States
                 isRunning = false;
                 _boardOutput = _game.Board.CreateOutput();
 
-                _afterBoardOutput = "End";
+                _afterBoardOutput = string.Empty;
                 SaveProperties(_lastInput, _error, _gameInfoOutput, _boardOutput, _helpOutput, _afterTurnOutput, _afterBoardOutput, _logic.CurrentPlayerID);
 
                 ServerActions.TurnFinished.Set();

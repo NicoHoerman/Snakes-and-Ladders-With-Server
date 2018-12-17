@@ -77,8 +77,6 @@ namespace EandE_ServerModel.EandE.States
                 {
                     isFinished = false;
                     _game.SwitchState(new GameEndingState(_game));
-
-                    _game.Init();
                 }
             }
         }
@@ -106,10 +104,10 @@ namespace EandE_ServerModel.EandE.States
         {
             var reactivationPackage = new DataPackage
             {
-                Header = ProtocolActionEnum.UpdateView,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                Header = ProtocolActionEnum.Restart,
+                Payload = JsonConvert.SerializeObject(new PROT_RESTART
                 {
-                    _boardOutput = "x"  
+
                 })
             };
 
