@@ -61,6 +61,7 @@ namespace TCP_Client.Actions
             _infoOutputView = views[ClientView.InfoOutput] as IUpdateOutputView;
             _finishInfoView = views[ClientView.FinishInfo] as IUpdateOutputView;
             _finishSkull1View = views[ClientView.FinishSkull1] as IUpdateOutputView;
+            _finishSkull3View = views[ClientView.FinishSkull1] as IUpdateOutputView;
             _finishSkull2View = views[ClientView.FinishSkull2] as IUpdateOutputView;
             _enterToRefreshView = views[ClientView.EnterToRefresh] as IUpdateOutputView;
 

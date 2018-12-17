@@ -286,8 +286,8 @@ namespace TCP_Server.Actions
             }
             int currentCommunication = _ServerInfo._communications.FindIndex(x => x == communication)+1;
 
-            if (_game.State.CurrentPlayer ==  currentCommunication)
-            {
+            //if (_game.State.CurrentPlayer ==  currentCommunication)
+           //{
                 _game.State.SetInput("/rolldice");
                 TurnFinished.WaitOne();
                 TurnFinished.Reset();
@@ -348,7 +348,7 @@ namespace TCP_Server.Actions
             {
                 return;
             }
-             }
+            /* }
              else
              {
                  var dataPackage = new DataPackage
@@ -363,7 +363,7 @@ namespace TCP_Server.Actions
                  dataPackage.Size = dataPackage.ToByteArray().Length;
 
                  communication.Send(dataPackage);
-             }
+             }*/
 
         }
 

@@ -73,6 +73,9 @@
     <Compile Include="EandE\XML_Config\ConfigurationProvider.cs" />
     <Compile Include="EandE\XML_Config\XElementExtension.cs" />
     <Compile Include="Enum\ClientConnectionAttempt.cs" />
+    <Compile Include="PackageProcessing.cs" />
+    <Compile Include="PackageQueue.cs" />
+    <Compile Include="PackageReceiver.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PROTOCOLS\PROT_ACCEPT.cs" />
