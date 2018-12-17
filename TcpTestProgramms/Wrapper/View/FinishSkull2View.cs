@@ -10,8 +10,8 @@ namespace Wrapper.View
 {
     public class FinishSkull2View : IUpdateOutputView
     {
-        public const int DEFAULT_POSITION_X = 40;
-        public const int DEFAULT_POSITION_Y = 0;
+        public const int DEFAULT_POSITION_X = 35;
+        public const int DEFAULT_POSITION_Y = 5;
 
         private readonly IOutputWrapper _outputWrapper;
         private int _posX;

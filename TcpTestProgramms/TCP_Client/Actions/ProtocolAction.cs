@@ -35,6 +35,7 @@ namespace TCP_Client.Actions
         private readonly IUpdateOutputView _finishInfoView;
         private readonly IUpdateOutputView _finishSkull1View;
         private readonly IUpdateOutputView _finishSkull2View;
+        private readonly IUpdateOutputView _finishSkull3View;
         public readonly IUpdateOutputView _enterToRefreshView;
         
 
@@ -159,7 +160,9 @@ namespace TCP_Client.Actions
             if(!(updatedView._finishskull1 == null || updatedView._finishskull1.Length == 0))
             {
                 _finishSkull1View.viewEnabled = true;
+                _finishSkull2View.viewEnabled = true;
                 _finishSkull1View.SetUpdateContent(updatedView._finishskull1);
+                _finishSkull3View.SetUpdateContent(updatedView._finishskull1);
             }
             if(!(updatedView._finishskull2 == null || updatedView._finishskull2.Length == 0))
             {
@@ -172,6 +175,7 @@ namespace TCP_Client.Actions
                 _enterToRefreshView.SetUpdateContent(updatedView._enterToRefresh);
             }
             Thread.Sleep(100);
+
             if(updatedView._boardOutput == "x")
             {
                 _finishInfoView.viewEnabled = false;

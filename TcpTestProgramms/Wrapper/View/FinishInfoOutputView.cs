@@ -10,7 +10,7 @@ namespace Wrapper.View
 {
     public class FinishInfoOutputView : IUpdateOutputView
     {
-        public const int DEFAULT_POSITION_X = 30;
+        public const int DEFAULT_POSITION_X = 35;
         public const int DEFAULT_POSITION_Y = 0;
 
         private readonly IOutputWrapper _outputWrapper;
