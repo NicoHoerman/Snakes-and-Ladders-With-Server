@@ -21,7 +21,7 @@ namespace EandE_ServerModel.EandE.States
         
 
         public bool isFinished;
-        public string _finishinfo =string.Empty;
+        public string _finishinfo = string.Empty;
         private string _finishskull1 = string.Empty;
         private string _finishskull2 = string.Empty;
         public int _winner;
@@ -68,17 +68,14 @@ namespace EandE_ServerModel.EandE.States
 
             SaveProperties(_finishinfo,_finishskull1,_finishskull2);
 
-            ServerActions.EndscreenSet.Set();
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             while (isFinished)
             {
-                Stopwatch stopwatch = new Stopwatch();
-                stopwatch.Start();
-                if (stopwatch.ElapsedMilliseconds > 5000)
+                if (stopwatch.ElapsedMilliseconds > 1000 * 10)
                 {
                     isFinished = false;
                     _game.SwitchState(new GameEndingState(_game));
-
-                    _game.Init();
                 }
             }
         }
@@ -106,10 +103,10 @@ namespace EandE_ServerModel.EandE.States
         {
             var reactivationPackage = new DataPackage
             {
-                Header = ProtocolActionEnum.UpdateView,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                Header = ProtocolActionEnum.Restart,
+                Payload = JsonConvert.SerializeObject(new PROT_RESTART
                 {
-                    _boardOutput = "x"  
+
                 })
             };
 

@@ -6,14 +6,15 @@ namespace Shared.Enums
         GetHelp = 101,
         RollDice = 102,
         StartGame = 103,
-        CloseGame = 104,
-        OnConnection =105,
+        Rule = 104,
+        CloseGame = 105,
+        OnConnection =106,
+
         Broadcast = 201,
         Decline = 202,
         Accept = 203,
         UpdateView = 204,
         HelpText = 205,
-        OnStartMenu = 206,
-        Classic = 207
+        Restart = 206
     }
 }

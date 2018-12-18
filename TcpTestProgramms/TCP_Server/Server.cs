@@ -24,8 +24,6 @@ namespace TCP_Server
         
         private bool isRunning;
         public List<ICommunication> communicationsToRemove = new List<ICommunication>();
-        public List<DataPackage> dataQueue = new List<DataPackage>();
-        public List<ICommunication> communicationsQueue = new List<ICommunication>();
        
         public static ManualResetEvent tcpClientConnected = new ManualResetEvent(false);
         
@@ -36,16 +34,22 @@ namespace TCP_Server
         private TcpClient _client;
         public Game _game;
 
+        public PackageQueue _queue;
+        public PackageProcessing _process;
+
         public Server(ServerInfo serverInfo,UdpBroadcast udpBroadcast)
         {
             _game = new Game();
             _serverInfo = serverInfo;
             _udpServer = udpBroadcast;
-            _ActionsHandler = new ServerActions(_serverInfo,this,_game,communicationsToRemove);
+            _ActionsHandler = new ServerActions(_serverInfo,this,_game);
+
+            _queue = new PackageQueue();
+            _process = new PackageProcessing(_queue, _ActionsHandler);
 
             _serverInfo._communications = new List<ICommunication>();
 
-            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_LEON), 8080);
+            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_NICO), 8080);
         }
 
         public void CLientConnection(TcpListener listener)
@@ -149,18 +153,12 @@ namespace TCP_Server
 
             var backgroundworkerGame = new BackgroundWorker();
 
-            backgroundworkerGame.DoWork += (obj, ea) => _game.Init();
+            backgroundworkerGame.DoWork += (obj, ea) => RunGame();
             backgroundworkerGame.RunWorkerAsync();
-
-            var backgroundworkerDataExe = new BackgroundWorker();
-
-            backgroundworkerDataExe.DoWork += (obj, ea) => ExecuteData();
-            //backgroundworkerDataExe.RunWorkerAsync();
 
             while (isRunning)
             {
-                var input = Console.ReadLine();
-                ShutdownServer(input);
+                
             }
 
         }
@@ -178,18 +176,14 @@ namespace TCP_Server
                         communication.Stop();
                         communicationsToRemove.Add(communication);
                     }
-                    else
+                    else if (communication.IsDataAvailable())
                     {
-                        if (communication.IsDataAvailable())
-                        {
-                            if (!(_game.State.ToString() == "EandE_ServerModel.EandE.States.GameFinishedState"))
-                            {
-                                var data = communication.Receive();
-                                communicationsQueue.Add(communication);
-                                dataQueue.Add(data);
-                                Task.Run(() => _ActionsHandler.ExecuteDataActionFor(communication, data));
-                            }
-                        }
+                        var data = communication.Receive();
+                        var communicationPackage = new CommunicationPackage(communication,data);
+                        _queue.Push(communicationPackage);
+
+                        // Old Method
+                        //Task.Run(() => _ActionsHandler.ExecuteDataActionFor(communication, data));
                     }
                 });
 
@@ -202,12 +196,17 @@ namespace TCP_Server
                 Thread.Sleep(1);
             }
         }
+
+
         
         public void RemoveFromLobby()
         {
             communicationsToRemove.ForEach(x => _serverInfo._CurrentPlayerCount--);
             _udpServer.SetBroadcastMsg(_serverInfo);
             RemoveFromList();
+
+            if (_game.isRunning)
+                _game.State.SetInput("/closegame");
         }
 
         public void RemoveFromList()
@@ -217,26 +216,15 @@ namespace TCP_Server
 
         private void ShutdownServer(string input)
         {
-            if (input == "x")
-            {
                 _game.State.SetInput("/closegame");
                 isRunning = false; 
-            }
-
         }
 
-        private void ExecuteData()
+        private void RunGame()
         {
             while (isRunning)
             {
-                //var dataAvailable = dataQueue.Any() && communicationsQueue.Any();
-                if (!(dataQueue.Count == 0 & communicationsQueue.Count == 0))
-                {
-
-                    _ActionsHandler.ExecuteDataActionFor(communicationsQueue[0], dataQueue.First());
-                    communicationsQueue.RemoveAt(0);
-                    dataQueue.RemoveAt(0);
-                }
+                _game.Init();
             }
         }
 

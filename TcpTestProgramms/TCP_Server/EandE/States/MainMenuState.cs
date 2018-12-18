@@ -57,6 +57,7 @@ namespace EandE_ServerModel.EandE.States
             _configurationProvider = configurationProvider;
             _sourceWrapper = sourceWrapper;
             _dataProvider = dataProvider;
+            Input = string.Empty;
             inMenu = true;
         }
      

@@ -29,6 +29,7 @@ namespace Wrapper
             { ClientView.FinishInfo, new FinishInfoOutputView() },
             { ClientView.FinishSkull1, new FinishSkull1View() },
             { ClientView.FinishSkull2, new FinishSkull2View() },
+            { ClientView.FinishSkull3, new FinishSkull3View() },
             { ClientView.EnterToRefresh, new EnterToRefreshView()}
             };
          

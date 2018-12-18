@@ -45,7 +45,6 @@ namespace EandE_ServerModel.EandE.ClassicEandE
             try
             {
 
-
                 var configurations = _configurationProvider.GetEntityConfigurations();
                 configurations.ForEach(config =>
                 {

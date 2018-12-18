@@ -41,7 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Communications\CommunicationPackage.cs" />
     <Compile Include="Communications\DummyCommunication.cs" />
+    <Compile Include="Contracts\IPackage.cs" />
     <Compile Include="Communications\TcpCommunication.cs" />
     <Compile Include="Contracts\ICommunication.cs" />
     <Compile Include="Contracts\IProtocol.cs" />

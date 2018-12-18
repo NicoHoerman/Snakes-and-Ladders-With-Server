@@ -35,7 +35,6 @@ namespace TCP_Server.Actions
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
         public static ManualResetEvent StateSwitched = new ManualResetEvent(false);
         public static ManualResetEvent TurnFinished = new ManualResetEvent(false);
-        public static ManualResetEvent EndscreenSet = new ManualResetEvent(false);
 
         public ClientConnectionAttempt _ConnectionStatus = ClientConnectionAttempt.NotSet;
 
@@ -50,7 +49,7 @@ namespace TCP_Server.Actions
                 { ProtocolActionEnum.StartGame, OnStartGameAction },
                 { ProtocolActionEnum.CloseGame, OnCloseGameAction },
                 { ProtocolActionEnum.OnConnection, OnConnectionAction },
-                { ProtocolActionEnum.Classic, OnClassicAction }
+                { ProtocolActionEnum.Rule, OnRuleAction }
             };
 
             _server = server;
@@ -220,7 +219,7 @@ namespace TCP_Server.Actions
                 communication.Send(dataPackage);
             }
         }
-        private void OnClassicAction(ICommunication communication, DataPackage data)
+        private void OnRuleAction(ICommunication communication, DataPackage data)
         {
             if (!gameStarted)
             {
@@ -287,7 +286,7 @@ namespace TCP_Server.Actions
             int currentCommunication = _ServerInfo._communications.FindIndex(x => x == communication)+1;
 
             //if (_game.State.CurrentPlayer ==  currentCommunication)
-            //{
+           //{
                 _game.State.SetInput("/rolldice");
                 TurnFinished.WaitOne();
                 TurnFinished.Reset();
@@ -320,8 +319,7 @@ namespace TCP_Server.Actions
                 Thread.Sleep(100);
                 if (_game.State.ToString() == "EandE_ServerModel.EandE.States.GameFinishedState")
                 {
-                    EndscreenSet.WaitOne();
-                    EndscreenSet.Reset();
+                    
                     {
                         var gameEndedPackage = new DataPackage
                         {
@@ -333,9 +331,11 @@ namespace TCP_Server.Actions
                                 _finishskull2 = _game.State.Finishskull2
                             })
                         };
-                        gameEndedPackage.Size = gameEndedPackage.ToByteArray().Length;
+                        gameEndedPackage.Size = gameEndedPackage.ToByteArrayUTF().Length;
 
                         communication.Send(gameEndedPackage);
+
+                        Thread.Sleep(5000);
 
                         finishedState.reactivateViews(communication);
 
@@ -349,7 +349,7 @@ namespace TCP_Server.Actions
             {
                 return;
             }
-             /*}
+            /* }
              else
              {
                  var dataPackage = new DataPackage
