@@ -11,7 +11,7 @@ namespace Wrapper.View
     public class InfoOutputView : IUpdateOutputView
     {
         public const int DEFAULT_POSITION_X = 0;
-        public const int DEFAULT_POSITION_Y = 5;
+        public const int DEFAULT_POSITION_Y = 7;
 
         private readonly IOutputWrapper _outputWrapper;
         private int _posX;
@@ -36,7 +36,7 @@ namespace Wrapper.View
 
         public void SetUpdateContent(string content)
         {
-            int x = 0;
+            /*int x = 0;
 
             if(content != string.Empty)
                 do
@@ -52,16 +52,17 @@ namespace Wrapper.View
                 }
                 while (infoList.Count <= 4);
 
-            infoList.RemoveAt(0);
+            infoList.RemoveAt(0);*/
+            _content = content;
 
-            //(_info = content;
-            //set
+            
         }
 
         public void Show()
         {
             _outputWrapper.WriteOutput(_posX, _posY, _content, ConsoleColor.Magenta);
-            _posY++;
+            //if(infoList.Count <= 4)
+                //_posY++;
         }
     }
 }

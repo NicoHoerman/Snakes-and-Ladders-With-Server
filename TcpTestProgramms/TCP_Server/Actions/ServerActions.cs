@@ -39,7 +39,7 @@ namespace TCP_Server.Actions
 
         public ClientConnectionAttempt _ConnectionStatus = ClientConnectionAttempt.NotSet;
 
-        public ServerActions(ServerInfo serverInfo, Server server, Game game)
+        public ServerActions(ServerInfo serverInfo, Server server, Game game, List<ICommunication> communicationsToRemove)
         {
             finishedState = new GameFinishedState(game, currentplayer);
 
@@ -338,6 +338,7 @@ namespace TCP_Server.Actions
                         communication.Send(gameEndedPackage);
 
                         finishedState.reactivateViews(communication);
+
                         _game.State.ClearProperties();
 
                     }
