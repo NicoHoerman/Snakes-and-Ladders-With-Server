@@ -72,7 +72,7 @@ namespace TCP_Client.Actions
                 { ProtocolActionEnum.Broadcast, OnBroadcastAction },
                 { ProtocolActionEnum.Accept, OnAcceptAction },
                 { ProtocolActionEnum.Decline, OnDeclineAction },
-                {ProtocolActionEnum.Restart, OnRestartAction }
+                { ProtocolActionEnum.Restart, OnRestartAction }
             
             };
 
@@ -114,10 +114,15 @@ namespace TCP_Client.Actions
                 _mainMenuOutputView.SetUpdateContent(updatedView._mainMenuOutput);
             }
 
-            _lobbyInfoDisplayView.viewEnabled = updatedView._lobbyDisplay != null && updatedView._lobbyDisplay.Length != 0; ;
-            _lobbyInfoDisplayView.SetUpdateContent(updatedView._lobbyDisplay);
+            //_lobbyInfoDisplayView.viewEnabled = updatedView._lobbyDisplay != null && updatedView._lobbyDisplay.Length != 0; ;
+            //_lobbyInfoDisplayView.SetUpdateContent(updatedView._lobbyDisplay);
+            if (!(updatedView._lobbyDisplay == null || updatedView._lobbyDisplay.Length == 0))
+            {
+                _lobbyInfoDisplayView.viewEnabled = true;
+                _lobbyInfoDisplayView.SetUpdateContent(updatedView._lobbyDisplay);
+            }
 
-            if(!(updatedView._boardOutput == null || updatedView._boardOutput.Length == 0))
+            if (!(updatedView._boardOutput == null || updatedView._boardOutput.Length == 0))
             {
                 _boardOutputView.viewEnabled = true;
                 _boardOutputView.SetUpdateContent(updatedView._boardOutput);
@@ -170,11 +175,6 @@ namespace TCP_Client.Actions
             {
                 _finishSkull2View.viewEnabled = true;
                 _finishSkull2View.SetUpdateContent(updatedView._finishskull2);
-            }
-            if(!(updatedView._enterToRefresh == null || updatedView._enterToRefresh.Length == 0))
-            {
-                _enterToRefreshView.viewEnabled = true;
-                _enterToRefreshView.SetUpdateContent(updatedView._enterToRefresh);
             }
         }
 
