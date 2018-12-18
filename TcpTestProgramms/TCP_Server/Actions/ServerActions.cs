@@ -35,7 +35,6 @@ namespace TCP_Server.Actions
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
         public static ManualResetEvent StateSwitched = new ManualResetEvent(false);
         public static ManualResetEvent TurnFinished = new ManualResetEvent(false);
-        public static ManualResetEvent EndscreenSet = new ManualResetEvent(false);
 
         public ClientConnectionAttempt _ConnectionStatus = ClientConnectionAttempt.NotSet;
 
@@ -320,8 +319,7 @@ namespace TCP_Server.Actions
                 Thread.Sleep(100);
                 if (_game.State.ToString() == "EandE_ServerModel.EandE.States.GameFinishedState")
                 {
-                    EndscreenSet.WaitOne();
-                    EndscreenSet.Reset();
+                    
                     {
                         var gameEndedPackage = new DataPackage
                         {
