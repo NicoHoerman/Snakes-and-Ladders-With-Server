@@ -204,6 +204,9 @@ namespace TCP_Server
             communicationsToRemove.ForEach(x => _serverInfo._CurrentPlayerCount--);
             _udpServer.SetBroadcastMsg(_serverInfo);
             RemoveFromList();
+
+            if (_game.isRunning)
+                _game.State.SetInput("/closegame");
         }
 
         public void RemoveFromList()
