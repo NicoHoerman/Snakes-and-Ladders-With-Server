@@ -26,7 +26,7 @@ namespace TCP_Client.Actions
 
         public string AfterConnectMsg { get; set; } = string.Empty;
 
-        public Dictionary<string, Action<string,ICommunication>> _inputActions;
+        public Dictionary<string, Action<List<string>, ICommunication>> _inputActions;
         private Dictionary<ClientView, IView> _views;
 
         private readonly IErrorView _errorView;
@@ -55,12 +55,12 @@ namespace TCP_Client.Actions
 
             _OutputWrapper = new OutputWrapper();
 
-            _inputActions = new Dictionary<string, Action<string,ICommunication>>
+            _inputActions = new Dictionary<string, Action<List<string>,ICommunication>>
             {
                 { "/help", OnInputHelpAction },
                 { "/rolldice", OnInputRollDiceAction },
                 { "/closegame", OnCloseGameAction },
-                {"/someInt" , OnIntAction },
+                {"/server" , OnServerConnectAction },
                 {"/search", OnSearchAction },
                 {"/startgame", OnStartGameAction },
                 {"/classic", OnClassicAction }
@@ -73,7 +73,7 @@ namespace TCP_Client.Actions
 
         public void ParseAndExecuteCommand(string input,ICommunication communication)
         {
-            string receivedInput = input;
+            var receivedInput = input.Split(' ').ToList();
             if (input == "")
                 return;
             if (input == "/someInt")
@@ -88,7 +88,7 @@ namespace TCP_Client.Actions
                 input = "/someInt";
             }
 
-            if (_inputActions.TryGetValue(input, out var action) == false)
+            if (_inputActions.TryGetValue(receivedInput[0], out var action) == false)
             {
                 _errorView.viewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
@@ -100,12 +100,12 @@ namespace TCP_Client.Actions
 
         #region Input actions
 
-        private void OnInputHelpAction(string input, ICommunication communication)
+        private void OnInputHelpAction(List<string> input, ICommunication communication)
         {
             if (!isConnected)
             {
                 _errorView.viewEnabled = true;
-                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
+                _errorView.SetContent(input[0], "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
             if (_commandListOutputView.viewEnabled)
@@ -133,12 +133,12 @@ namespace TCP_Client.Actions
             communication.Send(dataPackage);
         }
 
-        private void OnInputRollDiceAction(string input, ICommunication communication)
+        private void OnInputRollDiceAction(List<string> input, ICommunication communication)
         {
             if (!isConnected)
             {
                 _errorView.viewEnabled = true;
-                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
+                _errorView.SetContent(input[0], "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
 
@@ -155,16 +155,22 @@ namespace TCP_Client.Actions
             communication.Send(dataPackage);
         }
 
-        private void OnIntAction(string input, ICommunication communication)
+        private void OnServerConnectAction(List<string> input, ICommunication communication)
         {
 
             if (isConnected | !Searched | Declined)
             {
                 _errorView.viewEnabled = true;
-                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
+                _errorView.SetContent(input[0], "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
-            int chosenServerId = Int32.Parse(input);
+            if (input.Count != 2)
+            {
+                _errorView.viewEnabled = true;
+                _errorView.SetContent(input[0], "Error: " + "Server id missing or too many parameters.");
+                return;
+            }
+            int chosenServerId = Int32.Parse(input[1]);
             if (_ActionHandler._serverDictionary.Count >= chosenServerId)
             {
                 BroadcastDTO current = _ActionHandler.GetServer(chosenServerId-1);
@@ -196,7 +202,7 @@ namespace TCP_Client.Actions
             else
             {
                 _errorView.viewEnabled = true;
-                _errorView.SetContent(input, "There is no server with this ID");
+                _errorView.SetContent(input[1], "There is no server with this ID");
             }
 
             _inputView.SetInputLine("Type a command:", 16);
@@ -204,12 +210,12 @@ namespace TCP_Client.Actions
 
         }
 
-        private void OnSearchAction(string input, ICommunication communication)
+        private void OnSearchAction(List<string> input, ICommunication communication)
         {
             if (isConnected)
             {
                 _errorView.viewEnabled = true;
-                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
+                _errorView.SetContent(input[0], "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
 
@@ -239,7 +245,7 @@ namespace TCP_Client.Actions
             
         }
 
-        private void OnCloseGameAction(string obj,ICommunication communication)
+        private void OnCloseGameAction(List<string> obj,ICommunication communication)
         {
             if (!isConnected)
             {
@@ -264,7 +270,7 @@ namespace TCP_Client.Actions
 
         }
 
-        private void OnStartGameAction(string arg1, ICommunication communication)
+        private void OnStartGameAction(List<string> arg1, ICommunication communication)
         {
             if (isConnected)
             {
@@ -282,7 +288,7 @@ namespace TCP_Client.Actions
             }
         }
 
-        public void OnClassicAction(string input, ICommunication communication)
+        public void OnClassicAction(List<string> input, ICommunication communication)
         {
             if (isConnected)
             {

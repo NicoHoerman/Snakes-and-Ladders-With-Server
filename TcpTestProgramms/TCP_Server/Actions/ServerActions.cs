@@ -129,9 +129,7 @@ namespace TCP_Server.Actions
                     if (!(_ServerInfo._communications[i] == communication))
                         _ServerInfo._communications[i].Send(updatePackage);
                 }
-                //communication.Stop();
-                //_server.communicationsToRemove.Add(communication);
-                //_server.RemoveFromList();
+                
             }
             else if (_ConnectionStatus == ClientConnectionAttempt.NotSet)
                 throw new InvalidOperationException();
@@ -150,7 +148,7 @@ namespace TCP_Server.Actions
                 return;
             if (communication.IsMaster)
             {
-                if (_server.isLobbyComplete())
+                if (_server.IsLobbyComplete())
                 {
                     var masterDataPackage = new DataPackage
                     {

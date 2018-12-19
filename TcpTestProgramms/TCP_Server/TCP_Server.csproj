@@ -73,6 +73,7 @@
     <Compile Include="EandE\XML_Config\ConfigurationProvider.cs" />
     <Compile Include="EandE\XML_Config\XElementExtension.cs" />
     <Compile Include="Enum\ClientConnectionAttempt.cs" />
+    <Compile Include="Enum\StateEnum.cs" />
     <Compile Include="PackageProcessing.cs" />
     <Compile Include="PackageQueue.cs" />
     <Compile Include="Program.cs" />

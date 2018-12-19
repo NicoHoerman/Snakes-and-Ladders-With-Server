@@ -65,14 +65,14 @@ namespace TCP_Server
                     AddCommunication(_client);
                     
 
-                    if (!isLobbyComplete())
+                    if (!IsLobbyComplete())
                     {
                         _ActionsHandler._ConnectionStatus = ClientConnectionAttempt.Accepted;
                         ServerActions.verificationVariableSet.Set();
                         _serverInfo._CurrentPlayerCount++;
                         _udpServer.SetBroadcastMsg(_serverInfo);
                     }
-                    else if (isLobbyComplete())
+                    else if (IsLobbyComplete())
                     {
                         _ActionsHandler._ConnectionStatus = ClientConnectionAttempt.Declined;
                         ServerActions.verificationVariableSet.Set();
@@ -115,7 +115,7 @@ namespace TCP_Server
             tcpClientConnected.Set();
         }
 
-        public bool isLobbyComplete()
+        public bool IsLobbyComplete()
         {
             if (_serverInfo._CurrentPlayerCount == _serverInfo._MaxPlayerCount)
             {
