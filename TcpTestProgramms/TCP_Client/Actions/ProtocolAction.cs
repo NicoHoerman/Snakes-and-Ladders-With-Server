@@ -20,7 +20,8 @@ namespace TCP_Client.Actions
     {
         public Dictionary<ProtocolActionEnum, Action<DataPackage>> _protocolActions;
         public Dictionary<int, BroadcastDTO> _serverDictionary = new Dictionary<int, BroadcastDTO>();
-        private Dictionary<ClientView, IView> _views;
+        public Dictionary<ClientView, IView> _views;
+        private List<IView> _viewList;
         #region ViewInitialization
         private readonly IUpdateOutputView _serverTableView;
         private readonly IUpdateOutputView _commandListOutputView;
@@ -49,6 +50,7 @@ namespace TCP_Client.Actions
         {
             _client = client;
             _views = views;
+
             #region ViewConstructing
             _serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
             _commandListOutputView = views[ClientView.CommandList] as IUpdateOutputView;                   
@@ -66,18 +68,22 @@ namespace TCP_Client.Actions
             _finishSkull2View = views[ClientView.FinishSkull2] as IUpdateOutputView;
             _enterToRefreshView = views[ClientView.EnterToRefresh] as IUpdateOutputView;
             #endregion
+
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage>>
             {
-                { ProtocolActionEnum.HelpText, OnHelpTextAction},
                 { ProtocolActionEnum.UpdateView, OnUpdateAction},
                 { ProtocolActionEnum.Broadcast, OnBroadcastAction },
                 { ProtocolActionEnum.Accept, OnAcceptAction },
                 { ProtocolActionEnum.Decline, OnDeclineAction },
-                { ProtocolActionEnum.Restart, OnRestartAction }
-            
+                { ProtocolActionEnum.Restart, OnRestartAction }           
             };
 
             outputWrapper = new OutputWrapper();
+            _viewList.AddRange(_serverTableView, _commandListOutputView, _infoOutputView, 
+                _errorView, _boardOutputView, _gameInfoOutputView, _turnInfoOutputView, 
+                _afterTurnOutputView, _mainMenuOutputView, _lobbyInfoDisplayView, 
+                _finishInfoView, _finishSkull1View, _finishSkull2View, _finishSkull3View, 
+                _enterToRefreshView);
         }
 
         
@@ -95,18 +101,9 @@ namespace TCP_Client.Actions
 
         #region Protocol actions
 
-
-        private void OnHelpTextAction(DataPackage data)
-        {
-            var helpText = MapProtocolToDto<HelpTextDTO>(data);
-            
-            
-            //_helpOutputView.SetUpdateContent(helpText._HelpText);
-            
-        }
-
         private void OnUpdateAction(DataPackage data)
         {
+            
             var updatedView = MapProtocolToDto<UpdateDTO>(data);
            
             if(!(updatedView._mainMenuOutput == null || updatedView._mainMenuOutput.Length == 0))

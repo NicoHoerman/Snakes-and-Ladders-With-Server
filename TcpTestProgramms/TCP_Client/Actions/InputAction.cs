@@ -46,8 +46,8 @@ namespace TCP_Client.Actions
             _client = client;
             _ActionHandler = protocolAction;
             _views = views;
-            _errorView = views[ClientView.Error] as IErrorView; // Potential null exception error.
-            _commandListOutputView = views[ClientView.CommandList] as IUpdateOutputView; //Potenzieller Null Ausnahmen Fehler
+            _errorView = views[ClientView.Error] as IErrorView; 
+            _commandListOutputView = views[ClientView.CommandList] as IUpdateOutputView;
             _inputView = views[ClientView.Input] as IInputView;
             _serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
             _infoOutputView = views[ClientView.InfoOutput] as IUpdateOutputView;
@@ -57,7 +57,6 @@ namespace TCP_Client.Actions
 
             _inputActions = new Dictionary<string, Action<string,ICommunication>>
             {
-                { "/help", OnInputHelpAction },
                 { "/rolldice", OnInputRollDiceAction },
                 { "/closegame", OnCloseGameAction },
                 {"/someInt" , OnIntAction },
@@ -100,39 +99,7 @@ namespace TCP_Client.Actions
 
         #region Input actions
 
-        private void OnInputHelpAction(string input, ICommunication communication)
-        {
-            if (!isConnected)
-            {
-                _errorView.viewEnabled = true;
-                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
-                return;
-            }
-            if (_commandListOutputView.viewEnabled)
-            {
-                _commandListOutputView.viewEnabled = false;
-            }
-            else if(!_commandListOutputView.viewEnabled)
-            {
-                _commandListOutputView.viewEnabled = true;
-            }
-                            
-
-            var dataPackage = new DataPackage
-            {
-
-                Header = ProtocolActionEnum.GetHelp, //"Client_wants_to_get_help",
-                Payload = JsonConvert.SerializeObject(new PROT_HELP
-                {
-
-                })
-
-            };
-            dataPackage.Size = dataPackage.ToByteArray().Length;
-
-            communication.Send(dataPackage);
-        }
-
+        
         private void OnInputRollDiceAction(string input, ICommunication communication)
         {
             if (!isConnected)

@@ -32,7 +32,7 @@ namespace TCP_Client
             _viewDictionary = new ViewDictionary();
             _communication = communication;
             _ActionHandler = new ProtocolAction(_viewDictionary._views, this);
-            _InputHandler = new InputAction(_ActionHandler, _viewDictionary._views,this);
+            _InputHandler = new InputAction(_ActionHandler, _viewDictionary._views, this);
             _OutputWrapper = new OutputWrapper();
             _ViewUpdater = new ViewUpdater(_viewDictionary._views);
             _ActionHandler._enterToRefreshView.viewEnabled = true;
@@ -84,17 +84,11 @@ namespace TCP_Client
                 _InputHandler.ParseAndExecuteCommand(input, _communication);
             }
         }    
-        
-        public void CloseCommunication()
-        {
-            _communication.Stop();
-           
-        }
 
         public void CloseClient()
         {
             
-            _ViewUpdater.isViewRunning = false;
+            //_ViewUpdater.isViewRunning = false;
             _communication.Stop();
             isRunning = false;
         }

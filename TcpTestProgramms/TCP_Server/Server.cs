@@ -42,14 +42,14 @@ namespace TCP_Server
             _game = new Game();
             _serverInfo = serverInfo;
             _udpServer = udpBroadcast;
-            _ActionsHandler = new ServerActions(_serverInfo,this,_game);
+            _ActionsHandler = new ServerActions(_serverInfo,this,_game,communicationsToRemove);
 
             _queue = new PackageQueue();
             _process = new PackageProcessing(_queue, _ActionsHandler);
 
             _serverInfo._communications = new List<ICommunication>();
 
-            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_NICO), 8080);
+            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_LEON), 8080);
         }
 
         public void CLientConnection(TcpListener listener)

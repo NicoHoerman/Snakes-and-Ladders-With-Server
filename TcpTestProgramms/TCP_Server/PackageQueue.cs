@@ -39,7 +39,7 @@ namespace TCP_Server
             }
         }
 
-        public int Count { get { lock (_lock) return _queue.Count; } }
+        //public int Count { get { lock (_lock) return _queue.Count; } }
 
     }
 }
