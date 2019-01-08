@@ -28,7 +28,7 @@ namespace TCP_Server.Actions
 
         private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
         private Server _server;
-        private ServerInfo _ServerInfo;
+        private ServerInfo _serverInfo;
         private Game _game;
         private GameFinishedState finishedState;
 
@@ -37,7 +37,7 @@ namespace TCP_Server.Actions
         public static ManualResetEvent StateSwitched = new ManualResetEvent(false);
         public static ManualResetEvent TurnFinished = new ManualResetEvent(false);
 
-        public ServerActions(Lobby lobby, Server server, Game game)
+        public ServerActions(ServerInfo serverInfo, Server server, Game game)
         {
             finishedState = new GameFinishedState(game, currentplayer);
 
@@ -52,7 +52,7 @@ namespace TCP_Server.Actions
             };
 
             _server = server;
-            _ServerInfo = serverInfo;
+            _serverInfo = serverInfo;
             _game = game;
         }
 
@@ -69,76 +69,7 @@ namespace TCP_Server.Actions
         #region Protocol actions
         private void OnConnectionAction(ICommunication communication, DataPackage data)
         {
-            servername = _ServerInfo._LobbyName;
-            currentplayer = _ServerInfo._CurrentPlayerCount;
-            maxplayer = _ServerInfo._MaxPlayerCount;
-
-            verificationVariableSet.WaitOne();
-            verificationVariableSet.Reset();
-
-            var dataPackage = new DataPackage();
-            var lobbyUpdatePackage = new DataPackage();
-            if (_ConnectionStatus == ClientConnectionAttempt.Accepted)
-            {
-                dataPackage = new DataPackage
-                {
-                    Header = ProtocolActionEnum.Accept,
-                    Payload = JsonConvert.SerializeObject(new PROT_ACCEPT
-                    {
-                        _SmallUpdate = "You are connected to the Server and in the Lobby "
-                    })
-                };
-
-                lobbyUpdatePackage = new DataPackage
-                {
-                    Header = ProtocolActionEnum.UpdateView,
-                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                    {
-                        _lobbyDisplay = $"Current Lobby: {servername}. Players [{currentplayer}/{maxplayer}]",
-                        _commandList = "Commands:\n/search (only available when not connected to a server)\n/startgame\n/closegame\n/rolldice\n/someCommand"
-
-                    })
-                };
-                lobbyUpdatePackage.Size = lobbyUpdatePackage.ToByteArray().Length;
-                _ServerInfo._communications.ForEach(x => x.Send(lobbyUpdatePackage));
-            }
-            else if (_ConnectionStatus == ClientConnectionAttempt.Declined)
-            {
-                dataPackage = new DataPackage
-                {
-                    Header = ProtocolActionEnum.Decline,
-                    Payload = JsonConvert.SerializeObject(new PROT_DECLINE
-                    {
-                        _SmallUpdate = "You got declined. Lobby is probably full"
-                    })
-                };
-
-                var updatePackage = new DataPackage
-                {
-                    Header = ProtocolActionEnum.UpdateView,
-                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                    {
-                        _infoOutput = "A player got declined"
-                    })
-                };
-                updatePackage.Size = updatePackage.ToByteArray().Length;
-                //a send that sends to everyone except the current comunication
-                for (int i = 0; i <= _ServerInfo._communications.Count - 1; i++)
-                {
-                    if (!(_ServerInfo._communications[i] == communication))
-                        _ServerInfo._communications[i].Send(updatePackage);
-                }
-                
-            }
-            else if (_ConnectionStatus == ClientConnectionAttempt.NotSet)
-                throw new InvalidOperationException();
-
-            _ConnectionStatus = ClientConnectionAttempt.NotSet;
-
-            dataPackage.Size = dataPackage.ToByteArray().Length;
-            Thread.Sleep(10);
-            communication.Send(dataPackage);
-            MessageSent.Set();
+            //Work in Progress
         }
 
         private void OnStartGameAction(ICommunication communication, DataPackage data)
@@ -147,7 +78,7 @@ namespace TCP_Server.Actions
                 return;
             if (communication.IsMaster)
             {
-                if (_server.IsLobbyComplete())
+                if (_serverInfo.lobbylist[0].IsLobbyComplete())
                 {
                     var masterDataPackage = new DataPackage
                     {
@@ -175,10 +106,10 @@ namespace TCP_Server.Actions
                     };
                     playerDataPackage.Size = playerDataPackage.ToByteArray().Length;
 
-                    for (int i = 0; i <= _ServerInfo._communications.Count - 1; i++)
+                    for (int i = 0; i <= _serverInfo._communications.Count - 1; i++)
                     {
-                        if (!(_ServerInfo._communications[i] == communication))
-                            _ServerInfo._communications[i].Send(playerDataPackage);
+                        if (!(_serverInfo._communications[i] == communication))
+                            _serverInfo._communications[i].Send(playerDataPackage);
                     }
 
                     _game.State.ClearProperties();
@@ -250,9 +181,9 @@ namespace TCP_Server.Actions
                 _game.State.ClearProperties();
 
 
-                for (int i = 0; i <= _ServerInfo._communications.Count - 1; i++)
+                for (int i = 0; i <= _serverInfo._communications.Count - 1; i++)
                 {
-                        _ServerInfo._communications[i].Send(dataPackage);
+                        _serverInfo._communications[i].Send(dataPackage);
                 }
 
                 ruleSet = true;
@@ -280,7 +211,7 @@ namespace TCP_Server.Actions
             {
                 return;
             }
-            int currentCommunication = _ServerInfo._communications.FindIndex(x => x == communication)+1;
+            int currentCommunication = _serverInfo._communications.FindIndex(x => x == communication)+1;
 
             //if (_game.State.CurrentPlayer ==  currentCommunication)
            //{

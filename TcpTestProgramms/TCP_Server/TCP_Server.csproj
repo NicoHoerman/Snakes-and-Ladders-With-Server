@@ -72,7 +72,7 @@
     <Compile Include="EandE\StuffFromEandE\SourceWrapper.cs" />
     <Compile Include="EandE\XML_Config\ConfigurationProvider.cs" />
     <Compile Include="EandE\XML_Config\XElementExtension.cs" />
-    <Compile Include="Enum\ClientConnectionAttempt.cs" />
+    <Compile Include="Enum\ClientConnectionStatus.cs" />
     <Compile Include="PackageProcessing.cs" />
     <Compile Include="PackageQueue.cs" />
     <Compile Include="Program.cs" />
@@ -86,6 +86,7 @@
     <Compile Include="Server.cs" />
     <Compile Include="Actions\ServerActions.cs" />
     <Compile Include="ServerInfo.cs" />
+    <Compile Include="Test\DataPackageProvider.cs" />
     <Compile Include="Test\Lobby.cs" />
     <Compile Include="Test\LobbyState.cs" />
     <Compile Include="Test\StateEnum.cs" />
@@ -113,6 +114,7 @@
     <Content Include="EandE\XML_Config\Configurations.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Compile Include="Test\ClientConnection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

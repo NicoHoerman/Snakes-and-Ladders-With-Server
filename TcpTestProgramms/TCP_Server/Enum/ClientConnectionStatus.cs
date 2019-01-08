@@ -10,6 +10,7 @@ namespace TCP_Server.Enum
     {
         Accepted,
         Declined,
-        NotSet
+        Pending,
+        InLobby
     }
 }

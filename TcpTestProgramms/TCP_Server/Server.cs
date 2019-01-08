@@ -66,9 +66,9 @@ namespace TCP_Server
 
             backgroundworkerValidationSystem.RunWorkerAsync();
 
-            _validator = new Validator();
+            
             _game = new Game();
-            _ActionsHandler = new ServerActions(_serverInfo.lobbylist[0], this, _game);
+            _ActionsHandler = new ServerActions(_serverInfo, this, _game);
             //</new>
 
             _queue = new PackageQueue();
@@ -91,7 +91,6 @@ namespace TCP_Server
 
         public void DoBeginAcceptTcpClient(TcpListener listener)
         {
-
             listener.BeginAcceptTcpClient(
                 new AsyncCallback(DoAcceptTcpClientCallback),
                 listener);
@@ -103,13 +102,15 @@ namespace TCP_Server
         //<New>
         public void DoAcceptTcpClientCallback(IAsyncResult ar)
         {
+
             var listener = (TcpListener)ar.AsyncState;
             var client = listener.EndAcceptTcpClient(ar);
             AddCommunication(client);
             tcpClientConnected.Set();
 
+            status = ValidationEnum.ValidationState;
             //Handshake stuff
-            _validator.Validate(client);
+            new Validator(client);
         }
 
         public void AddCommunication(TcpClient client)
@@ -128,6 +129,8 @@ namespace TCP_Server
         {
             isRunning = true;
 
+            _udpServer.SetBroadcastMsg(_serverInfo);
+
             var backgroundworkerUpdate = new BackgroundWorker();
 
             backgroundworkerUpdate.DoWork += (obj, ea) => CheckForUpdates();
@@ -144,10 +147,7 @@ namespace TCP_Server
             backgroundworkerGame.RunWorkerAsync();
 
             while (isRunning)
-            {
-                
-            }
-
+            { }
         }
 
         private void CheckForUpdates()
@@ -184,11 +184,9 @@ namespace TCP_Server
             }
         }
 
-
-        
         public void RemoveFromLobby()
         {
-            communicationsToRemove.ForEach(x => _serverInfo._CurrentPlayerCount--);
+            communicationsToRemove.ForEach(x => _serverInfo.lobbylist[0]._CurrentPlayerCount--);
             _udpServer.SetBroadcastMsg(_serverInfo);
             RemoveFromList();
 
