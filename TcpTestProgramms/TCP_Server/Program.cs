@@ -9,10 +9,8 @@ namespace TCP_Server
     
         static void Main(string[] args)
         {
-            var serverInfo = new ServerInfo("Server_NICO",1,8080);
-
             Console.WriteLine("Listening for Clients...");
-            var udpserver = new UdpBroadcast(serverInfo);
+            var udpserver = new UdpBroadcast();
             
 
             var backgroundworker = new BackgroundWorker();
@@ -23,7 +21,7 @@ namespace TCP_Server
 
 
             Console.WriteLine("Waiting for players ");
-            var server = new Server(serverInfo,udpserver);
+            var server = new Server(udpserver);
             server.Run();
         }
     }

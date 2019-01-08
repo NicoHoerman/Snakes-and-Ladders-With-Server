@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TCP_Server.Actions;
 using TCP_Server.Enum;
+using TCP_Server.Test;
 using TCP_Server.UDP;
 
 namespace TCP_Server
@@ -37,59 +38,55 @@ namespace TCP_Server
         public PackageQueue _queue;
         public PackageProcessing _process;
 
-        public Server(ServerInfo serverInfo,UdpBroadcast udpBroadcast)
+        //<new>
+        public StateMachine stateMachine;
+        public static StateEnum state;
+        public ValidationSystem validationSystem;
+        public static ValidationEnum status;
+        public Validator _validator;
+        //</new>
+
+        public Server(UdpBroadcast udpBroadcast)
         {
+            //<new>
+            var backgroundworkerStateMachine = new BackgroundWorker();
+            backgroundworkerStateMachine.DoWork += (obj, ea) => stateMachine.Start();
+
+            var backgroundworkerValidationSystem = new BackgroundWorker();
+            backgroundworkerValidationSystem.DoWork += (obj, ea) => validationSystem.Start();
+
+            _serverInfo = new ServerInfo();
+            state = StateEnum.ServerRunningState;
+            stateMachine = new StateMachine(_serverInfo);
+
+            backgroundworkerStateMachine.RunWorkerAsync();
+
+            status = ValidationEnum.WaitingForPlayer;
+            validationSystem = new ValidationSystem(_serverInfo.lobbylist);
+
+            backgroundworkerValidationSystem.RunWorkerAsync();
+
+            _validator = new Validator();
             _game = new Game();
-            _serverInfo = serverInfo;
-            _udpServer = udpBroadcast;
-            _ActionsHandler = new ServerActions(_serverInfo,this,_game);
+            _ActionsHandler = new ServerActions(_serverInfo.lobbylist[0], this, _game);
+            //</new>
 
             _queue = new PackageQueue();
             _process = new PackageProcessing(_queue, _ActionsHandler);
-
+            _udpServer = udpBroadcast;
             _serverInfo._communications = new List<ICommunication>();
-
             _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_NICO), 8080);
         }
 
-        public void CLientConnection(TcpListener listener)
+        public void StartListening(TcpListener listener)
         {
             _listener.Start();
 
             while (isRunning)
             {
                 DoBeginAcceptTcpClient(listener);
-                if (_client != null)
-                {
-                    
-                    AddCommunication(_client);
-                    
-
-                    if (!IsLobbyComplete())
-                    {
-                        _ActionsHandler._ConnectionStatus = ClientConnectionAttempt.Accepted;
-                        ServerActions.verificationVariableSet.Set();
-                        _serverInfo._CurrentPlayerCount++;
-                        _udpServer.SetBroadcastMsg(_serverInfo);
-                    }
-                    else if (IsLobbyComplete())
-                    {
-                        _ActionsHandler._ConnectionStatus = ClientConnectionAttempt.Declined;
-                        ServerActions.verificationVariableSet.Set();
-
-                        ServerActions.MessageSent.WaitOne();
-                        ServerActions.MessageSent.Reset();
-                        var currentCommunication = _serverInfo._communications.Last();
-                        currentCommunication.Stop();
-                        
-                        communicationsToRemove.Add(currentCommunication);
-
-                        RemoveFromList();
-                    }
-                    _client = null;
-                }
-                Thread.Sleep(1000);
             }
+            Thread.Sleep(1000);
         }
 
         public void DoBeginAcceptTcpClient(TcpListener listener)
@@ -103,26 +100,16 @@ namespace TCP_Server
             tcpClientConnected.Reset();
         }
 
+        //<New>
         public void DoAcceptTcpClientCallback(IAsyncResult ar)
         {
-            TcpListener listener = (TcpListener)ar.AsyncState;
-
-            _client = listener.EndAcceptTcpClient(ar);
-            
-            //Conected
-            Console.WriteLine("Client succesfully connected");
-            
+            var listener = (TcpListener)ar.AsyncState;
+            var client = listener.EndAcceptTcpClient(ar);
+            AddCommunication(client);
             tcpClientConnected.Set();
-        }
 
-        public bool IsLobbyComplete()
-        {
-            if (_serverInfo._CurrentPlayerCount == _serverInfo._MaxPlayerCount)
-            {
-                return true;
-            }
-            else
-                return false;
+            //Handshake stuff
+            _validator.Validate(client);
         }
 
         public void AddCommunication(TcpClient client)
@@ -148,7 +135,7 @@ namespace TCP_Server
 
             var backgroundworkerConnection = new BackgroundWorker();
 
-            backgroundworkerConnection.DoWork += (obj, ea) => CLientConnection(_listener);
+            backgroundworkerConnection.DoWork += (obj, ea) => StartListening(_listener);
             backgroundworkerConnection.RunWorkerAsync();
 
             var backgroundworkerGame = new BackgroundWorker();

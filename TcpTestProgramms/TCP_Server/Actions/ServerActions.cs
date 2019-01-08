@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Threading;
 using TCP_Server.Enum;
 using TCP_Server.PROTOCOLS;
+using TCP_Server.Test;
 using Wrapper;
 
 
@@ -36,9 +37,7 @@ namespace TCP_Server.Actions
         public static ManualResetEvent StateSwitched = new ManualResetEvent(false);
         public static ManualResetEvent TurnFinished = new ManualResetEvent(false);
 
-        public ClientConnectionAttempt _ConnectionStatus = ClientConnectionAttempt.NotSet;
-
-        public ServerActions(ServerInfo serverInfo, Server server, Game game)
+        public ServerActions(Lobby lobby, Server server, Game game)
         {
             finishedState = new GameFinishedState(game, currentplayer);
 

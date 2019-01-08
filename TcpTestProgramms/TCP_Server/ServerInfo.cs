@@ -2,24 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using TCP_Server.Test;
 
 namespace TCP_Server
 {
     public class ServerInfo
     {
-        public int _MaxPlayerCount { get; set; }
-        public int _CurrentPlayerCount { get; set; } = 0;
-        public string _LobbyName { get;  set; }
-        public int _ServerPort { get; set; }
         public List<ICommunication> _communications { get; set; }
-
-        private List<IPAddress> _Blacklist = new List<IPAddress>();
-
-        public ServerInfo(string lobbyname,int maxplayercount,int port)
+        public List<Lobby> lobbylist { get; set; }
+        public ServerInfo()
         {
-            _MaxPlayerCount = maxplayercount;
-            _LobbyName = lobbyname;
-            _ServerPort = port;
+            _communications = new List<ICommunication>();
+            lobbylist = new List<Lobby>();
         }
 
         public void PrintPlayerIP()

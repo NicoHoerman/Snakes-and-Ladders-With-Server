@@ -28,11 +28,11 @@ namespace TCP_Server.UDP
         IPAddress ClientIP;
         ServerInfo _serverInfo;
 
-        public UdpBroadcast(ServerInfo serverInfo)
+        public UdpBroadcast()
         {
             _udpServer = new UdpClient(7070);
-            _serverInfo = serverInfo;
-            SetBroadcastMsg(_serverInfo);
+            //_serverInfo = serverInfo;
+            //SetBroadcastMsg(_serverInfo);
         }
 
         public void RunUdpServer()
@@ -88,10 +88,10 @@ namespace TCP_Server.UDP
                 Payload = JsonConvert.SerializeObject(new PROT_BROADCAST
                 {
                     _Server_ip = SERVER_IP_LAN_NICO,
-                    _Server_name = serverInfo._LobbyName,
-                    _CurrentPlayerCount = serverInfo._CurrentPlayerCount,
-                    _MaxPlayerCount = serverInfo._MaxPlayerCount,
-                    _Server_Port = serverInfo._ServerPort
+                    _Server_name = serverInfo.lobbylist[0]._LobbyName,
+                    _CurrentPlayerCount = serverInfo.lobbylist[0]._CurrentPlayerCount,
+                    _MaxPlayerCount = serverInfo.lobbylist[0]._MaxPlayerCount,
+                    _Server_Port = serverInfo.lobbylist[0]._ServerPort
                     
                 })
             };

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TCP_Server.Enum
 {
-    public enum ClientConnectionAttempt
+    public enum ClientConnectionStatus
     {
         Accepted,
         Declined,

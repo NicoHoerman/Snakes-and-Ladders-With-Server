@@ -73,7 +73,6 @@
     <Compile Include="EandE\XML_Config\ConfigurationProvider.cs" />
     <Compile Include="EandE\XML_Config\XElementExtension.cs" />
     <Compile Include="Enum\ClientConnectionAttempt.cs" />
-    <Compile Include="Enum\StateEnum.cs" />
     <Compile Include="PackageProcessing.cs" />
     <Compile Include="PackageQueue.cs" />
     <Compile Include="Program.cs" />
@@ -87,6 +86,13 @@
     <Compile Include="Server.cs" />
     <Compile Include="Actions\ServerActions.cs" />
     <Compile Include="ServerInfo.cs" />
+    <Compile Include="Test\Lobby.cs" />
+    <Compile Include="Test\LobbyState.cs" />
+    <Compile Include="Test\StateEnum.cs" />
+    <Compile Include="Test\StateMachine.cs" />
+    <Compile Include="Test\ValidationEnum.cs" />
+    <Compile Include="Test\ValidationSystem.cs" />
+    <Compile Include="Test\Validator.cs" />
     <Compile Include="UDP\UdpBroadcast.cs" />
   </ItemGroup>
   <ItemGroup>
