@@ -84,7 +84,7 @@ namespace TCP_Server
             var client = listener.EndAcceptTcpClient(ar);
             AddCommunication(client);
             tcpClientConnected.Set();
-            Core.status = ValidationEnum.ValidationState;
+            Core.ValidationStatus = ValidationEnum.ValidationState;
         }
 
         public void AddCommunication(TcpClient client)

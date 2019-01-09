@@ -49,8 +49,7 @@ namespace TCP_Server.Actions
                 { ProtocolActionEnum.OnConnection, OnConnectionAction },
                 { ProtocolActionEnum.Rule, OnRuleAction }
             };
-
-            _server = server;
+          
             _serverInfo = serverInfo;
             _game = game;
         }

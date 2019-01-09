@@ -18,7 +18,7 @@ namespace TCP_Server.Test
             {
 
             }
-                Server.state = StateEnum.GameRunningState;
+                Core.State = StateEnum.GameRunningState;
         }
     }
 }

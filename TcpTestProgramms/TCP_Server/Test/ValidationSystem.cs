@@ -24,11 +24,11 @@ namespace TCP_Server.Test
         public void Start()
         {
             isRunning = true;
-            Core.status = ValidationEnum.WaitingForPlayer;
+            Core.ValidationStatus = ValidationEnum.WaitingForPlayer;
 
             while (isRunning)
             {
-                switch (Core.status)
+                switch (Core.ValidationStatus)
                 {
                     case ValidationEnum.WaitingForPlayer:
                         //Something
@@ -52,15 +52,15 @@ namespace TCP_Server.Test
         {
             if (_serverInfo.lobbylist[0].IsLobbyComplete())
             {
-                Core._ConnectionStatus = ClientConnectionStatus.Declined;
+                Core.ConnectionStatus = ClientConnectionStatus.Declined;
                 _disconnectionHandler.Execute();
             }
             else
             {
-                Core._ConnectionStatus = ClientConnectionStatus.Accepted;
+                Core.ConnectionStatus = ClientConnectionStatus.Accepted;
                 _connectionHandler.Execute();
             }
-            Core.status = ValidationEnum.WaitingForPlayer;
+            Core.ValidationStatus = ValidationEnum.WaitingForPlayer;
         }
     }
 }

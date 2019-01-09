@@ -20,10 +20,10 @@ namespace TCP_Server.Test
         public ServerInfo serverInfo;
 
         public StateMachine stateMachine;
-        public static StateEnum state;
+        public static StateEnum State;
         public ValidationSystem validationSystem;
-        public static ValidationEnum status;
-        public static ClientConnectionStatus _ConnectionStatus;
+        public static ValidationEnum ValidationStatus;
+        public static ClientConnectionStatus ConnectionStatus;
 
         public Core()
         {
