@@ -27,7 +27,7 @@ namespace TCP_Server.Test
             var currentplayer = _serverInfo.lobbylist[0]._CurrentPlayerCount;
             var maxplayer = _serverInfo.lobbylist[0]._MaxPlayerCount;
 
-            accpetedInfoPackage = new DataPackage
+            accpetedInfoPackage  = new DataPackage
             {
                 Header = ProtocolActionEnum.Accept,
                 Payload = JsonConvert.SerializeObject(new PROT_ACCEPT
@@ -35,7 +35,7 @@ namespace TCP_Server.Test
                     _SmallUpdate = "You are connected to the Server and in the Lobby "
                 })
             };
-            declinedInfoPackage = new DataPackage
+            declinedInfoPackage  = new DataPackage
             {
                 Header = ProtocolActionEnum.Decline,
                 Payload = JsonConvert.SerializeObject(new PROT_DECLINE
@@ -43,7 +43,7 @@ namespace TCP_Server.Test
                     _SmallUpdate = "You got declind. Lobby is probably full"
                 })
             };
-            lobbyDisplayPackage = new DataPackage
+            lobbyDisplayPackage  = new DataPackage
             {
                 Header = ProtocolActionEnum.UpdateView,
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE

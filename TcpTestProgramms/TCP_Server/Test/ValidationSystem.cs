@@ -34,7 +34,7 @@ namespace TCP_Server.Test
                 switch (Core.ValidationStatus)
                 {
                     case ValidationEnum.WaitingForPlayer:
-                        //Something
+                        
                         break;
                     case ValidationEnum.ValidationState:
                         validator.Validate();
@@ -43,7 +43,7 @@ namespace TCP_Server.Test
                         LobbyCheck();
                         break;
                     case ValidationEnum.DeclineState:
-                        //Something
+                        _disconnectionHandler.DisconnectClient();
                         break;
                     default:
                         break;

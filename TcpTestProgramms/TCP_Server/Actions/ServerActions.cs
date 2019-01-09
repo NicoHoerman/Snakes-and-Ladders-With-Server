@@ -43,7 +43,6 @@ namespace TCP_Server.Actions
                 { ProtocolActionEnum.GetHelp,   OnGetHelpAction },
                 { ProtocolActionEnum.StartGame, OnStartGameAction },
                 { ProtocolActionEnum.CloseGame, OnCloseGameAction },
-                { ProtocolActionEnum.OnConnection, OnConnectionAction },
                 { ProtocolActionEnum.Rule, OnRuleAction }
             };
 
@@ -74,10 +73,6 @@ namespace TCP_Server.Actions
 
 
         #region Protocol actions
-        private void OnConnectionAction(ICommunication communication, DataPackage data)
-        {
-            //Work in Progress
-        }
 
         private void OnStartGameAction(ICommunication communication, DataPackage data)
         {
