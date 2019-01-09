@@ -58,18 +58,8 @@ namespace TCP_Server.Actions
 
             protocolAction(communication, data);
         }
+        
 
-        public void SendPackageToCurrent(ICommunication communication, DataPackage data)
-        {
-            communication.Send(data);
-        }
-        public void SendPackageToAll(DataPackage data)
-        {
-            for (int i = 0; i <= _serverInfo._communications.Count - 1; i++)
-            {
-                _serverInfo._communications[i].Send(data);
-            }
-        }
 
 
         #region Protocol actions

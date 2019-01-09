@@ -25,13 +25,17 @@ namespace TCP_Server.Test
 
         public void Execute(ICommunication communication )
         {
-            DisconnectClient();
             //Send To Current
             DataPackage declinedInfoPackage = _dataPackageProvider.GetPackage("DeclinedInfo");
-
+            communication.Send(declinedInfoPackage);
+            DisconnectClient();
             
-            //Send To All except current
+            //Send To All 
             DataPackage declineUpdatePackage = _dataPackageProvider.GetPackage("DeclineUpdate");
+            for (int i = 0; i <= _serverInfo._communications.Count - 1; i++)
+            {
+                _serverInfo._communications[i].Send(declineUpdatePackage);
+            }
         }
 
         public void RemoveFromLobby()
