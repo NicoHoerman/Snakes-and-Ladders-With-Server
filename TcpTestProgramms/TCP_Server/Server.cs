@@ -109,7 +109,7 @@ namespace TCP_Server
 
             _client = listener.EndAcceptTcpClient(ar);
             
-            //Conected
+            //Connected
             Console.WriteLine("Client succesfully connected");
             
             tcpClientConnected.Set();

@@ -14,6 +14,7 @@ using TCP_Client.UDP;
 using Wrapper;
 using Wrapper.Contracts;
 using Wrapper.Implementation;
+using TCP_Client.StateEnum;
 
 namespace TCP_Client.Actions
 {
@@ -151,6 +152,7 @@ namespace TCP_Client.Actions
 
         public void OnIntAction(string input, ICommunication communication)
         {
+            
 
             if (isConnected | !Searched | Declined)
             {
@@ -161,6 +163,9 @@ namespace TCP_Client.Actions
             int chosenServerId = Int32.Parse(input);
             if (_ActionHandler._serverDictionary.Count >= chosenServerId)
             {
+
+                _client.SwitchState(ClientStates.Connecting);
+
                 BroadcastDTO current = _ActionHandler.GetServer(chosenServerId-1);
                 try
                 {

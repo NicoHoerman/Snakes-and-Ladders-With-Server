@@ -149,7 +149,7 @@ namespace TCP_Client
             
         }
 
-        private void SwitchState(ClientStates newState)
+        public void SwitchState(ClientStates newState)
         {
             state = newState;
         }
