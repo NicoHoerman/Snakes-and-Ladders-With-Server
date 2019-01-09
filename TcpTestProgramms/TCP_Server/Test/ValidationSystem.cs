@@ -39,11 +39,7 @@ namespace TCP_Server.Test
                         //Something
                         break;
                     case ValidationEnum.ValidationState:
-                         ValidateClientAsync();
-                        if (validationStatus)
-                            _server.SwitchState(ValidationEnum.LobbyCheck);
-                        else
-                            _server.SwitchState(ValidationEnum.DeclineState);
+                         ValidateClientAsync();                      
                         break;
                     case ValidationEnum.LobbyCheck:
                         LobbyCheck();
@@ -96,7 +92,7 @@ namespace TCP_Server.Test
             validationStatus = await _server._ActionsHandler.OnValidationAction();
 
             timer = new System.Timers.Timer(5000);
-
+            timer.Enabled = true;
             timer.Elapsed += ValidationHelper;
 
             return validationStatus;
