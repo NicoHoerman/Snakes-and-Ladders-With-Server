@@ -6,12 +6,12 @@ namespace TCP_Server.Test
 {
     public class ValidationSystem
     {
-        private List<Lobby> _lobbylist;
+        private ServerInfo _serverInfo;
         private bool isRunning;
 
-        public ValidationSystem(List<Lobby> lobbylist)
+        public ValidationSystem(ServerInfo serverInfo)
         {
-            _lobbylist = lobbylist;
+            _serverInfo = serverInfo;
         }
 
         public void Start()
@@ -44,7 +44,7 @@ namespace TCP_Server.Test
 
         private void LobbyCheck()
         {
-            if (_lobbylist[0].IsLobbyComplete())
+            if (_serverInfo.lobbylist[0].IsLobbyComplete())
             {
                 _ConnectionStatus = ClientConnectionStatus.Declined;
             }
@@ -52,7 +52,7 @@ namespace TCP_Server.Test
             {
                 _ConnectionStatus = ClientConnectionStatus.Accepted;
             }
-            new ClientConnection(_ConnectionStatus);
+            new ClientConnection(_ConnectionStatus,_serverInfo);
             Server.status = ValidationEnum.WaitingForPlayer;
 
         }

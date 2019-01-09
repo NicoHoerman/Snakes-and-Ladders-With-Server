@@ -62,7 +62,7 @@ namespace TCP_Server
             backgroundworkerStateMachine.RunWorkerAsync();
 
             status = ValidationEnum.WaitingForPlayer;
-            validationSystem = new ValidationSystem(_serverInfo.lobbylist);
+            validationSystem = new ValidationSystem(_serverInfo);
 
             backgroundworkerValidationSystem.RunWorkerAsync();
 

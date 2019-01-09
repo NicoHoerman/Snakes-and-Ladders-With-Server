@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Sockets;
 using Shared.Communications;
 using TCP_Server.Enum;
@@ -9,9 +10,11 @@ namespace TCP_Server.Test
     {
         //<New>		
         public TcpClient _client;
+        private ServerInfo _serverInfo;
 
-        public ClientConnection(ClientConnectionStatus clientStatus)
+        public ClientConnection(ClientConnectionStatus clientStatus, ServerInfo serverinfo)
         {
+            _serverInfo = serverinfo;
             Execute(clientStatus);
         }
 
@@ -26,34 +29,14 @@ namespace TCP_Server.Test
             _client = null;
         }
 
-        private DataPackage AcceptClient()
+        private void DeclineClient()
         {
-            _serverInfo._CurrentPlayerCount++;
-            _udpServer.SetBroadcastMsg(_serverInfo);
-
-            var dataPackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.Accept,
-                Payload = JsonConvert.SerializeObject(new PROT_ACCEPT
-                {
-                    _SmallUpdate = "You are connected to the Server and in the Lobby "
-                })
-            };
-            return dataPackage;
+            throw new NotImplementedException();
         }
 
-        private DataPackage DeclineClient()
+        private void AcceptClient()
         {
-            var dataPackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.Decline,
-                Payload = JsonConvert.SerializeObject(new PROT_DECLINE
-                {
-                    _SmallUpdate = "You got declined. Lobby is probably full"
-                })
-            };
-
-            return dataPackage;
+            throw new NotImplementedException();
         }
 
         private void DisconnectClient()
@@ -65,29 +48,5 @@ namespace TCP_Server.Test
 
             RemoveFromList();
         }
-        private DataPackage SendUpdateToAll()
-        {
-            var lobbyUpdatePackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.UpdateView,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                {
-                    _lobbyDisplay = $"Current Lobby: {servername}. Players [{currentplayer}/{maxplayer}]",
-                    _commandList = "Commands:\n/search (only available when not connected to a server)\n/startgame\n/closegame\n/rolldice\n/someCommand"
-
-                })
-            };
-            lobbyUpdatePackage.Size = lobbyUpdatePackage.ToByteArray().Length;
-
-            var updatePackage = new DataPackage
-			{
-				Header = ProtocolActionEnum.UpdateView,
-				Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-				{
-					_infoOutput = "A player got declined"
-				})
-			};
-			updatePackage.Size = updatePackage.ToByteArray().Length;
-		}	
 	}
 }
