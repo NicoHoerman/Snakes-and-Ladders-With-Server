@@ -7,11 +7,13 @@ using Shared.Enums;
 using Newtonsoft.Json;
 using Shared.Communications;
 using TCP_Server.PROTOCOLS;
+using System.Timers;
 
 namespace TCP_Server.Test
 {
     public class ValidationSystem
     {
+        private static System.Timers.Timer timer;
         private ServerInfo _serverInfo;
         private bool isRunning;
         private Server _server;
@@ -40,7 +42,8 @@ namespace TCP_Server.Test
                          ValidateClientAsync();
                         if (validationStatus)
                             _server.SwitchState(ValidationEnum.LobbyCheck);
-                        else _server.SwitchState(ValidationEnum.DeclineState);
+                        else
+                            _server.SwitchState(ValidationEnum.DeclineState);
                         break;
                     case ValidationEnum.LobbyCheck:
                         LobbyCheck();
@@ -92,7 +95,19 @@ namespace TCP_Server.Test
 
             validationStatus = await _server._ActionsHandler.OnValidationAction();
 
+            timer = new System.Timers.Timer(5000);
+
+            timer.Elapsed += ValidationHelper;
+
             return validationStatus;
+        }
+
+        private void ValidationHelper(Object source, ElapsedEventArgs e)
+        {
+            if (validationStatus)
+                _server.SwitchState(ValidationEnum.LobbyCheck);
+            else
+                _server.SwitchState(ValidationEnum.DeclineState);
         }
 
        
