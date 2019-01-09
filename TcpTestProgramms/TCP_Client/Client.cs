@@ -90,9 +90,9 @@ namespace TCP_Client
             {                             
                 _ViewUpdater.UpdateView();
                 Console.SetCursorPosition(_InputHandler._inputView._xCursorPosition, 0);
-                input = _OutputWrapper.ReadInput();
+                //input = _OutputWrapper.ReadInput();
                 _OutputWrapper.Clear();
-                _InputHandler.ParseAndExecuteCommand(input, _communication);
+                //_InputHandler.ParseAndExecuteCommand(input, _communication);
             }
         }    
         
@@ -125,6 +125,7 @@ namespace TCP_Client
 
                     case ClientStates.Connecting:
                         _InputHandler._inputActions.Clear();
+                        
                         WaitForHandshake();
                         break;
 
