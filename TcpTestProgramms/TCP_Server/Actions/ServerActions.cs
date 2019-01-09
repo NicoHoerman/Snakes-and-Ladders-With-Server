@@ -14,6 +14,7 @@ using TCP_Server.Enum;
 using TCP_Server.PROTOCOLS;
 using TCP_Server.Test;
 using Wrapper;
+using System.Threading.Tasks;
 
 
 namespace TCP_Server.Actions
@@ -48,7 +49,8 @@ namespace TCP_Server.Actions
                 { ProtocolActionEnum.StartGame, OnStartGameAction },
                 { ProtocolActionEnum.CloseGame, OnCloseGameAction },
                 { ProtocolActionEnum.OnConnection, OnConnectionAction },
-                { ProtocolActionEnum.Rule, OnRuleAction }
+                { ProtocolActionEnum.Rule, OnRuleAction },
+                { ProtocolActionEnum.ValidationAnswer, OnValidationAction }
             };
 
             _server = server;
@@ -337,6 +339,11 @@ namespace TCP_Server.Actions
             communication.Stop();
             _server.communicationsToRemove.Add(communication);
             _server.RemoveFromLobby();
+        }
+
+        public async Task<bool> OnValidationAction()
+        {
+            return true;
         }
 
         #endregion

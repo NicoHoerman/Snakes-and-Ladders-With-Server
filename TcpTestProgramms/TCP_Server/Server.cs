@@ -30,7 +30,7 @@ namespace TCP_Server
         
         private TcpListener _listener;
         private ServerInfo _serverInfo;
-        private ServerActions _ActionsHandler;
+        public ServerActions _ActionsHandler;
         private UdpBroadcast _udpServer;
         private TcpClient _client;
         public Game _game;
@@ -62,7 +62,7 @@ namespace TCP_Server
             backgroundworkerStateMachine.RunWorkerAsync();
 
             status = ValidationEnum.WaitingForPlayer;
-            validationSystem = new ValidationSystem(_serverInfo);
+            validationSystem = new ValidationSystem(_serverInfo, this);
 
             backgroundworkerValidationSystem.RunWorkerAsync();
 
@@ -213,5 +213,9 @@ namespace TCP_Server
             }
         }
 
+        public void SwitchState(ValidationEnum newValidation)
+        {
+            status = newValidation;
+        }
     }
 }
