@@ -27,7 +27,6 @@ namespace TCP_Server.Actions
         private bool ruleSet = false;
 
         private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
-        private Server _server;
         private ServerInfo _serverInfo;
         private Game _game;
         private GameFinishedState finishedState;
@@ -37,7 +36,7 @@ namespace TCP_Server.Actions
         public static ManualResetEvent StateSwitched = new ManualResetEvent(false);
         public static ManualResetEvent TurnFinished = new ManualResetEvent(false);
 
-        public ServerActions(ServerInfo serverInfo, Server server, Game game)
+        public ServerActions(ServerInfo serverInfo, Game game)
         {
             finishedState = new GameFinishedState(game, currentplayer);
 
@@ -335,8 +334,8 @@ namespace TCP_Server.Actions
         private void OnCloseGameAction(ICommunication communication, DataPackage data)
         {
             communication.Stop();
-            _server.communicationsToRemove.Add(communication);
-            _server.RemoveFromLobby();
+            communicationsToRemove.Add(communication);
+            RemoveFromLobby();
         }
 
         #endregion

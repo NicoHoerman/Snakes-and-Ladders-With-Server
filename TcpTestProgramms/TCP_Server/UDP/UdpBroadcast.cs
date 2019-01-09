@@ -28,11 +28,10 @@ namespace TCP_Server.UDP
         IPAddress ClientIP;
         ServerInfo _serverInfo;
 
-        public UdpBroadcast()
+        public UdpBroadcast(ServerInfo serverInfo)
         {
             _udpServer = new UdpClient(7070);
-            //_serverInfo = serverInfo;
-            //SetBroadcastMsg(_serverInfo);
+            _serverInfo = serverInfo;
         }
 
         public void RunUdpServer()
@@ -69,10 +68,10 @@ namespace TCP_Server.UDP
                 byte[] bytes = _udpServer.EndReceive(ar, ref _recieverEndPoint);
                 string recievedMessage = Encoding.ASCII.GetString(bytes);
                 if(recievedMessage == "is there a Server")
-                Broadcast(_recieverEndPoint.Address.ToString());
-                
-                //_udpServer.Dispose();
-                //_udpServer.Close();
+                {
+                    SetBroadcastMsg(_serverInfo);
+                    Broadcast(_recieverEndPoint.Address.ToString());
+                }
             }
             Thread.Sleep(1);
             _MessageReceived.Set();
@@ -80,7 +79,6 @@ namespace TCP_Server.UDP
 
         public void SetBroadcastMsg(ServerInfo serverInfo)
         {
-            
             Random random = new Random();
             DataPackage dataPackage = new DataPackage
             {

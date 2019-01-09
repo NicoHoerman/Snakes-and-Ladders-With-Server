@@ -1,18 +1,12 @@
 ﻿using EandE_ServerModel.EandE.GameAndLogic;
 using Shared.Communications;
-using Shared.Contract;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
 using TCP_Server.Actions;
-using TCP_Server.Enum;
 using TCP_Server.Test;
-using TCP_Server.UDP;
 
 namespace TCP_Server
 {
@@ -24,57 +18,42 @@ namespace TCP_Server
         private const string SERVER_IP_NETWORK = "194.205.205.2";
         
         private bool isRunning;
-        public List<ICommunication> communicationsToRemove = new List<ICommunication>();
-       
+
         public static ManualResetEvent tcpClientConnected = new ManualResetEvent(false);
         
         private TcpListener _listener;
         private ServerInfo _serverInfo;
         private ServerActions _ActionsHandler;
-        private UdpBroadcast _udpServer;
-        private TcpClient _client;
+        public ClientDisconnection _DisconnectionHandler;
         public Game _game;
 
         public PackageQueue _queue;
         public PackageProcessing _process;
 
-        //<new>
-        public StateMachine stateMachine;
-        public static StateEnum state;
-        public ValidationSystem validationSystem;
-        public static ValidationEnum status;
-        public Validator _validator;
-        //</new>
+        public StateMachine _stateMachine;
+        public ValidationSystem _validationSystem;
 
-        public Server(UdpBroadcast udpBroadcast)
+        public Server(Game game,ServerInfo serverInfo,StateMachine stateMachine,
+            ValidationSystem validationSystem,ClientDisconnection disconnectionHandler)
         {
-            //<new>
-            var backgroundworkerStateMachine = new BackgroundWorker();
-            backgroundworkerStateMachine.DoWork += (obj, ea) => stateMachine.Start();
+            _stateMachine = stateMachine;
+            var bwStateMachine = new BackgroundWorker();
+            bwStateMachine.DoWork += (obj, ea) => stateMachine.Start();
+            bwStateMachine.RunWorkerAsync();
 
-            var backgroundworkerValidationSystem = new BackgroundWorker();
-            backgroundworkerValidationSystem.DoWork += (obj, ea) => validationSystem.Start();
-
-            _serverInfo = new ServerInfo();
-            state = StateEnum.ServerRunningState;
-            stateMachine = new StateMachine(_serverInfo);
-
-            backgroundworkerStateMachine.RunWorkerAsync();
-
-            status = ValidationEnum.WaitingForPlayer;
-            validationSystem = new ValidationSystem(_serverInfo);
-
-            backgroundworkerValidationSystem.RunWorkerAsync();
-
+            _validationSystem = validationSystem;
+            var bwValidationSystem = new BackgroundWorker();
+            bwValidationSystem.DoWork += (obj, ea) => validationSystem.Start();
+            bwValidationSystem.RunWorkerAsync();
             
-            _game = new Game();
-            _ActionsHandler = new ServerActions(_serverInfo, this, _game);
-            //</new>
+            _serverInfo = serverInfo;
+            _game = game;
+            _ActionsHandler = new ServerActions(_serverInfo,_game);
+            _DisconnectionHandler = disconnectionHandler;
 
             _queue = new PackageQueue();
             _process = new PackageProcessing(_queue, _ActionsHandler);
-            _udpServer = udpBroadcast;
-            _serverInfo._communications = new List<ICommunication>();
+
             _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_NICO), 8080);
         }
 
@@ -99,18 +78,13 @@ namespace TCP_Server
             tcpClientConnected.Reset();
         }
 
-        //<New>
         public void DoAcceptTcpClientCallback(IAsyncResult ar)
         {
-
             var listener = (TcpListener)ar.AsyncState;
             var client = listener.EndAcceptTcpClient(ar);
             AddCommunication(client);
             tcpClientConnected.Set();
-
-            status = ValidationEnum.ValidationState;
-            //Handshake stuff
-            new Validator(client);
+            Core.status = ValidationEnum.ValidationState;
         }
 
         public void AddCommunication(TcpClient client)
@@ -122,27 +96,21 @@ namespace TCP_Server
                 _serverInfo._communications[0].IsMaster = true;
 
             _serverInfo.PrintPlayerIP();
-            _client = null;
         } 
 
         public void Run()
         {
             isRunning = true;
 
-            _udpServer.SetBroadcastMsg(_serverInfo);
-
             var backgroundworkerUpdate = new BackgroundWorker();
-
             backgroundworkerUpdate.DoWork += (obj, ea) => CheckForUpdates();
             backgroundworkerUpdate.RunWorkerAsync();
 
             var backgroundworkerConnection = new BackgroundWorker();
-
             backgroundworkerConnection.DoWork += (obj, ea) => StartListening(_listener);
             backgroundworkerConnection.RunWorkerAsync();
 
             var backgroundworkerGame = new BackgroundWorker();
-
             backgroundworkerGame.DoWork += (obj, ea) => RunGame();
             backgroundworkerGame.RunWorkerAsync();
 
@@ -152,16 +120,15 @@ namespace TCP_Server
 
         private void CheckForUpdates()
         {
-            
             while (isRunning)
             {
-                communicationsToRemove.Clear();
+                _serverInfo.communicationsToRemove.Clear();
                 _serverInfo._communications.ForEach(communication =>
                 {
                     if (!communication.IsConnected)
                     {
                         communication.Stop();
-                        communicationsToRemove.Add(communication);
+                        _serverInfo.communicationsToRemove.Add(communication);
                     }
                     else if (communication.IsDataAvailable())
                     {
@@ -175,7 +142,7 @@ namespace TCP_Server
                 });
 
                 // All elements that lost conenction!
-                if(communicationsToRemove.Count > 0)
+                if(_serverInfo.communicationsToRemove.Count > 0)
                 {
                     RemoveFromLobby();
                 }
@@ -184,21 +151,7 @@ namespace TCP_Server
             }
         }
 
-        public void RemoveFromLobby()
-        {
-            communicationsToRemove.ForEach(x => _serverInfo.lobbylist[0]._CurrentPlayerCount--);
-            _udpServer.SetBroadcastMsg(_serverInfo);
-            RemoveFromList();
-
-            if (_game.isRunning)
-                _game.State.SetInput("/closegame");
-        }
-
-        public void RemoveFromList()
-        {
-            communicationsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
-        }
-
+        
         private void ShutdownServer(string input)
         {
                 _game.State.SetInput("/closegame");

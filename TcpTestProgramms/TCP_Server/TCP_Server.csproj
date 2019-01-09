@@ -86,6 +86,8 @@
     <Compile Include="Server.cs" />
     <Compile Include="Actions\ServerActions.cs" />
     <Compile Include="ServerInfo.cs" />
+    <Compile Include="Test\ClientDisconnection.cs" />
+    <Compile Include="Test\Core.cs" />
     <Compile Include="Test\DataPackageProvider.cs" />
     <Compile Include="Test\Lobby.cs" />
     <Compile Include="Test\LobbyState.cs" />

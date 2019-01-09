@@ -5,19 +5,15 @@ namespace TCP_Server.Test
 {
     public class Validator
     {
-        public Validator(TcpClient client)
-        {
-            Validate(client);
-        }
 
-        public void Validate(TcpClient client)
+        public void Validate()
         {
             //Validation
             bool ValidationSucced = true;
             if (ValidationSucced)
-                Server.status = ValidationEnum.LobbyCheck;
+               Core.status = ValidationEnum.LobbyCheck;
             else
-                Server.status = ValidationEnum.DeclineState;
+               Core.status = ValidationEnum.DeclineState;
 
         }
     }

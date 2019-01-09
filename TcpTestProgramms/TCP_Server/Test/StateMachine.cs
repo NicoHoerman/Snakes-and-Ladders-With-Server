@@ -15,15 +15,16 @@ namespace TCP_Server.Test
         public void Start()
         {
             isRunning = true;
+            Core.state = StateEnum.ServerRunningState;
 
             while (isRunning)
             {
-                switch (Server.state)
+                switch (Core.state)
                 {
                     case StateEnum.ServerRunningState:
                         _serverinfo.lobbylist.Add(new Lobby("name", 2,8080));
                        
-                        Server.state = StateEnum.LobbyState;
+                        Core.state = StateEnum.LobbyState;
 
                         break;
                     case StateEnum.LobbyState:
@@ -33,7 +34,7 @@ namespace TCP_Server.Test
                         break;
                     case StateEnum.GameRunningState:
                         
-                        Server.state = StateEnum.LobbyState;
+                        Core.state = StateEnum.LobbyState;
 
                         break;
                     case StateEnum.ServerEndingState:

@@ -8,25 +8,33 @@ namespace TCP_Server.Test
     {
         private ServerInfo _serverInfo;
         private bool isRunning;
+        private Validator validator;
+        private ClientDisconnection _disconnectionHandler;
+        private ClientConnection _connectionHandler;
 
-        public ValidationSystem(ServerInfo serverInfo)
+        public ValidationSystem(ServerInfo serverInfo,ClientDisconnection disconnectionHandler
+            , ClientConnection connectionHandler)
         {
             _serverInfo = serverInfo;
+            validator = new Validator();
+            _disconnectionHandler = disconnectionHandler;
+            _connectionHandler = connectionHandler;
         }
 
         public void Start()
         {
             isRunning = true;
+            Core.status = ValidationEnum.WaitingForPlayer;
 
             while (isRunning)
             {
-                switch (Server.status)
+                switch (Core.status)
                 {
                     case ValidationEnum.WaitingForPlayer:
                         //Something
                         break;
                     case ValidationEnum.ValidationState:
-
+                        validator.Validate();
                         break;
                     case ValidationEnum.LobbyCheck:
                         LobbyCheck();
@@ -40,22 +48,19 @@ namespace TCP_Server.Test
             }
         }
 
-        public ClientConnectionStatus _ConnectionStatus = ClientConnectionStatus.Pending;
-
         private void LobbyCheck()
         {
             if (_serverInfo.lobbylist[0].IsLobbyComplete())
             {
-                _ConnectionStatus = ClientConnectionStatus.Declined;
+                Core._ConnectionStatus = ClientConnectionStatus.Declined;
+                _disconnectionHandler.Execute();
             }
             else
             {
-                _ConnectionStatus = ClientConnectionStatus.Accepted;
+                Core._ConnectionStatus = ClientConnectionStatus.Accepted;
+                _connectionHandler.Execute();
             }
-            new ClientConnection(_ConnectionStatus,_serverInfo);
-            Server.status = ValidationEnum.WaitingForPlayer;
-
+            Core.status = ValidationEnum.WaitingForPlayer;
         }
-
     }
 }
