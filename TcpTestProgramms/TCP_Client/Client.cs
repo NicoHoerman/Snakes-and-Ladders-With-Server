@@ -119,9 +119,7 @@ namespace TCP_Client
                     case ClientStates.NotConnected:
                         _InputHandler._inputActions.Add("/search", _InputHandler.OnSearchAction);
                         input = _OutputWrapper.ReadInput();
-                        _InputHandler.ParseAndExecuteCommand(input, _communication);
-                        if (_communication.IsConnected)
-                            SwitchState(ClientStates.Connecting);
+                        _InputHandler.ParseAndExecuteCommand(input, _communication);                       
                         break;
 
                     case ClientStates.Connecting:
