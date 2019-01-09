@@ -238,7 +238,7 @@ namespace TCP_Client.Actions
             
         }
 
-        private void OnCloseGameAction(string obj,ICommunication communication)
+        public void OnCloseGameAction(string obj,ICommunication communication)
         {
             if (!isConnected)
             {

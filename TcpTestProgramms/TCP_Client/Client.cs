@@ -70,8 +70,6 @@ namespace TCP_Client
             backgroundworker.DoWork += (obj, ea) => CheckTCPUpdates();
             backgroundworker.RunWorkerAsync();
 
-
-
             var backgroundworker2 = new BackgroundWorker();
 
             backgroundworker2.DoWork += (obj, ea) => _ViewUpdater.RunUpdater();
@@ -119,6 +117,7 @@ namespace TCP_Client
                     case ClientStates.NotConnected:
                         _InputHandler._inputActions.Add("/search", _InputHandler.OnSearchAction);
                         _InputHandler._inputActions.Add("/someInt", _InputHandler.OnIntAction);
+                        _InputHandler._inputActions.Add("/closegame", _InputHandler.OnCloseGameAction);
                         input = _OutputWrapper.ReadInput();
                         _InputHandler.ParseAndExecuteCommand(input, _communication);                       
                         break;
