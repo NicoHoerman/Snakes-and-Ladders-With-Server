@@ -34,7 +34,7 @@ namespace TCP_Server
         public StateMachine _stateMachine;
         public ValidationSystem _validationSystem;
 
-        public Server(Game game,ServerInfo serverInfo,StateMachine stateMachine,
+        public Server(ServerActions actionHandler,Game game,ServerInfo serverInfo,StateMachine stateMachine,
             ValidationSystem validationSystem,ClientDisconnection disconnectionHandler)
         {
             _stateMachine = stateMachine;
@@ -49,7 +49,7 @@ namespace TCP_Server
             
             _serverInfo = serverInfo;
             _game = game;
-            _ActionsHandler = new ServerActions(_serverInfo,_game,disconnectionHandler);
+            _ActionsHandler = actionHandler;
             _DisconnectionHandler = disconnectionHandler;
 
             _queue = new PackageQueue();
@@ -118,7 +118,7 @@ namespace TCP_Server
             backgroundworkerGame.RunWorkerAsync();
 
             while (isRunning)
-            { }
+            { ShutdownServer(Console.ReadLine()); }
         }
 
         private void CheckForUpdates()
@@ -154,8 +154,8 @@ namespace TCP_Server
         
         private void ShutdownServer(string input)
         {
-                _game.State.SetInput("/closegame");
-                isRunning = false; 
+            if(input == "shutdown")
+            Core.State = StateEnum.ServerEndingState;
         }
 
         private void RunGame()

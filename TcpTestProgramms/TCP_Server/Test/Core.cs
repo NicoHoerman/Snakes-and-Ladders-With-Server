@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TCP_Server.Actions;
 using TCP_Server.Enum;
 using TCP_Server.UDP;
 
@@ -18,6 +19,7 @@ namespace TCP_Server.Test
         public ClientDisconnection _disconnectionHandler;
         public Game game;
         public ServerInfo serverInfo;
+        public ServerActions _ActionsHandler;
 
         public StateMachine stateMachine;
         public ValidationSystem validationSystem;
@@ -32,13 +34,14 @@ namespace TCP_Server.Test
             serverInfo = new ServerInfo();
 
             udpserver = new UdpBroadcast(serverInfo);
-            stateMachine = new StateMachine(serverInfo);
 
             _dataPackageProvider = new DataPackageProvider(serverInfo);
             _connectionHandler = new ClientConnection(serverInfo,_dataPackageProvider);
             _disconnectionHandler = new ClientDisconnection(game, serverInfo,_dataPackageProvider);
 
-            server = new Server(game, serverInfo, stateMachine, validationSystem, _disconnectionHandler);
+            _ActionsHandler = new ServerActions(serverInfo, game, _disconnectionHandler);
+            stateMachine = new StateMachine(serverInfo,_ActionsHandler);
+            server = new Server(_ActionsHandler, game, serverInfo, stateMachine, validationSystem, _disconnectionHandler);
             validationSystem = new ValidationSystem(serverInfo,_disconnectionHandler,_connectionHandler,_dataPackageProvider);
         }
 

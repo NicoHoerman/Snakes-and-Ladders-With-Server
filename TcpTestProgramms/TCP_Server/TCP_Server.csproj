@@ -90,12 +90,10 @@
     <Compile Include="Test\Core.cs" />
     <Compile Include="Test\DataPackageProvider.cs" />
     <Compile Include="Test\Lobby.cs" />
-    <Compile Include="Test\LobbyState.cs" />
     <Compile Include="Test\StateEnum.cs" />
     <Compile Include="Test\StateMachine.cs" />
     <Compile Include="Test\ValidationEnum.cs" />
     <Compile Include="Test\ValidationSystem.cs" />
-    <Compile Include="Test\Validator.cs" />
     <Compile Include="UDP\UdpBroadcast.cs" />
   </ItemGroup>
   <ItemGroup>

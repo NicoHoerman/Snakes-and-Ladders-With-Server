@@ -22,12 +22,14 @@ namespace TCP_Server.Test
         public void Execute(ICommunication communication)
         {
             _serverInfo.lobbylist[0]._CurrentPlayerCount++;
-            //Send To Current
             DataPackage acceptedInfoPackage = _dataPackageProvider.GetPackage("AcceptedInfo");
+            communication.Send(acceptedInfoPackage);
 
-
-            //Send To All
             DataPackage lobbyDisplayPackage = _dataPackageProvider.GetPackage("LobbyDisplay");
+            for (int i = 0; i <= _serverInfo._communications.Count - 1; i++)
+            {
+                _serverInfo._communications[i].Send(lobbyDisplayPackage);
+            }
         }
 	}
 }

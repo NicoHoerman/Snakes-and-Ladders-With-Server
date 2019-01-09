@@ -10,7 +10,6 @@ namespace TCP_Server.Test
     {
         private ServerInfo _serverInfo;
         private bool isRunning;
-        private Validator validator;
         private ClientDisconnection _disconnectionHandler;
         private ClientConnection _connectionHandler;
         private DataPackageProvider _dataPackageProvider;
@@ -20,7 +19,6 @@ namespace TCP_Server.Test
             , ClientConnection connectionHandler, DataPackageProvider dataPackageProvider)
         {
             _serverInfo = serverInfo;
-            validator = new Validator();
             _disconnectionHandler = disconnectionHandler;
             _connectionHandler = connectionHandler;
             _dataPackageProvider = dataPackageProvider;
@@ -39,7 +37,7 @@ namespace TCP_Server.Test
                         
                         break;
                     case ValidationEnum.ValidationState:
-                        validator.Validate();
+                        
                         break;
                     case ValidationEnum.LobbyCheck:
                         LobbyCheck();

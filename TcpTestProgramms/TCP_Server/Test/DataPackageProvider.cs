@@ -22,11 +22,16 @@ namespace TCP_Server.Test
         public DataPackageProvider(ServerInfo serverInfo)
         {
             _serverInfo = serverInfo;
-
-            var servername = _serverInfo.lobbylist[0]._LobbyName;
-            var currentplayer = _serverInfo.lobbylist[0]._CurrentPlayerCount;
-            var maxplayer = _serverInfo.lobbylist[0]._MaxPlayerCount;
-
+            try
+            {
+                string servername = _serverInfo.lobbylist[0]._LobbyName;
+                int currentplayer = _serverInfo.lobbylist[0]._CurrentPlayerCount;
+                int maxplayer = _serverInfo.lobbylist[0]._MaxPlayerCount;
+            }
+            catch
+            {
+                
+            }
             accpetedInfoPackage  = new DataPackage
             {
                 Header = ProtocolActionEnum.Accept,

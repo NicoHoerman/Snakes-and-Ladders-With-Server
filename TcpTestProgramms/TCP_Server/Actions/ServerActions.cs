@@ -23,7 +23,7 @@ namespace TCP_Server.Actions
         private bool gameStarted = false;
         private bool ruleSet = false;
 
-        private Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
+        public Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
         private ServerInfo _serverInfo;
         private Game _game;
         private GameFinishedState finishedState;
@@ -35,17 +35,7 @@ namespace TCP_Server.Actions
 
         public ServerActions(ServerInfo serverInfo, Game game, ClientDisconnection disconnectionHandler)
         {
-            //finishedState = new GameFinishedState(game, currentplayer);
-
-            _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>
-            {
-                { ProtocolActionEnum.RollDice,  OnRollDiceAction },
-                { ProtocolActionEnum.GetHelp,   OnGetHelpAction },
-                { ProtocolActionEnum.StartGame, OnStartGameAction },
-                { ProtocolActionEnum.CloseGame, OnCloseGameAction },
-                { ProtocolActionEnum.Rule, OnRuleAction }
-            };
-
+            _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>();
             _DisconnectionHandler = disconnectionHandler;
             _serverInfo = serverInfo;
             _game = game;
@@ -58,13 +48,10 @@ namespace TCP_Server.Actions
 
             protocolAction(communication, data);
         }
-        
-
-
 
         #region Protocol actions
 
-        private void OnStartGameAction(ICommunication communication, DataPackage data)
+        public void OnStartGameAction(ICommunication communication, DataPackage data)
         {
             if (ruleSet)
                 return;
@@ -106,6 +93,7 @@ namespace TCP_Server.Actions
 
                     _game.State.ClearProperties();
                     gameStarted = true;
+                    Core.State = StateEnum.GameRunningState;
                 }
                 else
                 {
@@ -139,7 +127,7 @@ namespace TCP_Server.Actions
                 communication.Send(dataPackage);
             }
         }
-        private void OnRuleAction(ICommunication communication, DataPackage data)
+        public void OnRuleAction(ICommunication communication, DataPackage data)
         {
             if (!gameStarted)
             {
@@ -192,7 +180,7 @@ namespace TCP_Server.Actions
             }
         }
 
-        private void OnRollDiceAction(ICommunication communication, DataPackage data)
+        public void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
             if (!ruleSet)
             {
@@ -250,6 +238,7 @@ namespace TCP_Server.Actions
                         Thread.Sleep(5000);
 
                         finishedState.reactivateViews(communication);
+                        Core.State = StateEnum.LobbyState;
                         _game.State.ClearProperties();
                     }
                 }
@@ -277,7 +266,7 @@ namespace TCP_Server.Actions
 
         }
 
-        private void OnGetHelpAction(ICommunication communication, DataPackage data)
+        public void OnGetHelpAction(ICommunication communication, DataPackage data)
         {
 
             var clientId = CreateProtocol<PROT_HELPTEXT>(data);
@@ -312,7 +301,7 @@ namespace TCP_Server.Actions
             }
         }
 
-        private void OnCloseGameAction(ICommunication communication, DataPackage data)
+        public void OnCloseGameAction(ICommunication communication, DataPackage data)
         {
             _DisconnectionHandler.DisconnectClient();
         }

@@ -13,8 +13,6 @@ namespace EandE_ServerModel.EandE.StuffFromEandE
             _commandList = new Dictionary<string, Action>();
         }
 
-
-
         public void AddCommand(string token, Action command) => _commandList.Add(token, command);
 
         public void SetErrorAction(Action<string> action) => _errorAction = action;
