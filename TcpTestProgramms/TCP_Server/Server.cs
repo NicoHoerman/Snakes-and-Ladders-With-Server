@@ -48,7 +48,7 @@ namespace TCP_Server
             
             _serverInfo = serverInfo;
             _game = game;
-            _ActionsHandler = new ServerActions(_serverInfo,_game);
+            _ActionsHandler = new ServerActions(_serverInfo,_game,disconnectionHandler);
             _DisconnectionHandler = disconnectionHandler;
 
             _queue = new PackageQueue();
@@ -143,10 +143,7 @@ namespace TCP_Server
 
                 // All elements that lost conenction!
                 if(_serverInfo.communicationsToRemove.Count > 0)
-                {
-                    RemoveFromLobby();
-                }
-
+                    _DisconnectionHandler.RemoveFromLobby();
                 Thread.Sleep(1);
             }
         }

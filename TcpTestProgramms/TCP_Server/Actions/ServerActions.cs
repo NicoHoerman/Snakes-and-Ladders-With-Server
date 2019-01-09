@@ -30,13 +30,13 @@ namespace TCP_Server.Actions
         private ServerInfo _serverInfo;
         private Game _game;
         private GameFinishedState finishedState;
+        private ClientDisconnection _DisconnectionHandler;
 
-        public static ManualResetEvent verificationVariableSet = new ManualResetEvent(false);
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
         public static ManualResetEvent StateSwitched = new ManualResetEvent(false);
         public static ManualResetEvent TurnFinished = new ManualResetEvent(false);
 
-        public ServerActions(ServerInfo serverInfo, Game game)
+        public ServerActions(ServerInfo serverInfo, Game game, ClientDisconnection disconnectionHandler)
         {
             finishedState = new GameFinishedState(game, currentplayer);
 
@@ -49,7 +49,8 @@ namespace TCP_Server.Actions
                 { ProtocolActionEnum.OnConnection, OnConnectionAction },
                 { ProtocolActionEnum.Rule, OnRuleAction }
             };
-          
+
+            _DisconnectionHandler = disconnectionHandler;
             _serverInfo = serverInfo;
             _game = game;
         }
@@ -332,9 +333,7 @@ namespace TCP_Server.Actions
 
         private void OnCloseGameAction(ICommunication communication, DataPackage data)
         {
-            communication.Stop();
-            communicationsToRemove.Add(communication);
-            RemoveFromLobby();
+            _DisconnectionHandler.DisconnectClient();
         }
 
         #endregion

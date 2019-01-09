@@ -12,16 +12,13 @@ namespace TCP_Server.Test
     {
         public Game _game;
         public ServerInfo _serverInfo;
+        private DataPackageProvider _dataPackageProvider;
 
-        public ClientDisconnection(Game game, ServerInfo serverInfo)
+        public ClientDisconnection(Game game, ServerInfo serverInfo,DataPackageProvider dataPackageProvider)
         {
             _game = game;
             _serverInfo = serverInfo;
-        }
-
-        public void Execute()
-        {
-
+            _dataPackageProvider = dataPackageProvider;
         }
 
         public void RemoveFromLobby()
@@ -33,12 +30,12 @@ namespace TCP_Server.Test
                 _game.State.SetInput("/closegame");
         }
 
-        public void RemoveFromList()
+        private void RemoveFromList()
         {
             _serverInfo.communicationsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
         }
 
-        private void DisconnectClient()
+        public void DisconnectClient()
         {
             var currentCommunication = _serverInfo._communications.Last();
             currentCommunication.Stop();

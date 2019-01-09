@@ -20,8 +20,9 @@ namespace TCP_Server.Test
         public ServerInfo serverInfo;
 
         public StateMachine stateMachine;
-        public static StateEnum State;
         public ValidationSystem validationSystem;
+        public DataPackageProvider _dataPackageProvider;
+        public static StateEnum State;
         public static ValidationEnum ValidationStatus;
         public static ClientConnectionStatus ConnectionStatus;
 
@@ -33,9 +34,11 @@ namespace TCP_Server.Test
             udpserver = new UdpBroadcast(serverInfo);
             stateMachine = new StateMachine(serverInfo);
 
+            _dataPackageProvider = new DataPackageProvider(serverInfo);
+            _connectionHandler = new ClientConnection(serverInfo,_dataPackageProvider);
+            _disconnectionHandler = new ClientDisconnection(game, serverInfo,_dataPackageProvider);
+
             server = new Server(game, serverInfo, stateMachine, validationSystem, _disconnectionHandler);
-            _connectionHandler = new ClientConnection(serverInfo);
-            _disconnectionHandler = new ClientDisconnection(game, serverInfo);
             validationSystem = new ValidationSystem(serverInfo,_disconnectionHandler,_connectionHandler);
         }
 

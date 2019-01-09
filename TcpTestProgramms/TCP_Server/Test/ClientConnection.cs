@@ -10,15 +10,19 @@ namespace TCP_Server.Test
     {
         //<New>		
         private ServerInfo _serverInfo;
+        private DataPackageProvider _dataPackageProvider;
 
-        public ClientConnection(ServerInfo serverinfo)
+        public ClientConnection(ServerInfo serverinfo, DataPackageProvider dataPackageProvider)
         {
             _serverInfo = serverinfo;
+            _dataPackageProvider = dataPackageProvider;
         }
 
         public void Execute()
         {
-           
+            _serverInfo.lobbylist[0]._CurrentPlayerCount++;
+            DataPackage acceptedInfoPackage = _dataPackageProvider.GetPackage("AcceptedInfo");
+            DataPackage lobbyDisplayPackage = _dataPackageProvider.GetPackage("LobbyDisplay");
         }
 	}
 }

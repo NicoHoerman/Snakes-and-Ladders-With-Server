@@ -12,13 +12,21 @@ namespace TCP_Server.Test
 {
     public class DataPackageProvider
     {
+        Dictionary<string, DataPackage> _DataPackages
         private DataPackage accpetedInfoPackage;
         private DataPackage declinedInfoPackage;
         private DataPackage lobbyDisplayPackage;
         private DataPackage declineUpdatePackage;
+        private ServerInfo _serverInfo;
 
-        public DataPackageProvider()
+        public DataPackageProvider(ServerInfo serverInfo)
         {
+            _serverInfo = serverInfo;
+
+            var servername = _serverInfo.lobbylist[0]._LobbyName;
+            var currentplayer = _serverInfo.lobbylist[0]._CurrentPlayerCount;
+            var maxplayer = _serverInfo.lobbylist[0]._MaxPlayerCount;
+
             accpetedInfoPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.Accept,
@@ -45,7 +53,7 @@ namespace TCP_Server.Test
                     " \n /startgame \n/closegame \n /rolldice \n /someCommand"
                 })
             };
-            declinedInfoPackage = new DataPackage
+            declineUpdatePackage = new DataPackage
             {
                 Header = ProtocolActionEnum.UpdateView,
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE
@@ -54,13 +62,14 @@ namespace TCP_Server.Test
                 })
             };
 
-            Dictionary<string, DataPackage> _DataPackages = new Dictionary<string, DataPackage>
+            var _DataPackages = new Dictionary<string, DataPackage>
             {
-                {"AcceptedInfo",  accpetedInfoPackage },
-                {"DeclinedInfo",  declinedInfoPackage },
-                {"LobbyDisplay",  lobbyDisplayPackage },
-                {"DeclineUpdate", declinedInfoPackage },
+                {"AcceptedInfo" ,  accpetedInfoPackage },
+                {"DeclinedInfo" ,  declinedInfoPackage },
+                {"LobbyDisplay" ,  lobbyDisplayPackage },
+                {"DeclineUpdate", declineUpdatePackage },
             };
         }
+        public DataPackage GetPackage(string key) => _DataPackages[key];
     }
 }

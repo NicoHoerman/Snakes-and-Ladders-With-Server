@@ -53,7 +53,7 @@ namespace TCP_Server.Test
             if (_serverInfo.lobbylist[0].IsLobbyComplete())
             {
                 Core.ConnectionStatus = ClientConnectionStatus.Declined;
-                _disconnectionHandler.Execute();
+                _disconnectionHandler.DisconnectClient();
             }
             else
             {
