@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Net.Sockets;
 using Shared.Communications;
+using Shared.Contract;
 using TCP_Server.Enum;
 
 namespace TCP_Server.Test
@@ -18,10 +19,14 @@ namespace TCP_Server.Test
             _dataPackageProvider = dataPackageProvider;
         }
 
-        public void Execute()
+        public void Execute(ICommunication communication)
         {
             _serverInfo.lobbylist[0]._CurrentPlayerCount++;
+            //Send To Current
             DataPackage acceptedInfoPackage = _dataPackageProvider.GetPackage("AcceptedInfo");
+
+
+            //Send To All
             DataPackage lobbyDisplayPackage = _dataPackageProvider.GetPackage("LobbyDisplay");
         }
 	}

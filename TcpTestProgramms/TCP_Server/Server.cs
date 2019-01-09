@@ -2,6 +2,7 @@
 using Shared.Communications;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -91,6 +92,8 @@ namespace TCP_Server
         {
             _serverInfo._communications.Add(
                 new TcpCommunication(client));
+
+            _validationSystem.currentcommunication = _serverInfo._communications.Last();
 
             if (_serverInfo._communications.Count == 1)
                 _serverInfo._communications[0].IsMaster = true;

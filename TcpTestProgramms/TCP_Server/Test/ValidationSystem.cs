@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Shared.Communications;
+using Shared.Contract;
+using System;
 using System.Collections.Generic;
 using TCP_Server.Enum;
 
@@ -11,6 +13,7 @@ namespace TCP_Server.Test
         private Validator validator;
         private ClientDisconnection _disconnectionHandler;
         private ClientConnection _connectionHandler;
+        public ICommunication currentcommunication;
 
         public ValidationSystem(ServerInfo serverInfo,ClientDisconnection disconnectionHandler
             , ClientConnection connectionHandler)
@@ -53,12 +56,12 @@ namespace TCP_Server.Test
             if (_serverInfo.lobbylist[0].IsLobbyComplete())
             {
                 Core.ConnectionStatus = ClientConnectionStatus.Declined;
-                _disconnectionHandler.DisconnectClient();
+                _disconnectionHandler.Execute(currentcommunication);
             }
             else
             {
                 Core.ConnectionStatus = ClientConnectionStatus.Accepted;
-                _connectionHandler.Execute();
+                _connectionHandler.Execute(currentcommunication);
             }
             Core.ValidationStatus = ValidationEnum.WaitingForPlayer;
         }

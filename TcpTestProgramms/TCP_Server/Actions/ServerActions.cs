@@ -15,14 +15,11 @@ using TCP_Server.PROTOCOLS;
 using TCP_Server.Test;
 using Wrapper;
 
-
 namespace TCP_Server.Actions
 {
     public class ServerActions
     {
-        private string servername = string.Empty;
         private int currentplayer;
-        private int maxplayer;
         private bool gameStarted = false;
         private bool ruleSet = false;
 
@@ -38,7 +35,7 @@ namespace TCP_Server.Actions
 
         public ServerActions(ServerInfo serverInfo, Game game, ClientDisconnection disconnectionHandler)
         {
-            finishedState = new GameFinishedState(game, currentplayer);
+            //finishedState = new GameFinishedState(game, currentplayer);
 
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>
             {
@@ -55,8 +52,6 @@ namespace TCP_Server.Actions
             _game = game;
         }
 
-
-
         public void ExecuteDataActionFor(ICommunication communication, DataPackage data)
         {
             if (_protocolActions.TryGetValue(data.Header, out var protocolAction) == false)
@@ -64,6 +59,19 @@ namespace TCP_Server.Actions
 
             protocolAction(communication, data);
         }
+
+        public void SendPackageToCurrent(ICommunication communication, DataPackage data)
+        {
+            communication.Send(data);
+        }
+        public void SendPackageToAll(DataPackage data)
+        {
+            for (int i = 0; i <= _serverInfo._communications.Count - 1; i++)
+            {
+                _serverInfo._communications[i].Send(data);
+            }
+        }
+
 
         #region Protocol actions
         private void OnConnectionAction(ICommunication communication, DataPackage data)
@@ -159,10 +167,8 @@ namespace TCP_Server.Actions
                 StateSwitched.WaitOne();
                 StateSwitched.Reset();
 
-
                 var dataPackage = new DataPackage
                 {
-
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
@@ -179,19 +185,16 @@ namespace TCP_Server.Actions
 
                 _game.State.ClearProperties();
 
-
                 for (int i = 0; i <= _serverInfo._communications.Count - 1; i++)
                 {
                         _serverInfo._communications[i].Send(dataPackage);
                 }
-
                 ruleSet = true;
             }
             else
             {
                 var dataPackage = new DataPackage
                 {
-
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
@@ -223,7 +226,6 @@ namespace TCP_Server.Actions
             {
                 var turnPackage = new DataPackage
                 {
-
                     Header = ProtocolActionEnum.UpdateView,
                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                     {
@@ -233,7 +235,6 @@ namespace TCP_Server.Actions
                         _lastinput = _game.State.Lastinput,
                         _turnInfoOutput = _game.State.TurnInfoOutput,
                         _afterTurnOutput = _game.State.AfterTurnOutput,
-                        
                     })
                 };
                 turnPackage.Size = turnPackage.ToByteArray().Length;
@@ -246,7 +247,6 @@ namespace TCP_Server.Actions
                 Thread.Sleep(100);
                 if (_game.State.ToString() == "EandE_ServerModel.EandE.States.GameFinishedState")
                 {
-                    
                     {
                         var gameEndedPackage = new DataPackage
                         {
@@ -266,9 +266,7 @@ namespace TCP_Server.Actions
 
                         finishedState.reactivateViews(communication);
                         _game.State.ClearProperties();
-
                     }
-
                 }
             }
             else
@@ -316,7 +314,6 @@ namespace TCP_Server.Actions
             }
             else
             {
-
                 var dataPackage = new DataPackage
                 {
                     Header = ProtocolActionEnum.HelpText,
@@ -328,7 +325,6 @@ namespace TCP_Server.Actions
                 dataPackage.Size = dataPackage.ToByteArray().Length;
                 communication.Send(dataPackage);
             }
-
         }
 
         private void OnCloseGameAction(ICommunication communication, DataPackage data)

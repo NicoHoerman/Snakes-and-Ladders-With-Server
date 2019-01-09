@@ -1,4 +1,6 @@
 ﻿using EandE_ServerModel.EandE.GameAndLogic;
+using Shared.Communications;
+using Shared.Contract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,17 @@ namespace TCP_Server.Test
             _game = game;
             _serverInfo = serverInfo;
             _dataPackageProvider = dataPackageProvider;
+        }
+
+        public void Execute(ICommunication communication )
+        {
+            DisconnectClient();
+            //Send To Current
+            DataPackage declinedInfoPackage = _dataPackageProvider.GetPackage("DeclinedInfo");
+
+            
+            //Send To All except current
+            DataPackage declineUpdatePackage = _dataPackageProvider.GetPackage("DeclineUpdate");
         }
 
         public void RemoveFromLobby()

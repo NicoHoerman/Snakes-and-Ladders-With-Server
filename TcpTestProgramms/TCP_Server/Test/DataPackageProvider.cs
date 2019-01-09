@@ -12,7 +12,7 @@ namespace TCP_Server.Test
 {
     public class DataPackageProvider
     {
-        Dictionary<string, DataPackage> _DataPackages
+        Dictionary<string, DataPackage> _DataPackages;
         private DataPackage accpetedInfoPackage;
         private DataPackage declinedInfoPackage;
         private DataPackage lobbyDisplayPackage;
