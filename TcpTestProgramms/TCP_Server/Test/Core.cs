@@ -39,7 +39,7 @@ namespace TCP_Server.Test
             _disconnectionHandler = new ClientDisconnection(game, serverInfo,_dataPackageProvider);
 
             server = new Server(game, serverInfo, stateMachine, validationSystem, _disconnectionHandler);
-            validationSystem = new ValidationSystem(serverInfo,_disconnectionHandler,_connectionHandler);
+            validationSystem = new ValidationSystem(serverInfo,_disconnectionHandler,_connectionHandler,_dataPackageProvider);
         }
 
         public void Start()

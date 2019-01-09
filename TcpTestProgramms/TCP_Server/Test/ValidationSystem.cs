@@ -13,15 +13,17 @@ namespace TCP_Server.Test
         private Validator validator;
         private ClientDisconnection _disconnectionHandler;
         private ClientConnection _connectionHandler;
+        private DataPackageProvider _dataPackageProvider;
         public ICommunication currentcommunication;
 
         public ValidationSystem(ServerInfo serverInfo,ClientDisconnection disconnectionHandler
-            , ClientConnection connectionHandler)
+            , ClientConnection connectionHandler, DataPackageProvider dataPackageProvider)
         {
             _serverInfo = serverInfo;
             validator = new Validator();
             _disconnectionHandler = disconnectionHandler;
             _connectionHandler = connectionHandler;
+            _dataPackageProvider = dataPackageProvider;
         }
 
         public void Start()
