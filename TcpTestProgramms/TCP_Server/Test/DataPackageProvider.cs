@@ -16,6 +16,7 @@ namespace TCP_Server.Test
         private DataPackage declinedInfoPackage;
         private DataPackage lobbyDisplayPackage;
         private DataPackage declineUpdatePackage;
+        private DataPackage validationRequestPackage;
 
         public DataPackageProvider()
         {
@@ -54,12 +55,23 @@ namespace TCP_Server.Test
                 })
             };
 
+            validationRequestPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.ValidationRequest,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                {
+
+                })
+            };
+
+
             Dictionary<string, DataPackage> _DataPackages = new Dictionary<string, DataPackage>
             {
                 {"AcceptedInfo",  accpetedInfoPackage },
                 {"DeclinedInfo",  declinedInfoPackage },
                 {"LobbyDisplay",  lobbyDisplayPackage },
                 {"DeclineUpdate", declinedInfoPackage },
+                {"Validation", validationRequestPackage }
             };
         }
     }

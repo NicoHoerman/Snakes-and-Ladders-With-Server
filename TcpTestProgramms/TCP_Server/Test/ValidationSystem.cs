@@ -17,12 +17,14 @@ namespace TCP_Server.Test
         private ServerInfo _serverInfo;
         private bool isRunning;
         private Server _server;
+        private DataPackageProvider _dataPackageProvider;
         bool validationStatus;
 
-        public ValidationSystem(ServerInfo serverInfo, Server server)
+        public ValidationSystem(ServerInfo serverInfo, Server server, DataPackageProvider dataPackageProvider)
         {
             _serverInfo = serverInfo;
             _server = server;
+            _dataPackageProvider = dataPackageProvider;
         }
 
         public ClientConnectionStatus _ConnectionStatus = ClientConnectionStatus.Pending;
