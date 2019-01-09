@@ -57,13 +57,7 @@ namespace TCP_Client.Actions
 
             _inputActions = new Dictionary<string, Action<string,ICommunication>>
             {
-                { "/help", OnInputHelpAction },
-                { "/rolldice", OnInputRollDiceAction },
-                { "/closegame", OnCloseGameAction },
-                {"/someInt" , OnIntAction },
-                {"/search", OnSearchAction },
-                {"/startgame", OnStartGameAction },
-                {"/classic", OnClassicAction }
+                
             };
 
             _UdpListener = new UdpClientUnit();
@@ -204,7 +198,7 @@ namespace TCP_Client.Actions
 
         }
 
-        private void OnSearchAction(string input, ICommunication communication)
+        public void OnSearchAction(string input, ICommunication communication)
         {
             if (isConnected)
             {

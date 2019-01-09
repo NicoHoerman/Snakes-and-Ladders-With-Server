@@ -10,6 +10,8 @@ using System.Linq;
 using Wrapper;
 using Wrapper.Contracts;
 using Wrapper.View;
+using Shared.Contracts;
+using TCP_Client.StateEnum;
 
 namespace TCP_Client
 {
@@ -24,8 +26,9 @@ namespace TCP_Client
         private OutputWrapper _OutputWrapper;
         private ViewUpdater _ViewUpdater;
         private ViewDictionary _viewDictionary;
+        string input = string.Empty;
+        public ClientStates state { get; set; }
         
-
         //<Constructors>
         public Client(ICommunication communication)
         {
@@ -37,7 +40,7 @@ namespace TCP_Client
             _ViewUpdater = new ViewUpdater(_viewDictionary._views);
             _ActionHandler._enterToRefreshView.viewEnabled = true;
             _ActionHandler._enterToRefreshView.SetUpdateContent("Press enter to refresh\nafter you typed a command.");
-
+            
         }
 
         public Client()
@@ -67,16 +70,24 @@ namespace TCP_Client
             backgroundworker.DoWork += (obj, ea) => CheckTCPUpdates();
             backgroundworker.RunWorkerAsync();
 
+
+
             var backgroundworker2 = new BackgroundWorker();
 
             backgroundworker2.DoWork += (obj, ea) => _ViewUpdater.RunUpdater();
             //backgroundworker2.RunWorkerAsync();
 
-            string input = string.Empty;
+            state = ClientStates.NotConnected;
+            var backgroundworker3 = new BackgroundWorker();
+
+            backgroundworker3.DoWork += (obj, ea) => StateMachine(state);
+            backgroundworker3.RunWorkerAsync();
+
+            
             isRunning = true;
 
             while (isRunning)
-            {
+            {                             
                 _ViewUpdater.UpdateView();
                 Console.SetCursorPosition(_InputHandler._inputView._xCursorPosition, 0);
                 input = _OutputWrapper.ReadInput();
@@ -99,7 +110,50 @@ namespace TCP_Client
             isRunning = false;
         }
 
-        
+        public void StateMachine(ClientStates state)
+        {
+            while (isRunning)
+            {
+                switch (state)
+                {
+                    case ClientStates.NotConnected:
+                        _InputHandler._inputActions.Add("/search", _InputHandler.OnSearchAction);
+                        input = _OutputWrapper.ReadInput();
+                        _InputHandler.ParseAndExecuteCommand(input, _communication);
+                        if (_communication.IsConnected)
+                            SwitchState(ClientStates.Connecting);
+                        break;
+
+                    case ClientStates.Connecting:
+                        _InputHandler._inputActions.Clear();
+                        WaitForHandshake();
+                        break;
+
+                    case ClientStates.Connected:
+                        break;
+
+                    case ClientStates.GameRunning:
+                        break;
+
+                    case ClientStates.Handshake:
+                        break;
+
+                    case ClientStates.Lobby:
+                        break;
+                }
+            }
+            
+        }
+
+        private void WaitForHandshake()
+        {
+            
+        }
+
+        private void SwitchState(ClientStates newState)
+        {
+            state = newState;
+        }
     }
 }
 
