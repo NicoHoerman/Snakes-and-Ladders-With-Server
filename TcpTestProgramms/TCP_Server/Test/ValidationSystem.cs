@@ -40,7 +40,7 @@ namespace TCP_Server.Test
                          ValidateClientAsync();
                         if (validationStatus)
                             _server.SwitchState(ValidationEnum.LobbyCheck);
-                        else _server.SwitchState(ValidationEnum.WaitingForPlayer);
+                        else _server.SwitchState(ValidationEnum.DeclineState);
                         break;
                     case ValidationEnum.LobbyCheck:
                         LobbyCheck();
