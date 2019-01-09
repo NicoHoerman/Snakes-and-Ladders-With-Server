@@ -118,6 +118,7 @@ namespace TCP_Client
                 {
                     case ClientStates.NotConnected:
                         _InputHandler._inputActions.Add("/search", _InputHandler.OnSearchAction);
+                        _InputHandler._inputActions.Add("/someInt", _InputHandler.OnIntAction);
                         input = _OutputWrapper.ReadInput();
                         _InputHandler.ParseAndExecuteCommand(input, _communication);                       
                         break;

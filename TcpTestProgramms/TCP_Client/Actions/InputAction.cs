@@ -149,7 +149,7 @@ namespace TCP_Client.Actions
             communication.Send(dataPackage);
         }
 
-        private void OnIntAction(string input, ICommunication communication)
+        public void OnIntAction(string input, ICommunication communication)
         {
 
             if (isConnected | !Searched | Declined)
