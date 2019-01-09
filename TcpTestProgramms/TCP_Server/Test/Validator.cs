@@ -15,9 +15,9 @@ namespace TCP_Server.Test
             //Validation
             bool ValidationSucced = true;
             if (ValidationSucced)
-                Server.status = ValidationEnum.LobbyCheck;
+                Server.ValidationStatus = ValidationEnum.LobbyCheck;
             else
-                Server.status = ValidationEnum.DeclineState;
+                Server.ValidationStatus = ValidationEnum.DeclineState;
 
         }
     }

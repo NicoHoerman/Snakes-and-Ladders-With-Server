@@ -42,7 +42,7 @@ namespace TCP_Server
         public StateMachine stateMachine;
         public static StateEnum state;
         public ValidationSystem validationSystem;
-        public static ValidationEnum status;
+        public static ValidationEnum ValidationStatus;
         public Validator _validator;
         //</new>
 
@@ -61,7 +61,7 @@ namespace TCP_Server
 
             backgroundworkerStateMachine.RunWorkerAsync();
 
-            status = ValidationEnum.WaitingForPlayer;
+            ValidationStatus = ValidationEnum.WaitingForPlayer;
             validationSystem = new ValidationSystem(_serverInfo, this);
 
             backgroundworkerValidationSystem.RunWorkerAsync();
@@ -108,7 +108,7 @@ namespace TCP_Server
             AddCommunication(client);
             tcpClientConnected.Set();
 
-            status = ValidationEnum.ValidationState;
+            ValidationStatus = ValidationEnum.ValidationState;
             //Handshake stuff
             new Validator(client);
         }
@@ -215,7 +215,7 @@ namespace TCP_Server
 
         public void SwitchState(ValidationEnum newValidation)
         {
-            status = newValidation;
+            ValidationStatus = newValidation;
         }
     }
 }

@@ -31,7 +31,7 @@ namespace TCP_Server.Test
 
             while (isRunning)
             {
-                switch (Server.status)
+                switch (Server.ValidationStatus)
                 {
                     case ValidationEnum.WaitingForPlayer:
                         //Something
@@ -66,8 +66,8 @@ namespace TCP_Server.Test
             {
                 _ConnectionStatus = ClientConnectionStatus.Accepted;
             }
-            new ClientConnection(_ConnectionStatus, _serverInfo);
-            Server.status = ValidationEnum.WaitingForPlayer;
+            new ClientConnection(_ConnectionStatus, _serverInfo, _server);
+            Server.ValidationStatus = ValidationEnum.WaitingForPlayer;
 
         }
 

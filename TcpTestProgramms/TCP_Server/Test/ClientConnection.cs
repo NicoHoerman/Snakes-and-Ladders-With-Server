@@ -11,11 +11,13 @@ namespace TCP_Server.Test
         //<New>		
         public TcpClient _client;
         private ServerInfo _serverInfo;
+        private Server _server;
 
-        public ClientConnection(ClientConnectionStatus clientStatus, ServerInfo serverinfo)
+        public ClientConnection(ClientConnectionStatus clientStatus, ServerInfo serverinfo, Server server)
         {
             _serverInfo = serverinfo;
             Execute(clientStatus);
+            _server = server;
         }
 
         public void Execute(ClientConnectionStatus clientStatus)
@@ -31,7 +33,7 @@ namespace TCP_Server.Test
 
         private void DeclineClient()
         {
-            throw new NotImplementedException();
+            DisconnectClient();
         }
 
         private void AcceptClient()
@@ -43,10 +45,10 @@ namespace TCP_Server.Test
         {
             var currentCommunication = _serverInfo._communications.Last();
             currentCommunication.Stop();
+            
+            _server.communicationsToRemove.Add(currentCommunication);
 
-            communicationsToRemove.Add(currentCommunication);
-
-            RemoveFromList();
+            _server.RemoveFromList();
         }
 	}
 }
