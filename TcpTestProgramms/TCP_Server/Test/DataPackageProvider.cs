@@ -17,6 +17,7 @@ namespace TCP_Server.Test
         private DataPackage declinedInfoPackage;
         private DataPackage lobbyDisplayPackage;
         private DataPackage declineUpdatePackage;
+        private DataPackage validationRequestPackage;
         private ServerInfo _serverInfo;
 
         private string servername = string.Empty;
@@ -55,11 +56,27 @@ namespace TCP_Server.Test
             };
             declineUpdatePackage.Size = declineUpdatePackage.ToByteArray().Length;
 
+            validationRequestPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.ValidationRequest,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
+            };
+            validationRequestPackage.Size = validationRequestPackage.ToByteArray().Length;
+
+            validationAnswerPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.ValidationAnswer,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
+            };
+            validationAnswerPackage.Size = validationAnswerPackage.ToByteArray().Length;
+
             var _DataPackages = new Dictionary<string, DataPackage>
             {
                 {"AcceptedInfo" ,  accpetedInfoPackage },
                 {"DeclinedInfo" ,  declinedInfoPackage },
                 {"DeclineUpdate", declineUpdatePackage },
+                {"ValidationRequest", validationRequestPackage },
+                {"ValidationAnswer", validationAnswerPackage }
             };
         }
         public DataPackage GetPackage(string key) => _DataPackages[key];
@@ -83,5 +100,8 @@ namespace TCP_Server.Test
             lobbyDisplayPackage.Size = lobbyDisplayPackage.ToByteArray().Length;
             return lobbyDisplayPackage;
         }
+       
     }
+
+    
 }

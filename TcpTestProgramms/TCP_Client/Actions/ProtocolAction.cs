@@ -12,15 +12,16 @@ using Wrapper.Contracts;
 using Wrapper.View;
 using Wrapper;
 using System.Threading;
-
+using Shared.Contract;
 
 namespace TCP_Client.Actions
 {
     public class ProtocolAction
     {
-        public Dictionary<ProtocolActionEnum, Action<DataPackage>> _protocolActions;
+        public Dictionary<ProtocolActionEnum, Action<DataPackage,ICommunication>> _protocolActions;
         public Dictionary<int, BroadcastDTO> _serverDictionary = new Dictionary<int, BroadcastDTO>();
         private Dictionary<ClientView, IView> _views;
+        private ClientDataPackageProvider _clientDataPackageProvider;
 
         private readonly IUpdateOutputView _serverTableView;
         private readonly IUpdateOutputView _commandListOutputView;
@@ -45,8 +46,9 @@ namespace TCP_Client.Actions
 
         private OutputWrapper outputWrapper;
 
-        public ProtocolAction(Dictionary<ClientView, IView> views, Client client)
+        public ProtocolAction(Dictionary<ClientView, IView> views, Client client, ClientDataPackageProvider clientDataPackageProvider)
         {
+            _clientDataPackageProvider = clientDataPackageProvider;
             _client = client;
             _views = views;
             _serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
@@ -65,29 +67,28 @@ namespace TCP_Client.Actions
             _finishSkull2View = views[ClientView.FinishSkull2] as IUpdateOutputView;
             _enterToRefreshView = views[ClientView.EnterToRefresh] as IUpdateOutputView;
 
-            _protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage>>
+            _protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage,ICommunication>>
             {
                 { ProtocolActionEnum.HelpText, OnHelpTextAction},
                 { ProtocolActionEnum.UpdateView, OnUpdateAction},
                 { ProtocolActionEnum.Broadcast, OnBroadcastAction },
                 { ProtocolActionEnum.Accept, OnAcceptAction },
                 { ProtocolActionEnum.Decline, OnDeclineAction },
-                { ProtocolActionEnum.Restart, OnRestartAction }
+                { ProtocolActionEnum.Restart, OnRestartAction },
+                { ProtocolActionEnum.ValidationAnswer, OnValidationRequestAction }
             
             };
 
             outputWrapper = new OutputWrapper();
         }
 
-        
-
-        public void ExecuteDataActionFor(DataPackage data)
+        public void ExecuteDataActionFor(DataPackage data,  ICommunication communication)
         {
             //weißt dem packet die richtige funktion zu
             if (_protocolActions.TryGetValue(data.Header, out var protocolAction) == false)
                 throw new InvalidOperationException("Invalid communication");
             //führt die bekommene methode mit dem datapackage aus
-            protocolAction(data);
+            protocolAction(data, communication);
         }
 
         public BroadcastDTO GetServer(int key) => _serverDictionary[key];
@@ -95,7 +96,7 @@ namespace TCP_Client.Actions
         #region Protocol actions
 
 
-        private void OnHelpTextAction(DataPackage data)
+        private void OnHelpTextAction(DataPackage data, ICommunication communication)
         {
             var helpText = MapProtocolToDto<HelpTextDTO>(data);
             
@@ -104,7 +105,7 @@ namespace TCP_Client.Actions
             
         }
 
-        private void OnUpdateAction(DataPackage data)
+        private void OnUpdateAction(DataPackage data, ICommunication communication)
         {
             var updatedView = MapProtocolToDto<UpdateDTO>(data);
            
@@ -185,7 +186,7 @@ namespace TCP_Client.Actions
         private int keyIndex = 0;
 
 
-        private void OnBroadcastAction(DataPackage data)
+        private void OnBroadcastAction(DataPackage data, ICommunication communication)
         {
             var broadcast = MapProtocolToDto<BroadcastDTO>(data);
 
@@ -226,7 +227,7 @@ namespace TCP_Client.Actions
             //  2  [1/2]  LuL
         }
 
-        private void OnAcceptAction(DataPackage data)
+        private void OnAcceptAction(DataPackage data, ICommunication communication)
 
         {
             var accept = MapProtocolToDto<AcceptDTO>(data);
@@ -234,7 +235,7 @@ namespace TCP_Client.Actions
             _infoOutputView.SetUpdateContent(accept._SmallUpdate);
         }
 
-        private void OnDeclineAction(DataPackage data)
+        private void OnDeclineAction(DataPackage data, ICommunication communication)
         {
             _client._InputHandler.Declined = true;
             _client._InputHandler.isConnected = false;
@@ -245,13 +246,18 @@ namespace TCP_Client.Actions
    
         }
 
-        private void OnRestartAction(DataPackage obj)
+        private void OnRestartAction(DataPackage obj, ICommunication communication)
         {
                 _finishInfoView.viewEnabled = false;
                 _finishSkull1View.viewEnabled = false;
                 _finishSkull2View.viewEnabled = false;
                 _finishSkull3View.viewEnabled = false;
                 EnableViews();
+        }
+
+        private void OnValidationRequestAction(DataPackage data, ICommunication communication)
+        {
+            communication.Send(_clientDataPackageProvider.GetPackage("ValidationAnswer"));
         }
 
         public void DisableViews()

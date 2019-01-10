@@ -9,6 +9,7 @@ namespace Shared.Enums
         Rule = 104,
         CloseGame = 105,
         OnConnection =106,
+        ValidationAnswer = 107,
 
         Broadcast = 201,
         Decline = 202,

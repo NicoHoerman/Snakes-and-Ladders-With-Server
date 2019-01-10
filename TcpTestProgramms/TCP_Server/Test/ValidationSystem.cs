@@ -81,19 +81,9 @@ namespace TCP_Server.Test
 
         async Task<bool> ValidateClientAsync()
         {
-            var ValidationRequestPackage = new DataPackage
-            {
+                   
 
-                Header = ProtocolActionEnum.ValidationRequest,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                {
-
-                })
-            };
-
-            ValidationRequestPackage.Size = ValidationRequestPackage.ToByteArray().Length;
-
-            _serverInfo._communications[_serverInfo._communications.Count].Send(ValidationRequestPackage);
+            _serverInfo._communications[_serverInfo._communications.Count].Send(_dataPackageProvider.GetPackage("ValidationRequest"));
 
             validationStatus = await _serverActions.OnValidationAction();
 

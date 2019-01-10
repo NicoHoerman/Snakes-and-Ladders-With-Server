@@ -28,6 +28,7 @@ namespace TCP_Client.Actions
 
         public Dictionary<string, Action<List<string>, ICommunication>> _inputActions;
         private Dictionary<ClientView, IView> _views;
+        private ClientDataPackageProvider _clientDataPackageProvider;
 
         private readonly IErrorView _errorView;
         private readonly IUpdateOutputView _commandListOutputView;
@@ -41,8 +42,9 @@ namespace TCP_Client.Actions
         private ProtocolAction _ActionHandler;
         private UdpClientUnit _UdpListener;
 
-        public InputAction(ProtocolAction protocolAction, Dictionary<ClientView, IView> views,Client client)
+        public InputAction(ProtocolAction protocolAction, Dictionary<ClientView, IView> views,Client client, ClientDataPackageProvider clientDataPackageProvider)
         {
+            _clientDataPackageProvider = clientDataPackageProvider;
             _client = client;
             _ActionHandler = protocolAction;
             _views = views;

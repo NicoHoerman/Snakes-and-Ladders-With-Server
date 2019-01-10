@@ -24,15 +24,17 @@ namespace TCP_Client
         private OutputWrapper _OutputWrapper;
         private ViewUpdater _ViewUpdater;
         private ViewDictionary _viewDictionary;
+        private ClientDataPackageProvider clientDataPackageProvider;
         
 
         //<Constructors>
         public Client(ICommunication communication)
         {
+            clientDataPackageProvider = new ClientDataPackageProvider();
             _viewDictionary = new ViewDictionary();
             _communication = communication;
-            _ActionHandler = new ProtocolAction(_viewDictionary._views, this);
-            _InputHandler = new InputAction(_ActionHandler, _viewDictionary._views,this);
+            _ActionHandler = new ProtocolAction(_viewDictionary._views, this, clientDataPackageProvider);
+            _InputHandler = new InputAction(_ActionHandler, _viewDictionary._views,this,  clientDataPackageProvider);
             _OutputWrapper = new OutputWrapper();
             _ViewUpdater = new ViewUpdater(_viewDictionary._views);
             _ActionHandler._enterToRefreshView.viewEnabled = true;
@@ -53,7 +55,7 @@ namespace TCP_Client
                 if (_communication.IsDataAvailable())
                 {
                     var data = _communication.Receive();
-                    _ActionHandler.ExecuteDataActionFor(data);
+                    _ActionHandler.ExecuteDataActionFor(data, _communication);
                 }
                 else
                     Thread.Sleep(1);
