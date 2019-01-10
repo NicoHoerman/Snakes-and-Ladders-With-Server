@@ -19,19 +19,14 @@ namespace TCP_Server.Test
         private DataPackage declineUpdatePackage;
         private ServerInfo _serverInfo;
 
+        private string servername = string.Empty;
+        private int currentplayer;
+        private int maxplayer;
+
         public DataPackageProvider(ServerInfo serverInfo)
         {
             _serverInfo = serverInfo;
-            try
-            {
-                string servername = _serverInfo.lobbylist[0]._LobbyName;
-                int currentplayer = _serverInfo.lobbylist[0]._CurrentPlayerCount;
-                int maxplayer = _serverInfo.lobbylist[0]._MaxPlayerCount;
-            }
-            catch
-            {
-                
-            }
+            
             accpetedInfoPackage  = new DataPackage
             {
                 Header = ProtocolActionEnum.Accept,
@@ -40,6 +35,7 @@ namespace TCP_Server.Test
                     _SmallUpdate = "You are connected to the Server and in the Lobby "
                 })
             };
+            accpetedInfoPackage.Size = accpetedInfoPackage.ToByteArray().Length;
             declinedInfoPackage  = new DataPackage
             {
                 Header = ProtocolActionEnum.Decline,
@@ -48,7 +44,33 @@ namespace TCP_Server.Test
                     _SmallUpdate = "You got declind. Lobby is probably full"
                 })
             };
-            lobbyDisplayPackage  = new DataPackage
+            declinedInfoPackage.Size = declinedInfoPackage.ToByteArray().Length;
+            declineUpdatePackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.UpdateView,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                {
+                    _infoOutput = "A player got declined"
+                })
+            };
+            declineUpdatePackage.Size = declineUpdatePackage.ToByteArray().Length;
+
+            var _DataPackages = new Dictionary<string, DataPackage>
+            {
+                {"AcceptedInfo" ,  accpetedInfoPackage },
+                {"DeclinedInfo" ,  declinedInfoPackage },
+                {"DeclineUpdate", declineUpdatePackage },
+            };
+        }
+        public DataPackage GetPackage(string key) => _DataPackages[key];
+
+        public DataPackage LobbyDisplay()
+        {
+            servername = _serverInfo.lobbylist[0]._LobbyName;
+            currentplayer = _serverInfo.lobbylist[0]._CurrentPlayerCount;
+            maxplayer = _serverInfo.lobbylist[0]._MaxPlayerCount;
+
+            lobbyDisplayPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.UpdateView,
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE
@@ -58,23 +80,8 @@ namespace TCP_Server.Test
                     " \n /startgame \n/closegame \n /rolldice \n /someCommand"
                 })
             };
-            declineUpdatePackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.UpdateView,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                {
-                    _infoOutput = "A player got declined"
-                })
-            };
-
-            var _DataPackages = new Dictionary<string, DataPackage>
-            {
-                {"AcceptedInfo" ,  accpetedInfoPackage },
-                {"DeclinedInfo" ,  declinedInfoPackage },
-                {"LobbyDisplay" ,  lobbyDisplayPackage },
-                {"DeclineUpdate", declineUpdatePackage },
-            };
+            lobbyDisplayPackage.Size = lobbyDisplayPackage.ToByteArray().Length;
+            return lobbyDisplayPackage;
         }
-        public DataPackage GetPackage(string key) => _DataPackages[key];
     }
 }

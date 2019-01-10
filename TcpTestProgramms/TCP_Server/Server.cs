@@ -39,12 +39,12 @@ namespace TCP_Server
         {
             _stateMachine = stateMachine;
             var bwStateMachine = new BackgroundWorker();
-            bwStateMachine.DoWork += (obj, ea) => stateMachine.Start();
+            bwStateMachine.DoWork += (obj, ea) => _stateMachine.Start();
             bwStateMachine.RunWorkerAsync();
 
             _validationSystem = validationSystem;
             var bwValidationSystem = new BackgroundWorker();
-            bwValidationSystem.DoWork += (obj, ea) => validationSystem.Start();
+            bwValidationSystem.DoWork += (obj, ea) => _validationSystem.Start();
             bwValidationSystem.RunWorkerAsync();
             
             _serverInfo = serverInfo;

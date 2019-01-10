@@ -25,7 +25,7 @@ namespace TCP_Server.Test
             DataPackage acceptedInfoPackage = _dataPackageProvider.GetPackage("AcceptedInfo");
             communication.Send(acceptedInfoPackage);
 
-            DataPackage lobbyDisplayPackage = _dataPackageProvider.GetPackage("LobbyDisplay");
+            DataPackage lobbyDisplayPackage = _dataPackageProvider.LobbyDisplay();
             for (int i = 0; i <= _serverInfo._communications.Count - 1; i++)
             {
                 _serverInfo._communications[i].Send(lobbyDisplayPackage);
