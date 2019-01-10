@@ -20,7 +20,7 @@ namespace TCP_Server.Test
         private ClientConnection _connectionHandler;
         private DataPackageProvider _dataPackageProvider;
         public ICommunication currentcommunication;
-        private bool validationStatus;
+        private bool validationStatus = false;
         private Server _server;
 
         private System.Timers.Timer timer;
@@ -92,10 +92,7 @@ namespace TCP_Server.Test
 
             ValidationRequestPackage.Size = ValidationRequestPackage.ToByteArray().Length;
 
-            _serverInfo._communications.ForEach(communication =>
-            {
-                communication.Send(ValidationRequestPackage);
-            });
+            _serverInfo._communications[_serverInfo._communications.Count].Send(ValidationRequestPackage);
 
             validationStatus = await _server._ActionsHandler.OnValidationAction();
 
@@ -109,9 +106,9 @@ namespace TCP_Server.Test
         private void ValidationHelper(Object source, ElapsedEventArgs e)
         {
             if (validationStatus)
-                _server.SwitchState(ValidationEnum.LobbyCheck);
+                Core.ValidationStatus = ValidationEnum.LobbyCheck;
             else
-                _server.SwitchState(ValidationEnum.DeclineState);
+                Core.ValidationStatus = ValidationEnum.DeclineState;
         }
     }
 }

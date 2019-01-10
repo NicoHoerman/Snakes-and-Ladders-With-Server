@@ -307,7 +307,7 @@ namespace TCP_Server.Actions
             _DisconnectionHandler.DisconnectClient();
         }
 
-        public Task<bool> OnValidationAction()
+        public async Task<bool> OnValidationAction()
         {
             return true;
         }
