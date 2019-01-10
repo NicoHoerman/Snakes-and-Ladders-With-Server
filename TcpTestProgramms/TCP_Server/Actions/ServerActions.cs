@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
+using System.Threading.Tasks;
 using TCP_Server.Enum;
 using TCP_Server.PROTOCOLS;
 using TCP_Server.Test;
@@ -304,6 +305,11 @@ namespace TCP_Server.Actions
         public void OnCloseGameAction(ICommunication communication, DataPackage data)
         {
             _DisconnectionHandler.DisconnectClient();
+        }
+
+        public Task<bool> OnValidationAction()
+        {
+            return true;
         }
 
         #endregion

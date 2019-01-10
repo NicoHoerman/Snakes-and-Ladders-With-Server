@@ -24,7 +24,7 @@ namespace TCP_Server
         
         private TcpListener _listener;
         private ServerInfo _serverInfo;
-        private ServerActions _ActionsHandler;
+        public ServerActions _ActionsHandler;
         public ClientDisconnection _DisconnectionHandler;
         public Game _game;
 
