@@ -4,7 +4,14 @@ using System.Text;
 
 namespace TCP_Client.StateEnum
 {
-    class ClientStates
+    public enum ClientStates
     {
+        NotConnected,
+        Connecting,
+        Handshake,
+        Connected,
+        Lobby,
+        GameRunning,
+        ClientClosing
     }
 }

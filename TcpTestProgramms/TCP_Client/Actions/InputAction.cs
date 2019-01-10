@@ -102,7 +102,7 @@ namespace TCP_Client.Actions
 
         #region Input actions
 
-        private void OnInputHelpAction(List<string> input, ICommunication communication)
+        public void OnInputHelpAction(List<string> input, ICommunication communication)
         {
             if (!isConnected)
             {
@@ -135,7 +135,7 @@ namespace TCP_Client.Actions
             communication.Send(dataPackage);
         }
 
-        private void OnInputRollDiceAction(List<string> input, ICommunication communication)
+        public void OnInputRollDiceAction(List<string> input, ICommunication communication)
         {
             if (!isConnected)
             {
@@ -157,7 +157,7 @@ namespace TCP_Client.Actions
             communication.Send(dataPackage);
         }
 
-        private void OnServerConnectAction(List<string> input, ICommunication communication)
+        public void OnServerConnectAction(List<string> input, ICommunication communication)
         {
 
             if (isConnected | !Searched | Declined)
@@ -175,6 +175,8 @@ namespace TCP_Client.Actions
             int chosenServerId = Int32.Parse(input[1]);
             if (_ActionHandler._serverDictionary.Count >= chosenServerId)
             {
+                _client.SwitchState(StateEnum.ClientStates.Connecting);
+
                 BroadcastDTO current = _ActionHandler.GetServer(chosenServerId-1);
                 try
                 {
@@ -212,7 +214,7 @@ namespace TCP_Client.Actions
 
         }
 
-        private void OnSearchAction(List<string> input, ICommunication communication)
+        public void OnSearchAction(List<string> input, ICommunication communication)
         {
             if (isConnected)
             {
@@ -247,7 +249,7 @@ namespace TCP_Client.Actions
             
         }
 
-        private void OnCloseGameAction(List<string> obj,ICommunication communication)
+        public void OnCloseGameAction(List<string> obj,ICommunication communication)
         {
             if (!isConnected)
             {
@@ -272,7 +274,7 @@ namespace TCP_Client.Actions
 
         }
 
-        private void OnStartGameAction(List<string> arg1, ICommunication communication)
+        public void OnStartGameAction(List<string> arg1, ICommunication communication)
         {
             if (isConnected)
             {

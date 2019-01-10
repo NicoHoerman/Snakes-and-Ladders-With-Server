@@ -10,6 +10,7 @@ using System.Linq;
 using Wrapper;
 using Wrapper.Contracts;
 using Wrapper.View;
+using TCP_Client.StateEnum;
 
 namespace TCP_Client
 {
@@ -25,7 +26,11 @@ namespace TCP_Client
         private ViewUpdater _ViewUpdater;
         private ViewDictionary _viewDictionary;
         private ClientDataPackageProvider clientDataPackageProvider;
-        
+        string input = string.Empty;
+
+        ClientStates state { get; set; }
+
+
 
         //<Constructors>
         public Client(ICommunication communication)
@@ -34,7 +39,7 @@ namespace TCP_Client
             _viewDictionary = new ViewDictionary();
             _communication = communication;
             _ActionHandler = new ProtocolAction(_viewDictionary._views, this, clientDataPackageProvider);
-            _InputHandler = new InputAction(_ActionHandler, _viewDictionary._views,this,  clientDataPackageProvider);
+            _InputHandler = new InputAction(_ActionHandler, _viewDictionary._views, this, clientDataPackageProvider);
             _OutputWrapper = new OutputWrapper();
             _ViewUpdater = new ViewUpdater(_viewDictionary._views);
             _ActionHandler._enterToRefreshView.viewEnabled = true;
@@ -74,16 +79,20 @@ namespace TCP_Client
             backgroundworker2.DoWork += (obj, ea) => _ViewUpdater.RunUpdater();
             //backgroundworker2.RunWorkerAsync();
 
-            string input = string.Empty;
+            var backgroundworker3 = new BackgroundWorker();
+
+            backgroundworker3.DoWork += (obj, ea) => StateMachine(state);
+            backgroundworker3.RunWorkerAsync();
+
             isRunning = true;
 
             while (isRunning)
             {
                 _ViewUpdater.UpdateView();
                 Console.SetCursorPosition(_InputHandler._inputView._xCursorPosition, 0);
-                input = _OutputWrapper.ReadInput();
+                //input = _OutputWrapper.ReadInput();
                 _OutputWrapper.Clear();
-                _InputHandler.ParseAndExecuteCommand(input, _communication);
+                //_InputHandler.ParseAndExecuteCommand(input, _communication);
             }
         }
 
@@ -95,7 +104,7 @@ namespace TCP_Client
                 {
                     case ClientStates.NotConnected:
                         _InputHandler._inputActions.Add("/search", _InputHandler.OnSearchAction);
-                        _InputHandler._inputActions.Add("/someInt", _InputHandler.OnIntAction);
+                        _InputHandler._inputActions.Add("/someInt", _InputHandler.OnServerConnectAction);
                         _InputHandler._inputActions.Add("/closegame", _InputHandler.OnCloseGameAction);
                         input = _OutputWrapper.ReadInput();
                         _InputHandler.ParseAndExecuteCommand(input, _communication);
