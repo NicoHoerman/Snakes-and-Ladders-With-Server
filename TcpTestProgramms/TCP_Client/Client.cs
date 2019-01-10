@@ -114,20 +114,23 @@ namespace TCP_Client
 
                     case ClientStates.Connecting:
                         _InputHandler._inputActions.Clear();
-                        WaitForHandshake();
+                        while (state == ClientStates.Connecting)
+                        { }
                         break;
 
                     case ClientStates.Connected:
-                        break;
-
-                    case ClientStates.GameRunning:
-                        break;
-
-                    case ClientStates.Handshake:
+                        _InputHandler._inputActions.Add("/search", _InputHandler.OnSearchAction);
+                        _InputHandler._inputActions.Add("/closegame", _InputHandler.OnCloseGameAction);
+                        while (state == ClientStates.Connected) //LobbyCheck() sollte wechseln, aber wie?
+                        { }
                         break;
 
                     case ClientStates.Lobby:
                         break;
+
+                    case ClientStates.GameRunning:
+                        break;                  
+
                 }
             }
 
