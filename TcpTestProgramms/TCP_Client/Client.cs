@@ -114,7 +114,6 @@ namespace TCP_Client
 
                     case ClientStates.Connecting:
                         _InputHandler._inputActions.Clear();
-
                         WaitForHandshake();
                         break;
 
