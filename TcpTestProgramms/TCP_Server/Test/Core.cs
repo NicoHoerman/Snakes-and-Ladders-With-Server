@@ -41,8 +41,8 @@ namespace TCP_Server.Test
 
             _ActionsHandler = new ServerActions(serverInfo, game, _disconnectionHandler);
             stateMachine = new StateMachine(serverInfo,_ActionsHandler);
+            validationSystem = new ValidationSystem(serverInfo,_disconnectionHandler,_connectionHandler,_dataPackageProvider, _ActionsHandler);
             server = new Server(_ActionsHandler, game, serverInfo, stateMachine, validationSystem, _disconnectionHandler);
-            validationSystem = new ValidationSystem(serverInfo,_disconnectionHandler,_connectionHandler,_dataPackageProvider, server);
         }
 
         public void Start()

@@ -9,6 +9,7 @@ using System.Threading;
 using Shared.Enums;
 using Newtonsoft.Json;
 using TCP_Server.PROTOCOLS;
+using TCP_Server.Actions;
 
 namespace TCP_Server.Test
 {
@@ -21,19 +22,19 @@ namespace TCP_Server.Test
         private DataPackageProvider _dataPackageProvider;
         public ICommunication currentcommunication;
         private bool validationStatus = false;
-        private Server _server;
+        private ServerActions _serverActions;
 
         private System.Timers.Timer timer;
 
 
         public ValidationSystem(ServerInfo serverInfo,ClientDisconnection disconnectionHandler
-            , ClientConnection connectionHandler, DataPackageProvider dataPackageProvider, Server server)
+            , ClientConnection connectionHandler, DataPackageProvider dataPackageProvider, ServerActions serverActions)
         {
             _serverInfo = serverInfo;
             _disconnectionHandler = disconnectionHandler;
             _connectionHandler = connectionHandler;
             _dataPackageProvider = dataPackageProvider;
-            _server = server;
+            _serverActions = serverActions;
         }
 
         public void Start()
@@ -94,7 +95,7 @@ namespace TCP_Server.Test
 
             _serverInfo._communications[_serverInfo._communications.Count].Send(ValidationRequestPackage);
 
-            validationStatus = await _server._ActionsHandler.OnValidationAction();
+            validationStatus = await _serverActions.OnValidationAction();
 
             timer = new System.Timers.Timer(5000);
             timer.Enabled = true;
