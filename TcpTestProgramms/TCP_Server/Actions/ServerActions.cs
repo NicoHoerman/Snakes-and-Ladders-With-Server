@@ -29,17 +29,19 @@ namespace TCP_Server.Actions
         private Game _game;
         private GameFinishedState finishedState;
         private ClientDisconnection _DisconnectionHandler;
+        private ServerDataPackageProvider _dataPackageProvider;
 
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
         public static ManualResetEvent StateSwitched = new ManualResetEvent(false);
         public static ManualResetEvent TurnFinished = new ManualResetEvent(false);
 
-        public ServerActions(ServerInfo serverInfo, Game game, ClientDisconnection disconnectionHandler)
+        public ServerActions(ServerInfo serverInfo, Game game, ClientDisconnection disconnectionHandler, ServerDataPackageProvider dataPackageProvider)
         {          
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>();
             _DisconnectionHandler = disconnectionHandler;
             _serverInfo = serverInfo;
             _game = game;
+            _dataPackageProvider = dataPackageProvider;
         }
 
         public void ExecuteDataActionFor(ICommunication communication, DataPackage data)
@@ -311,6 +313,7 @@ namespace TCP_Server.Actions
         {
             ValidationSystem.validationStatus = true;
             Core.State = StateEnum.LobbyState;
+            communication.Send(_dataPackageProvider.GetPackage("ValidationAccepted"));
         }
 
         #endregion

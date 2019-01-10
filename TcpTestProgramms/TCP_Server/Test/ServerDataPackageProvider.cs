@@ -62,13 +62,21 @@ namespace TCP_Server.Test
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
             };
             validationRequestPackage.Size = validationRequestPackage.ToByteArray().Length;
-           
+
+            DataPackage validationAcceptedPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.ValidationAccepted,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
+            };
+            validationAcceptedPackage.Size = validationAcceptedPackage.ToByteArray().Length;
+
             _DataPackages = new Dictionary<string, DataPackage>
             {
                 {"AcceptedInfo" ,  accpetedInfoPackage },
                 {"DeclinedInfo" ,  declinedInfoPackage },
                 {"DeclineUpdate", declineUpdatePackage },
-                {"ValidationRequest", validationRequestPackage },               
+                {"ValidationRequest", validationRequestPackage },
+                {"ValidationAccepted", validationAcceptedPackage }
             };
         }
 

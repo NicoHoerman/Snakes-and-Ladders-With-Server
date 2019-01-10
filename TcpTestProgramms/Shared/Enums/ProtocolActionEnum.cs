@@ -17,6 +17,7 @@ namespace Shared.Enums
         UpdateView = 204,
         HelpText = 205,
         Restart = 206,
-        ValidationRequest = 207
+        ValidationRequest = 207,
+        ValidationAccepted = 208
     }
 }
