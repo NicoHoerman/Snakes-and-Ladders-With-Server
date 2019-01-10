@@ -59,13 +59,7 @@ namespace TCP_Client.Actions
 
             _inputActions = new Dictionary<string, Action<List<string>,ICommunication>>
             {
-                { "/help", OnInputHelpAction },
-                { "/rolldice", OnInputRollDiceAction },
-                { "/closegame", OnCloseGameAction },
-                {"/server" , OnServerConnectAction },
-                {"/search", OnSearchAction },
-                {"/startgame", OnStartGameAction },
-                {"/classic", OnClassicAction }
+                
             };
 
             _UdpListener = new UdpClientUnit();

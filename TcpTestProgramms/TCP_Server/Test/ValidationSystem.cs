@@ -19,7 +19,7 @@ namespace TCP_Server.Test
         private bool isRunning;
         private ClientDisconnection _disconnectionHandler;
         private ClientConnection _connectionHandler;
-        private DataPackageProvider _dataPackageProvider;
+        private ServerDataPackageProvider _dataPackageProvider;
         public ICommunication currentcommunication;
         private bool validationStatus = false;
         private ServerActions _serverActions;
@@ -28,7 +28,7 @@ namespace TCP_Server.Test
 
 
         public ValidationSystem(ServerInfo serverInfo,ClientDisconnection disconnectionHandler
-            , ClientConnection connectionHandler, DataPackageProvider dataPackageProvider, ServerActions serverActions)
+            , ClientConnection connectionHandler, ServerDataPackageProvider dataPackageProvider, ServerActions serverActions)
         {
             _serverInfo = serverInfo;
             _disconnectionHandler = disconnectionHandler;

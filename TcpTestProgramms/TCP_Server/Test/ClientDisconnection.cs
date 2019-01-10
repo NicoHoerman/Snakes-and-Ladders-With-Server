@@ -14,9 +14,9 @@ namespace TCP_Server.Test
     {
         public Game _game;
         public ServerInfo _serverInfo;
-        private DataPackageProvider _dataPackageProvider;
+        private ServerDataPackageProvider _dataPackageProvider;
 
-        public ClientDisconnection(Game game, ServerInfo serverInfo,DataPackageProvider dataPackageProvider)
+        public ClientDisconnection(Game game, ServerInfo serverInfo,ServerDataPackageProvider dataPackageProvider)
         {
             _game = game;
             _serverInfo = serverInfo;

@@ -23,7 +23,7 @@ namespace TCP_Client
         {                               
             validationAnswerPackage = new DataPackage
             {
-                Header = ProtocolActionEnum.ValidationAnswer,
+                Header = ProtocolActionEnum.ValidationRequest,
                 Payload = JsonConvert.SerializeObject(new PROT_CONNECTION{})
             };
             validationAnswerPackage.Size = validationAnswerPackage.ToByteArray().Length;

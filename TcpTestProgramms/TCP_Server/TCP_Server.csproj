@@ -88,7 +88,7 @@
     <Compile Include="ServerInfo.cs" />
     <Compile Include="Test\ClientDisconnection.cs" />
     <Compile Include="Test\Core.cs" />
-    <Compile Include="Test\DataPackageProvider.cs" />
+    <Compile Include="Test\ServerDataPackageProvider.cs" />
     <Compile Include="Test\Lobby.cs" />
     <Compile Include="Test\StateEnum.cs" />
     <Compile Include="Test\StateMachine.cs" />

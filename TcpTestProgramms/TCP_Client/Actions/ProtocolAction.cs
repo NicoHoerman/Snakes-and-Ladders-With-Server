@@ -75,7 +75,7 @@ namespace TCP_Client.Actions
                 { ProtocolActionEnum.Accept, OnAcceptAction },
                 { ProtocolActionEnum.Decline, OnDeclineAction },
                 { ProtocolActionEnum.Restart, OnRestartAction },
-                { ProtocolActionEnum.ValidationAnswer, OnValidationRequestAction }
+                { ProtocolActionEnum.ValidationRequest, OnValidationRequestAction }
             
             };
 

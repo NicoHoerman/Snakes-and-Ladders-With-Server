@@ -11,9 +11,9 @@ namespace TCP_Server.Test
     {
         //<New>		
         private ServerInfo _serverInfo;
-        private DataPackageProvider _dataPackageProvider;
+        private ServerDataPackageProvider _dataPackageProvider;
 
-        public ClientConnection(ServerInfo serverinfo, DataPackageProvider dataPackageProvider)
+        public ClientConnection(ServerInfo serverinfo, ServerDataPackageProvider dataPackageProvider)
         {
             _serverInfo = serverinfo;
             _dataPackageProvider = dataPackageProvider;

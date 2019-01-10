@@ -9,6 +9,7 @@ namespace Shared.Enums
         Rule = 104,
         CloseGame = 105,
         OnConnection =106,
+        ValidationAnswer = 107,
 
         Broadcast = 201,
         Decline = 202,
@@ -16,6 +17,6 @@ namespace Shared.Enums
         UpdateView = 204,
         HelpText = 205,
         Restart = 206,
-        ValidationAnswer = 207
+        ValidationRequest = 207
     }
 }

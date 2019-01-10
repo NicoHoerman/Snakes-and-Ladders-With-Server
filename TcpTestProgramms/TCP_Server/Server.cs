@@ -55,7 +55,7 @@ namespace TCP_Server
             _queue = new PackageQueue();
             _process = new PackageProcessing(_queue, _ActionsHandler);
 
-            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_NICO), 8080);
+            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_LEON), 8080);
         }
 
         public void StartListening(TcpListener listener)

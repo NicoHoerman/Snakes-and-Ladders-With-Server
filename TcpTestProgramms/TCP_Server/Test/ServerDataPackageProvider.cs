@@ -10,7 +10,7 @@ using TCP_Server.PROTOCOLS;
 
 namespace TCP_Server.Test
 {
-    public class DataPackageProvider
+    public class ServerDataPackageProvider
     {
         Dictionary<string, DataPackage> _DataPackages;
         private DataPackage accpetedInfoPackage;
@@ -24,7 +24,7 @@ namespace TCP_Server.Test
         private int currentplayer;
         private int maxplayer;
 
-        public DataPackageProvider(ServerInfo serverInfo)
+        public ServerDataPackageProvider(ServerInfo serverInfo)
         {
             _serverInfo = serverInfo;
             
@@ -62,21 +62,13 @@ namespace TCP_Server.Test
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
             };
             validationRequestPackage.Size = validationRequestPackage.ToByteArray().Length;
-
-            validationAnswerPackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.ValidationAnswer,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
-            };
-            validationAnswerPackage.Size = validationAnswerPackage.ToByteArray().Length;
-
+           
             var _DataPackages = new Dictionary<string, DataPackage>
             {
                 {"AcceptedInfo" ,  accpetedInfoPackage },
                 {"DeclinedInfo" ,  declinedInfoPackage },
                 {"DeclineUpdate", declineUpdatePackage },
-                {"ValidationRequest", validationRequestPackage },
-                {"ValidationAnswer", validationAnswerPackage }
+                {"ValidationRequest", validationRequestPackage },               
             };
         }
         public DataPackage GetPackage(string key) => _DataPackages[key];
