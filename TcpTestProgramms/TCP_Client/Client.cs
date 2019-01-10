@@ -44,14 +44,11 @@ namespace TCP_Client
             _ViewUpdater = new ViewUpdater(_viewDictionary._views);
             _ActionHandler._enterToRefreshView.viewEnabled = true;
             _ActionHandler._enterToRefreshView.SetUpdateContent("Press enter to refresh\nafter you typed a command.");
-
         }
 
         public Client()
             : this(new TcpCommunication())
         { }
-
-        //<Methods>
 
         private void CheckTCPUpdates()
         {
@@ -73,11 +70,6 @@ namespace TCP_Client
 
             backgroundworker.DoWork += (obj, ea) => CheckTCPUpdates();
             backgroundworker.RunWorkerAsync();
-
-            var backgroundworker2 = new BackgroundWorker();
-
-            backgroundworker2.DoWork += (obj, ea) => _ViewUpdater.RunUpdater();
-            //backgroundworker2.RunWorkerAsync();
 
             var backgroundworker3 = new BackgroundWorker();
 
@@ -130,7 +122,6 @@ namespace TCP_Client
                         break;
                 }
             }
-
         }
 
         private void WaitForHandshake()
@@ -151,13 +142,9 @@ namespace TCP_Client
 
         public void CloseClient()
         {
-            
             _ViewUpdater.isViewRunning = false;
             _communication.Stop();
             isRunning = false;
         }
-
-        
     }
 }
-

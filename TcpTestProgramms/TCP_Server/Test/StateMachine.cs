@@ -6,8 +6,9 @@ namespace TCP_Server.Test
 {
     public class StateMachine
     {
-        private ServerInfo _serverinfo;
         private bool isRunning;
+
+        private ServerInfo _serverinfo;
         private ServerActions _ActionHandler;
 
         public StateMachine(ServerInfo serverinfo,ServerActions serverActions)

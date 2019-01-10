@@ -264,7 +264,6 @@ namespace TCP_Server.Actions
 
                  communication.Send(dataPackage);
              }*/
-
         }
 
         public void OnGetHelpAction(ICommunication communication, DataPackage data)

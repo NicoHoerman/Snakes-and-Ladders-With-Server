@@ -38,7 +38,6 @@ namespace TCP_Client.Actions
         private readonly IUpdateOutputView _finishSkull2View;
         private readonly IUpdateOutputView _finishSkull3View;
         public readonly IUpdateOutputView _enterToRefreshView;
-        
 
         private readonly Client _client;
 
@@ -76,9 +75,7 @@ namespace TCP_Client.Actions
                 { ProtocolActionEnum.Decline, OnDeclineAction },
                 { ProtocolActionEnum.Restart, OnRestartAction },
                 { ProtocolActionEnum.ValidationRequest, OnValidationRequestAction }
-            
             };
-
             outputWrapper = new OutputWrapper();
         }
 
@@ -95,14 +92,10 @@ namespace TCP_Client.Actions
 
         #region Protocol actions
 
-
         private void OnHelpTextAction(DataPackage data, ICommunication communication)
         {
             var helpText = MapProtocolToDto<HelpTextDTO>(data);
-            
-            
             //_helpOutputView.SetUpdateContent(helpText._HelpText);
-            
         }
 
         private void OnUpdateAction(DataPackage data, ICommunication communication)
@@ -114,7 +107,6 @@ namespace TCP_Client.Actions
                 _mainMenuOutputView.viewEnabled = true;
                 _mainMenuOutputView.SetUpdateContent(updatedView._mainMenuOutput);
             }
-
             //_lobbyInfoDisplayView.viewEnabled = updatedView._lobbyDisplay != null && updatedView._lobbyDisplay.Length != 0; ;
             //_lobbyInfoDisplayView.SetUpdateContent(updatedView._lobbyDisplay);
             if (!(updatedView._lobbyDisplay == null || updatedView._lobbyDisplay.Length == 0))
@@ -185,7 +177,6 @@ namespace TCP_Client.Actions
         private int[] _CurrentPlayerCount = new int[100];
         private int keyIndex = 0;
 
-
         private void OnBroadcastAction(DataPackage data, ICommunication communication)
         {
             var broadcast = MapProtocolToDto<BroadcastDTO>(data);
@@ -221,10 +212,6 @@ namespace TCP_Client.Actions
             _serverTableView.SetUpdateContent(_serverTable);
             _serverTable = string.Empty;
             _serverTableView.viewEnabled = true;
-            // Key Player Server 
-            //
-            //  1  [0/4]  XD
-            //  2  [1/2]  LuL
         }
 
         private void OnAcceptAction(DataPackage data, ICommunication communication)
@@ -263,7 +250,6 @@ namespace TCP_Client.Actions
 
         public void DisableViews()
         {
-            
             _commandListOutputView.viewEnabled = false;
             _errorView.viewEnabled = false;
             _gameInfoOutputView.viewEnabled = false;

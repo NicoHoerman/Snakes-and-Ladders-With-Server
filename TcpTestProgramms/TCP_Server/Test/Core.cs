@@ -31,10 +31,9 @@ namespace TCP_Server.Test
         public Core()
         {
             game = new Game();
-
             serverInfo = new ServerInfo();
 
-            _dataPackageProvider = new ServerDataPackageProvider(serverInfo);
+            _dataPackageProvider = new ServerDataPackageProvider(serverInfo,game);
 
             udpserver = new UdpBroadcast(serverInfo);
 
