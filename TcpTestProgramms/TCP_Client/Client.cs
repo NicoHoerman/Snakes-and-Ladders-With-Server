@@ -85,8 +85,54 @@ namespace TCP_Client
                 _OutputWrapper.Clear();
                 _InputHandler.ParseAndExecuteCommand(input, _communication);
             }
-        }    
-        
+        }
+
+        public void StateMachine(ClientStates state)
+        {
+            while (isRunning)
+            {
+                switch (state)
+                {
+                    case ClientStates.NotConnected:
+                        _InputHandler._inputActions.Add("/search", _InputHandler.OnSearchAction);
+                        _InputHandler._inputActions.Add("/someInt", _InputHandler.OnIntAction);
+                        _InputHandler._inputActions.Add("/closegame", _InputHandler.OnCloseGameAction);
+                        input = _OutputWrapper.ReadInput();
+                        _InputHandler.ParseAndExecuteCommand(input, _communication);
+                        break;
+
+                    case ClientStates.Connecting:
+                        _InputHandler._inputActions.Clear();
+
+                        WaitForHandshake();
+                        break;
+
+                    case ClientStates.Connected:
+                        break;
+
+                    case ClientStates.GameRunning:
+                        break;
+
+                    case ClientStates.Handshake:
+                        break;
+
+                    case ClientStates.Lobby:
+                        break;
+                }
+            }
+
+        }
+
+        private void WaitForHandshake()
+        {
+
+        }
+
+        public void SwitchState(ClientStates newState)
+        {
+            state = newState;
+        }
+
         public void CloseCommunication()
         {
             _communication.Stop();
