@@ -3,6 +3,12 @@ using Shared.Contract;
 using System;
 using System.Collections.Generic;
 using TCP_Server.Enum;
+using System.Threading.Tasks;
+using System.Timers;
+using System.Threading;
+using Shared.Enums;
+using Newtonsoft.Json;
+using TCP_Server.PROTOCOLS;
 
 namespace TCP_Server.Test
 {
@@ -14,14 +20,20 @@ namespace TCP_Server.Test
         private ClientConnection _connectionHandler;
         private DataPackageProvider _dataPackageProvider;
         public ICommunication currentcommunication;
+        private bool validationStatus = false;
+        private Server _server;
+
+        private System.Timers.Timer timer;
+
 
         public ValidationSystem(ServerInfo serverInfo,ClientDisconnection disconnectionHandler
-            , ClientConnection connectionHandler, DataPackageProvider dataPackageProvider)
+            , ClientConnection connectionHandler, DataPackageProvider dataPackageProvider, Server server)
         {
             _serverInfo = serverInfo;
             _disconnectionHandler = disconnectionHandler;
             _connectionHandler = connectionHandler;
             _dataPackageProvider = dataPackageProvider;
+            _server = server;
         }
 
         public void Start()
@@ -37,7 +49,7 @@ namespace TCP_Server.Test
                         
                         break;
                     case ValidationEnum.ValidationState:
-                        
+                        ValidateClientAsync();
                         break;
                     case ValidationEnum.LobbyCheck:
                         LobbyCheck();
@@ -64,6 +76,39 @@ namespace TCP_Server.Test
                 _connectionHandler.Execute(currentcommunication);
             }
             Core.ValidationStatus = ValidationEnum.WaitingForPlayer;
+        }
+
+        async Task<bool> ValidateClientAsync()
+        {
+            var ValidationRequestPackage = new DataPackage
+            {
+
+                Header = ProtocolActionEnum.ValidationRequest,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                {
+
+                })
+            };
+
+            ValidationRequestPackage.Size = ValidationRequestPackage.ToByteArray().Length;
+
+            _serverInfo._communications[_serverInfo._communications.Count].Send(ValidationRequestPackage);
+
+            validationStatus = await _server._ActionsHandler.OnValidationAction();
+
+            timer = new System.Timers.Timer(5000);
+            timer.Enabled = true;
+            timer.Elapsed += ValidationHelper;
+
+            return validationStatus;
+        }
+
+        private void ValidationHelper(Object source, ElapsedEventArgs e)
+        {
+            if (validationStatus)
+                Core.ValidationStatus = ValidationEnum.LobbyCheck;
+            else
+                Core.ValidationStatus = ValidationEnum.DeclineState;
         }
     }
 }
