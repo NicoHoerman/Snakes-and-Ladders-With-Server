@@ -72,7 +72,8 @@ namespace TCP_Client.Actions
                 { ProtocolActionEnum.Broadcast, OnBroadcastAction },
                 { ProtocolActionEnum.Accept, OnAcceptAction },
                 { ProtocolActionEnum.Decline, OnDeclineAction },
-                { ProtocolActionEnum.Restart, OnRestartAction }
+                { ProtocolActionEnum.Restart, OnRestartAction },
+                { ProtocolActionEnum.ValidationAnswer, OnValidationRequestAction }
             
             };
 
@@ -252,6 +253,11 @@ namespace TCP_Client.Actions
                 _finishSkull2View.viewEnabled = false;
                 _finishSkull3View.viewEnabled = false;
                 EnableViews();
+        }
+
+        private void OnValidationRequestAction()
+        {
+            
         }
 
         public void DisableViews()
