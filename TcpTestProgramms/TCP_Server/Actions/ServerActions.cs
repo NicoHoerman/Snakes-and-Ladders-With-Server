@@ -23,7 +23,7 @@ namespace TCP_Server.Actions
         private int currentplayer;
         private bool gameStarted = false;
         private bool ruleSet = false;
-
+        
         public Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
         private ServerInfo _serverInfo;
         private Game _game;
@@ -35,7 +35,7 @@ namespace TCP_Server.Actions
         public static ManualResetEvent TurnFinished = new ManualResetEvent(false);
 
         public ServerActions(ServerInfo serverInfo, Game game, ClientDisconnection disconnectionHandler)
-        {
+        {          
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>();
             _DisconnectionHandler = disconnectionHandler;
             _serverInfo = serverInfo;
@@ -307,9 +307,10 @@ namespace TCP_Server.Actions
             _DisconnectionHandler.DisconnectClient();
         }
 
-        public async Task<bool> OnValidationAction()
+        public void OnValidationAction(ICommunication communication, DataPackage data)
         {
-            return true;
+            ValidationSystem.validationStatus = true;
+            Core.State = StateEnum.LobbyState;
         }
 
         #endregion

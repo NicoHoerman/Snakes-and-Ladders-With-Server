@@ -63,7 +63,7 @@ namespace TCP_Server.Test
             };
             validationRequestPackage.Size = validationRequestPackage.ToByteArray().Length;
            
-            var _DataPackages = new Dictionary<string, DataPackage>
+            _DataPackages = new Dictionary<string, DataPackage>
             {
                 {"AcceptedInfo" ,  accpetedInfoPackage },
                 {"DeclinedInfo" ,  declinedInfoPackage },
@@ -71,6 +71,7 @@ namespace TCP_Server.Test
                 {"ValidationRequest", validationRequestPackage },               
             };
         }
+
         public DataPackage GetPackage(string key) => _DataPackages[key];
 
         public DataPackage LobbyDisplay()

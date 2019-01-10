@@ -155,7 +155,10 @@ namespace TCP_Server
         private void ShutdownServer(string input)
         {
             if(input == "shutdown")
-            Core.State = StateEnum.ServerEndingState;
+            {
+                Core.State = StateEnum.ServerEndingState;
+                isRunning = false;
+            }
         }
 
         private void RunGame()

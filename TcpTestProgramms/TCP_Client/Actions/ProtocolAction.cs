@@ -258,6 +258,7 @@ namespace TCP_Client.Actions
         private void OnValidationRequestAction(DataPackage data, ICommunication communication)
         {
             communication.Send(_clientDataPackageProvider.GetPackage("ValidationAnswer"));
+
         }
 
         public void DisableViews()

@@ -31,11 +31,13 @@ namespace TCP_Server.Test
         public Core()
         {
             game = new Game();
+
             serverInfo = new ServerInfo();
+
+            _dataPackageProvider = new ServerDataPackageProvider(serverInfo);
 
             udpserver = new UdpBroadcast(serverInfo);
 
-            _dataPackageProvider = new ServerDataPackageProvider(serverInfo);
             _connectionHandler = new ClientConnection(serverInfo,_dataPackageProvider);
             _disconnectionHandler = new ClientDisconnection(game, serverInfo,_dataPackageProvider);
 

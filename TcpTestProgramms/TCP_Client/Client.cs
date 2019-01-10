@@ -90,14 +90,16 @@ namespace TCP_Client
             {
                 _ViewUpdater.UpdateView();
                 Console.SetCursorPosition(_InputHandler._inputView._xCursorPosition, 0);
-                //input = _OutputWrapper.ReadInput();
+                input = _OutputWrapper.ReadInput();
                 _OutputWrapper.Clear();
-                //_InputHandler.ParseAndExecuteCommand(input, _communication);
+                _InputHandler.ParseAndExecuteCommand(input, _communication);
             }
         }
 
         public void StateMachine(ClientStates state)
         {
+            state = ClientStates.NotConnected;
+
             while (isRunning)
             {
                 switch (state)
@@ -105,9 +107,9 @@ namespace TCP_Client
                     case ClientStates.NotConnected:
                         _InputHandler._inputActions.Add("/search", _InputHandler.OnSearchAction);
                         _InputHandler._inputActions.Add("/someInt", _InputHandler.OnServerConnectAction);
-                        _InputHandler._inputActions.Add("/closegame", _InputHandler.OnCloseGameAction);
-                        input = _OutputWrapper.ReadInput();
-                        _InputHandler.ParseAndExecuteCommand(input, _communication);
+                        _InputHandler._inputActions.Add("/closegame", _InputHandler.OnCloseGameAction);                                               
+                        while (state == ClientStates.NotConnected)
+                        { }
                         break;
 
                     case ClientStates.Connecting:

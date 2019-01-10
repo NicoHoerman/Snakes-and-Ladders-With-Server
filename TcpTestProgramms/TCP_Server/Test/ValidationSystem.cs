@@ -1,15 +1,9 @@
-﻿using Shared.Communications;
-using Shared.Contract;
+﻿using Shared.Contract;
 using System;
-using System.Collections.Generic;
-using TCP_Server.Enum;
-using System.Threading.Tasks;
+using System.Linq;
 using System.Timers;
-using System.Threading;
-using Shared.Enums;
-using Newtonsoft.Json;
-using TCP_Server.PROTOCOLS;
 using TCP_Server.Actions;
+using TCP_Server.Enum;
 
 namespace TCP_Server.Test
 {
@@ -17,14 +11,16 @@ namespace TCP_Server.Test
     {
         private ServerInfo _serverInfo;
         private bool isRunning;
+        private bool timerElapsed = false;
         private ClientDisconnection _disconnectionHandler;
         private ClientConnection _connectionHandler;
         private ServerDataPackageProvider _dataPackageProvider;
         public ICommunication currentcommunication;
-        private bool validationStatus = false;
+        public static bool validationStatus = false;
         private ServerActions _serverActions;
+        
 
-        private System.Timers.Timer timer;
+        private Timer timer;
 
 
         public ValidationSystem(ServerInfo serverInfo,ClientDisconnection disconnectionHandler
@@ -50,7 +46,7 @@ namespace TCP_Server.Test
                         
                         break;
                     case ValidationEnum.ValidationState:
-                        ValidateClientAsync();
+                        ValidateClient();
                         break;
                     case ValidationEnum.LobbyCheck:
                         LobbyCheck();
@@ -79,27 +75,33 @@ namespace TCP_Server.Test
             Core.ValidationStatus = ValidationEnum.WaitingForPlayer;
         }
 
-        async Task<bool> ValidateClientAsync()
+        public void ValidateClient()
         {
+            _serverInfo._communications.Last().SetNWStream();
                    
+            _serverInfo._communications.Last().Send(_dataPackageProvider.GetPackage("ValidationRequest"));
 
-            _serverInfo._communications[_serverInfo._communications.Count].Send(_dataPackageProvider.GetPackage("ValidationRequest"));
-
-            validationStatus = await _serverActions.OnValidationAction();
-
-            timer = new System.Timers.Timer(5000);
+            timer = new Timer(3000);
             timer.Enabled = true;
-            timer.Elapsed += ValidationHelper;
+            timer.AutoReset = false;
+            timer.Elapsed += timerSetter;
 
-            return validationStatus;
-        }
+            while (!validationStatus && !timerElapsed)
+            {
 
-        private void ValidationHelper(Object source, ElapsedEventArgs e)
-        {
+            }
+
             if (validationStatus)
                 Core.ValidationStatus = ValidationEnum.LobbyCheck;
             else
                 Core.ValidationStatus = ValidationEnum.DeclineState;
+            
+        }
+       
+
+        private void timerSetter(Object source, ElapsedEventArgs e)
+        {
+            timerElapsed = true;
         }
     }
 }

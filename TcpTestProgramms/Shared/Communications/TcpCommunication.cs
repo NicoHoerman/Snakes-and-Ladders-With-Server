@@ -48,13 +48,13 @@ namespace Shared.Communications
             _backgroundWorker.RunWorkerAsync();
 
             _backgroundWorker2 = new BackgroundWorker();
-            _backgroundWorker2.DoWork += (_, __) => GetStream();
+            _backgroundWorker2.DoWork += (_, __) => GetStreamWithStyle();
             _backgroundWorker2.RunWorkerAsync();
 
 
         }
 
-        private void GetStream()
+        private void GetStreamWithStyle()
         {
             while (_NWStreamNotSet)
                 try
@@ -111,17 +111,10 @@ namespace Shared.Communications
         //Sendet Datenpackete
         public void Send(DataPackage data)
         {
-            try
-            {
-                    var bytesToSend = data.ToByteArrayUTF();
-                    _nwStream.Write(bytesToSend, 0, bytesToSend.Length);
-            }
-
-            catch
-            {
-                throw new Exception();
-            }
-
+            //Thread.Sleep(2000);
+            var bytesToSend = data.ToByteArrayUTF();
+            _nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+            
         }
 
        

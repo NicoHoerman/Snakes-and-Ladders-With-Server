@@ -26,7 +26,7 @@ namespace TCP_Client.Actions
 
         public string AfterConnectMsg { get; set; } = string.Empty;
 
-        public Dictionary<string, Action<List<string>, ICommunication>> _inputActions;
+        public Dictionary<string, Action<string,ICommunication>> _inputActions;
         private Dictionary<ClientView, IView> _views;
         private ClientDataPackageProvider _clientDataPackageProvider;
 
@@ -57,7 +57,7 @@ namespace TCP_Client.Actions
 
             _OutputWrapper = new OutputWrapper();
 
-            _inputActions = new Dictionary<string, Action<List<string>,ICommunication>>
+            _inputActions = new Dictionary<string, Action<string,ICommunication>>
             {
                 
             };
@@ -69,7 +69,7 @@ namespace TCP_Client.Actions
 
         public void ParseAndExecuteCommand(string input,ICommunication communication)
         {
-            var receivedInput = input.Split(' ').ToList();
+            var receivedInput = input;        
             if (input == "")
                 return;
             if (input == "/someInt")
@@ -84,7 +84,7 @@ namespace TCP_Client.Actions
                 input = "/someInt";
             }
 
-            if (_inputActions.TryGetValue(receivedInput[0], out var action) == false)
+            if (_inputActions.TryGetValue(input, out var action) == false)
             {
                 _errorView.viewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
@@ -96,12 +96,12 @@ namespace TCP_Client.Actions
 
         #region Input actions
 
-        public void OnInputHelpAction(List<string> input, ICommunication communication)
+        public void OnInputHelpAction(string input, ICommunication communication)
         {
             if (!isConnected)
             {
                 _errorView.viewEnabled = true;
-                _errorView.SetContent(input[0], "Error: " + "This command does not exist or isn't enabled at this time");
+                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
             if (_commandListOutputView.viewEnabled)
@@ -111,109 +111,70 @@ namespace TCP_Client.Actions
             else if(!_commandListOutputView.viewEnabled)
             {
                 _commandListOutputView.viewEnabled = true;
-            }
-                            
+            }                                      
 
-            var dataPackage = new DataPackage
-            {
-
-                Header = ProtocolActionEnum.GetHelp, //"Client_wants_to_get_help",
-                Payload = JsonConvert.SerializeObject(new PROT_HELP
-                {
-
-                })
-
-            };
-            dataPackage.Size = dataPackage.ToByteArray().Length;
-
-            communication.Send(dataPackage);
+            communication.Send(_clientDataPackageProvider.GetPackage("Help"));
         }
 
-        public void OnInputRollDiceAction(List<string> input, ICommunication communication)
+        public void OnInputRollDiceAction(string input, ICommunication communication)
         {
             if (!isConnected)
             {
                 _errorView.viewEnabled = true;
-                _errorView.SetContent(input[0], "Error: " + "This command does not exist or isn't enabled at this time");
+                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
 
-            var dataPackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.RollDice, //"Client_wants_to_rolldice",
-                Payload = JsonConvert.SerializeObject(new PROT_ROLLDICE
-                {
-
-                })
-            };
-            dataPackage.Size = dataPackage.ToByteArray().Length;
-
-            communication.Send(dataPackage);
+            communication.Send(_clientDataPackageProvider.GetPackage("RollDice"));
         }
 
-        public void OnServerConnectAction(List<string> input, ICommunication communication)
+        public void OnServerConnectAction(string input, ICommunication communication)
         {
 
             if (isConnected | !Searched | Declined)
             {
                 _errorView.viewEnabled = true;
-                _errorView.SetContent(input[0], "Error: " + "This command does not exist or isn't enabled at this time");
+                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
-            if (input.Count != 2)
-            {
-                _errorView.viewEnabled = true;
-                _errorView.SetContent(input[0], "Error: " + "Server id missing or too many parameters.");
-                return;
-            }
-            int chosenServerId = Int32.Parse(input[1]);
+            //if (input.Count != 2)
+            //{
+            //    _errorView.viewEnabled = true;
+            //    _errorView.SetContent(input, "Error: " + "Server id missing or too many parameters.");
+            //    return;
+            //}
+            int chosenServerId = Int32.Parse(input);
             if (_ActionHandler._serverDictionary.Count >= chosenServerId)
             {
                 _client.SwitchState(StateEnum.ClientStates.Connecting);
 
                 BroadcastDTO current = _ActionHandler.GetServer(chosenServerId-1);
-                try
-                {
-                    communication._client.Connect(IPAddress.Parse(current._Server_ip), current._Server_Port);    
-                }
-                catch
-                {
-
-                }
-                AfterConnectMsg = $"Server {chosenServerId} chosen";
-                isConnected = true;
-                _infoOutputView.viewEnabled = true;
-                _infoOutputView.SetUpdateContent(AfterConnectMsg +"\nYou established a connection with the server. Verifying Player Information...");
+                communication._client.Connect(IPAddress.Parse(current._Server_ip), current._Server_Port);    
                 communication.SetNWStream();
-                var dataPackage = new DataPackage
-                {
-                    Header = ProtocolActionEnum.OnConnection, 
-                    Payload = JsonConvert.SerializeObject(new PROT_CONNECTION
-                    {
-
-                    })
-                };
-                dataPackage.Size = dataPackage.ToByteArray().Length;
-
-                communication.Send(dataPackage);
+                //fertig 
+                //AfterConnectMsg = $"Server {chosenServerId} chosen";
+                //isConnected = true;
+                //_infoOutputView.viewEnabled = true;
+                //_infoOutputView.SetUpdateContent(AfterConnectMsg +"\nYou established a connection with the server. Verifying Player Information...");
+                
             }
             else
             {
                 _errorView.viewEnabled = true;
-                _errorView.SetContent(input[1], "There is no server with this ID");
+                _errorView.SetContent(input, "There is no server with this ID");
             }
 
-            _inputView.SetInputLine("Type a command:", 16);
-            _serverTableView.viewEnabled = false;
+            //_inputView.SetInputLine("Type a command:", 16);
+            //_serverTableView.viewEnabled = false;
 
         }
 
-        public void OnSearchAction(List<string> input, ICommunication communication)
+        public void OnSearchAction(string input, ICommunication communication)
         {
             if (isConnected)
             {
                 _errorView.viewEnabled = true;
-                _errorView.SetContent(input[0], "Error: " + "This command does not exist or isn't enabled at this time");
+                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
 
@@ -243,7 +204,7 @@ namespace TCP_Client.Actions
             
         }
 
-        public void OnCloseGameAction(List<string> obj,ICommunication communication)
+        public void OnCloseGameAction(string obj,ICommunication communication)
         {
             if (!isConnected)
             {
@@ -251,58 +212,28 @@ namespace TCP_Client.Actions
                 _client.CloseClient();
                 return;
             }
-            var dataPackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.CloseGame,
-                Payload = JsonConvert.SerializeObject(new PROT_CLOSEGAME
-                {
-
-                })
-            };
-            dataPackage.Size = dataPackage.ToByteArray().Length;
-
-            communication.Send(dataPackage);
+            
+            communication.Send(_clientDataPackageProvider.GetPackage("CloseGame"));
             Thread.Sleep(5000);
             _client.CloseClient();
 
-
         }
 
-        public void OnStartGameAction(List<string> arg1, ICommunication communication)
+        public void OnStartGameAction(string arg1, ICommunication communication)
         {
             if (isConnected)
-            {
-                var dataPackage = new DataPackage
-                {
-                    Header = ProtocolActionEnum.StartGame,
-                    Payload = JsonConvert.SerializeObject(new PROT_STARTGAME
-                    {
-                        
-                    })
-                };
-                dataPackage.Size = dataPackage.ToByteArray().Length;
-
-                communication.Send(dataPackage);
+            {               
+                communication.Send(_clientDataPackageProvider.GetPackage("StartGame"));
             }
         }
 
-        public void OnClassicAction(List<string> input, ICommunication communication)
+        public void OnClassicAction(string input, ICommunication communication)
         {
             if (isConnected)
             {
                 _mainMenuOutputView.viewEnabled = false;
 
-                var dataPackage = new DataPackage
-                {
-                    Header = ProtocolActionEnum.Rule,
-                    Payload = JsonConvert.SerializeObject(new PROT_STARTGAME
-                    {
-
-                    })
-                };
-                dataPackage.Size = dataPackage.ToByteArray().Length;
-
-                communication.Send(dataPackage);
+                communication.Send(_clientDataPackageProvider.GetPackage("Classic"));
             }
         }
         #endregion

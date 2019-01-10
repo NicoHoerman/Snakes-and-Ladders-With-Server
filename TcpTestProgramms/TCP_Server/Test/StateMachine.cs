@@ -26,14 +26,13 @@ namespace TCP_Server.Test
                 switch (Core.State)
                 {
                     case StateEnum.ServerRunningState:
-                        _serverinfo.lobbylist.Add(new Lobby("name", 2,8080));
-                       
-                        Core.State = StateEnum.LobbyState;
-
+                         _serverinfo.lobbylist.Add(new Lobby("name", 2, 8080));
+                         _ActionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer, _ActionHandler.OnValidationAction);
+                        while (Core.State == StateEnum.ServerRunningState)
+                        { }
                         break;
                     case StateEnum.LobbyState:
-                        ExecuteLobbyState();
-                        
+                        ExecuteLobbyState();                        
                         break;
                     case StateEnum.GameRunningState:
                         ExecuteGameRunningState();
