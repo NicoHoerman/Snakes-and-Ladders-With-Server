@@ -30,8 +30,8 @@ namespace TCP_Server.Test
                 switch (Core.State)
                 {
                     case StateEnum.ServerRunningState:
-                         _serverinfo.lobbylist.Add(new Lobby("name", 2, 8080, _game));
                          _ActionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer, _ActionHandler.OnValidationAction);
+                         _serverinfo.lobbylist.Add(new Lobby("name", 2, 8080, _game));
                         while (Core.State == StateEnum.ServerRunningState)
                         { }
                         break;
@@ -52,10 +52,16 @@ namespace TCP_Server.Test
         }
         private void ExecuteLobbyState()
         {
-            _ActionHandler._protocolActions.Add(ProtocolActionEnum.StartGame
-                             , _ActionHandler.OnStartGameAction);
             _ActionHandler._protocolActions.Add(ProtocolActionEnum.Rule,
                 _ActionHandler.OnRuleAction);
+            while (_ActionHandler.ruleSet == false)
+            { }
+            _ActionHandler._protocolActions.Add(ProtocolActionEnum.StartGame,
+               _ActionHandler.OnStartGameAction);
+            while (_ActionHandler.gameStarted == false)
+            { }
+            _serverinfo.lobbylist[0].RunGame();
+            _game.State.SetInput("/classic");
             while (Core.State == StateEnum.LobbyState)
             { }
             _ActionHandler._protocolActions.Clear();

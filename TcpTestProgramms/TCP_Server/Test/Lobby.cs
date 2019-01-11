@@ -1,5 +1,6 @@
 ﻿using EandE_ServerModel.EandE.GameAndLogic;
 using System;
+using System.ComponentModel;
 
 namespace TCP_Server.Test
 {
@@ -20,7 +21,6 @@ namespace TCP_Server.Test
             _LobbyName = lobbyname;
             _ServerPort = port;
             _game = game;
-            RunLobby();
         }
 
         public void RunLobby()
@@ -29,9 +29,18 @@ namespace TCP_Server.Test
 
             while (isRunning)
             {
-
+                
             }
+        }
 
+        public void RunGame()
+        {
+            while (isRunning)
+            {
+                var backgroundworkerGame = new BackgroundWorker();
+                backgroundworkerGame.DoWork += (obj, ea) => _game.Init(); ;
+                backgroundworkerGame.RunWorkerAsync();
+            }
         }
 
         public bool IsLobbyComplete()
@@ -44,12 +53,5 @@ namespace TCP_Server.Test
                 return false;
         }
 
-        private void RunGame()
-        {
-            while (isRunning)
-            {
-                _game.Init();
-            }
-        }
     }
 }

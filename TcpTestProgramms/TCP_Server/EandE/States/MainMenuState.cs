@@ -117,7 +117,6 @@ namespace EandE_ServerModel.EandE.States
             StateFinished.Set();
             _game.SwitchState(new GameStartingState(_game));
         }
-
         
         private void CreateNewRulesInGame(string rulesname)
         {
