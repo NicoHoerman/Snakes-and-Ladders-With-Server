@@ -13,6 +13,7 @@ using Wrapper.View;
 using Wrapper;
 using System.Threading;
 using Shared.Contract;
+using System.Linq;
 
 namespace TCP_Client.Actions
 {
@@ -107,9 +108,31 @@ namespace TCP_Client.Actions
         }
 
         public void OnUpdateAction(DataPackage data, ICommunication communication)
-        {
+        {            
+
             var updatedView = MapProtocolToDto<UpdateDTO>(data);
-           
+
+            var dtoStringList = new List<string>();
+            dtoStringList.Clear();
+            dtoStringList.Add(updatedView._afterTurnOutput);
+            dtoStringList.Add(updatedView._boardOutput);
+            dtoStringList.Add(updatedView._commandList);
+            dtoStringList.Add(updatedView._error);
+            dtoStringList.Add(updatedView._finishinfo);
+            dtoStringList.Add(updatedView._finishskull1);
+            dtoStringList.Add(updatedView._finishskull2);
+            dtoStringList.Add(updatedView._gameInfoOutput);
+            dtoStringList.Add(updatedView._infoOutput);
+            dtoStringList.Add(updatedView._lastinput);
+            dtoStringList.Add(updatedView._lobbyDisplay);
+
+            _views.ToList().ForEach(view =>
+            {
+                              
+                if(!(view.Value == null ||  view.Value.)
+                view.Value.viewEnabled = true;
+            });
+
             if(!(updatedView._mainMenuOutput == null || updatedView._mainMenuOutput.Length == 0))
             {
                 _mainMenuOutputView.viewEnabled = true;
