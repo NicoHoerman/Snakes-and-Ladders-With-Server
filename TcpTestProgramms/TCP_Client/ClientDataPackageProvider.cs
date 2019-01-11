@@ -12,12 +12,11 @@ namespace TCP_Client
 {
     public class ClientDataPackageProvider
     {
-        Dictionary<string, DataPackage> _DataPackages;       
-        private DataPackage validationAnswerPackage;    
+        Dictionary<string, DataPackage> _DataPackages;               
         
         public ClientDataPackageProvider()
         {                               
-            validationAnswerPackage = new DataPackage
+            var validationAnswerPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.ValidationAnswer,
                 Payload = JsonConvert.SerializeObject(new PROT_CONNECTION{})

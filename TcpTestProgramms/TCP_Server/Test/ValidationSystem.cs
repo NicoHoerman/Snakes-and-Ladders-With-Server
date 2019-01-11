@@ -81,10 +81,10 @@ namespace TCP_Server.Test
         public void ValidateClient()
         {
             _serverInfo._communications.Last().SetNWStream();
-                   
+            
             _serverInfo._communications.Last().Send(_dataPackageProvider.GetPackage("ValidationRequest"));
 
-            timer = new Timer(3000);
+            timer = new Timer(5000);
             timer.Enabled = true;
             timer.AutoReset = false;
             timer.Elapsed += timerSetter;
