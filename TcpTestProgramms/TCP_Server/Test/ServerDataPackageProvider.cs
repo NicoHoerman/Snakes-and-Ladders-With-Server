@@ -33,6 +33,7 @@ namespace TCP_Server.Test
                 })
             };
             accpetedInfoPackage.Size = accpetedInfoPackage.ToByteArray().Length;
+
             var declinedInfoPackage  = new DataPackage
             {
                 Header = ProtocolActionEnum.DeclineInfo,
@@ -42,6 +43,7 @@ namespace TCP_Server.Test
                 })
             };
             declinedInfoPackage.Size = declinedInfoPackage.ToByteArray().Length;
+
             var declineUpdatePackage = new DataPackage
             {
                 Header = ProtocolActionEnum.UpdateView,
@@ -51,12 +53,14 @@ namespace TCP_Server.Test
                 })
             };
             declineUpdatePackage.Size = declineUpdatePackage.ToByteArray().Length;
+
             var validationRequestPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.ValidationRequest,
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
             };
             validationRequestPackage.Size = validationRequestPackage.ToByteArray().Length;
+
             var playerDataPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.UpdateView,
@@ -66,6 +70,7 @@ namespace TCP_Server.Test
                 })
             };
             playerDataPackage.Size = playerDataPackage.ToByteArray().Length;
+
             var notEnoughDP = new DataPackage
             {
                 Header = ProtocolActionEnum.UpdateView,
@@ -75,6 +80,7 @@ namespace TCP_Server.Test
                 })
             };
             notEnoughDP.Size = notEnoughDP.ToByteArray().Length;
+
             var onlyMasterStartDP = new DataPackage
             {
 
@@ -85,6 +91,7 @@ namespace TCP_Server.Test
                 })
             };
             onlyMasterStartDP.Size = onlyMasterStartDP.ToByteArray().Length;
+
             var onlyMasterRuleDP = new DataPackage
             {
                 Header = ProtocolActionEnum.UpdateView,
@@ -94,6 +101,7 @@ namespace TCP_Server.Test
                 })
             };
             onlyMasterRuleDP.Size = onlyMasterRuleDP.ToByteArray().Length;
+
             var gameEndedPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.UpdateView,
@@ -105,7 +113,6 @@ namespace TCP_Server.Test
                 })
             };
             gameEndedPackage.Size = gameEndedPackage.ToByteArrayUTF().Length;
-            #endregion
 
             var lobbyCheckFailedPackage = new DataPackage
             {
@@ -127,6 +134,10 @@ namespace TCP_Server.Test
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
             };
             serverStartingGamePackage.Size = serverStartingGamePackage.ToByteArray().Length;
+            
+            #endregion
+
+
 
             _DataPackages = new Dictionary<string, DataPackage>
             {
@@ -134,18 +145,15 @@ namespace TCP_Server.Test
                 {"DeclinedInfo" ,  declinedInfoPackage },
                 {"DeclineUpdate", declineUpdatePackage },
                 {"ValidationRequest", validationRequestPackage },
-<<<<<<< HEAD
+                {"ValidationAccepted", validationAcceptedPackage },
                 {"PlayerData",playerDataPackage },
                 {"NotEnoughInfo",notEnoughDP },
                 {"OnlyMasterStartInfo",onlyMasterStartDP},
                 {"OnlyMasterRuleInfo",onlyMasterRuleDP},
-                {"GameEndedInfo",gameEndedPackage }
-=======
-                {"ValidationAccepted", validationAcceptedPackage },
+                {"GameEndedInfo",gameEndedPackage },
                 {"LobbyCheckFailed", lobbyCheckFailedPackage },
                 {"LobbyCheckSuccessful", lobbyCheckSuccessfulPackage },
                 {"ServerStartingGame", serverStartingGamePackage }
->>>>>>> LeonsDeafBranch
             };
         }
 
