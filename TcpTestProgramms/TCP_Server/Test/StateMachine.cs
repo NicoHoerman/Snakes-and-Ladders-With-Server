@@ -1,4 +1,5 @@
-﻿using Shared.Enums;
+﻿using EandE_ServerModel.EandE.GameAndLogic;
+using Shared.Enums;
 using System;
 using TCP_Server.Actions;
 
@@ -10,11 +11,13 @@ namespace TCP_Server.Test
 
         private ServerInfo _serverinfo;
         private ServerActions _ActionHandler;
+        private Game _game;
 
-        public StateMachine(ServerInfo serverinfo,ServerActions serverActions)
+        public StateMachine(ServerInfo serverinfo,ServerActions serverActions, Game game)
         {
             _serverinfo = serverinfo;
             _ActionHandler = serverActions;
+            _game = game;
         }
 
         public void Start()
@@ -27,7 +30,7 @@ namespace TCP_Server.Test
                 switch (Core.State)
                 {
                     case StateEnum.ServerRunningState:
-                         _serverinfo.lobbylist.Add(new Lobby("name", 2, 8080));
+                         _serverinfo.lobbylist.Add(new Lobby("name", 2, 8080, _game));
                          _ActionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer, _ActionHandler.OnValidationAction);
                         while (Core.State == StateEnum.ServerRunningState)
                         { }
@@ -40,6 +43,7 @@ namespace TCP_Server.Test
                         
                         break;
                     case StateEnum.ServerEndingState:
+
                         break;
                     default:
                         break;
