@@ -209,7 +209,7 @@ namespace TCP_Server.Actions
 
         public void OnValidationAction(ICommunication communication, DataPackage data)
         {
-            ValidationSystem.validationStatus = true;
+            ValidationSystem.isValidated = true;
             Core.State = StateEnum.LobbyState;
         }
 

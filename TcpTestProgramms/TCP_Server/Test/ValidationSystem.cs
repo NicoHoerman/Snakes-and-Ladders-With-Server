@@ -11,7 +11,7 @@ namespace TCP_Server.Test
     {
         private bool isRunning;
         private bool timerElapsed = false;
-        public static bool validationStatus = false;
+        public static bool isValidated = false;
 
         private ServerInfo _serverInfo;
         private ServerActions _serverActions;
@@ -80,17 +80,17 @@ namespace TCP_Server.Test
         public void ValidateClient()
         {
             _serverInfo._communications.Last().SetNWStream();
-                   
-            _serverInfo._communications.Last().Send(_dataPackageProvider.GetPackage("ValidationRequest"));
 
-            timer = new Timer(3000);
+            timer = new Timer(5000);
             timer.Enabled = true;
             timer.AutoReset = false;
             timer.Elapsed += timerSetter;
 
-            while (!validationStatus && !timerElapsed)
-            { }
-            if (validationStatus)
+            while (!isValidated && !timerElapsed)
+            {
+                _serverInfo._communications.Last().Send(_dataPackageProvider.GetPackage("ValidationRequest"));
+            }
+                if (isValidated)
                 Core.ValidationStatus = ValidationEnum.LobbyCheck;
             else
                 Core.ValidationStatus = ValidationEnum.DeclineState;

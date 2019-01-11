@@ -75,7 +75,6 @@ namespace TCP_Client.Actions
                 //{ ProtocolActionEnum.AcceptInfo, OnAcceptInfoAction },
                 //{ ProtocolActionEnum.DeclineInfo, OnDeclineInfoAction },
                 { ProtocolActionEnum.Restart, OnRestartAction },
-                { ProtocolActionEnum.ValidationRequest, OnValidationRequestAction }
                 //{ ProtocolActionEnum.ValidationRequest, OnValidationRequestAction },
                 //{ ProtocolActionEnum.ValidationAccepted, OnValidationAcceptedAction },
                 //{ ProtocolActionEnum.LobbyCheckFailed, OnLobbyCheckFailedAction },
@@ -88,10 +87,9 @@ namespace TCP_Client.Actions
 
         public void ExecuteDataActionFor(DataPackage data,  ICommunication communication)
         {
-            //weißt dem packet die richtige funktion zu
             if (_protocolActions.TryGetValue(data.Header, out var protocolAction) == false)
-                throw new InvalidOperationException("Invalid communication");
-            //führt die bekommene methode mit dem datapackage aus
+                return;
+
             protocolAction(data, communication);
         }
 

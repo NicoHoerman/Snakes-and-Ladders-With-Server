@@ -143,14 +143,14 @@ namespace TCP_Client.Actions
             int chosenServerId = Int32.Parse(input);
             if (_ActionHandler._serverDictionary.Count >= chosenServerId)
             {
-                _client.SwitchState(StateEnum.ClientStates.Connecting);
 
                 BroadcastDTO current = _ActionHandler.GetServer(chosenServerId-1);
                 communication._client.Connect(IPAddress.Parse(current._Server_ip), current._Server_Port);    
                 communication.SetNWStream();
+                _client.SwitchState(StateEnum.ClientStates.Connecting);
+                isConnected = true;
                 //fertig 
                 //AfterConnectMsg = $"Server {chosenServerId} chosen";
-                //isConnected = true;
                 //_infoOutputView.viewEnabled = true;
                 //_infoOutputView.SetUpdateContent(AfterConnectMsg +"\nYou established a connection with the server. Verifying Player Information...");
             }
