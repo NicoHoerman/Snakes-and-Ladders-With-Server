@@ -30,7 +30,7 @@ namespace TCP_Server.Test
             
             accpetedInfoPackage  = new DataPackage
             {
-                Header = ProtocolActionEnum.Accept,
+                Header = ProtocolActionEnum.AcceptInfo,
                 Payload = JsonConvert.SerializeObject(new PROT_ACCEPT
                 {
                     _SmallUpdate = "You are connected to the Server and in the Lobby "
@@ -39,7 +39,7 @@ namespace TCP_Server.Test
             accpetedInfoPackage.Size = accpetedInfoPackage.ToByteArray().Length;
             declinedInfoPackage  = new DataPackage
             {
-                Header = ProtocolActionEnum.Decline,
+                Header = ProtocolActionEnum.DeclineInfo,
                 Payload = JsonConvert.SerializeObject(new PROT_DECLINE
                 {
                     _SmallUpdate = "You got declind. Lobby is probably full"

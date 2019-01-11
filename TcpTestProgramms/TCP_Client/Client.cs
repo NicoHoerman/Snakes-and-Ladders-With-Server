@@ -107,25 +107,39 @@ namespace TCP_Client
                     case ClientStates.NotConnected:
                         _InputHandler._inputActions.Add("/search", _InputHandler.OnSearchAction);
                         _InputHandler._inputActions.Add("/someInt", _InputHandler.OnServerConnectAction);
-                        _InputHandler._inputActions.Add("/closegame", _InputHandler.OnCloseGameAction);                                               
+                        _InputHandler._inputActions.Add("/closegame", _InputHandler.OnCloseGameAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView, _ActionHandler.OnUpdateAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.Broadcast, _ActionHandler.OnBroadcastAction);
                         while (state == ClientStates.NotConnected)
                         { }
                         break;
 
                     case ClientStates.Connecting:
                         _InputHandler._inputActions.Clear();
+                        _ActionHandler._protocolActions.Clear();
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.ValidationRequest, _ActionHandler.OnValidationRequestAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.ValidationAccepted, _ActionHandler.OnValidationAcceptedAction);
                         while (state == ClientStates.Connecting)
                         { }
                         break;
 
-                    case ClientStates.Connected:
-                        _InputHandler._inputActions.Add("/search", _InputHandler.OnSearchAction);
+                    case ClientStates.WaitingForLobbyCheck:                      
                         _InputHandler._inputActions.Add("/closegame", _InputHandler.OnCloseGameAction);
-                        while (state == ClientStates.Connected)
+                        _ActionHandler._protocolActions.Clear();
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.AcceptInfo, _ActionHandler.OnAcceptInfoAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.DeclineInfo, _ActionHandler.OnDeclineInfoAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.LobbyCheckFailed, _ActionHandler.OnLobbyCheckFailedAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.LobbyCheckSuccessful, _ActionHandler.OnLobbyCheckSuccessfulAction);
+                        while (state == ClientStates.WaitingForLobbyCheck)
                         { }
                         break;
 
                     case ClientStates.Lobby:
+                        _ActionHandler._protocolActions.Clear();
+                        _InputHandler._inputActions.Add("/startgame", _InputHandler.OnStartGameAction);
+                        _InputHandler._inputActions.Add("/classic", _InputHandler.OnClassicAction);
+                        while (state == ClientStates.Lobby)
+                        { }
                         break;
 
                     case ClientStates.GameRunning:

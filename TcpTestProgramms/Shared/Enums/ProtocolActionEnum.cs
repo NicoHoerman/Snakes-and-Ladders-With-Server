@@ -12,8 +12,8 @@ namespace Shared.Enums
         ValidationAnswer = 107,
 
         Broadcast = 201,
-        Decline = 202,
-        Accept = 203,
+        DeclineInfo = 202,
+        AcceptInfo = 203,
         UpdateView = 204,
         HelpText = 205,
         Restart = 206,

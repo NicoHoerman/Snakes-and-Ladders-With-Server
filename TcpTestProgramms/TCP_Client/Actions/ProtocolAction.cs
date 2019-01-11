@@ -70,13 +70,13 @@ namespace TCP_Client.Actions
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage,ICommunication>>
             {
                 { ProtocolActionEnum.HelpText, OnHelpTextAction},
-                { ProtocolActionEnum.UpdateView, OnUpdateAction},
-                { ProtocolActionEnum.Broadcast, OnBroadcastAction },
-                { ProtocolActionEnum.Accept, OnAcceptAction },
-                { ProtocolActionEnum.Decline, OnDeclineAction },
+                //{ ProtocolActionEnum.UpdateView, OnUpdateAction},
+                //{ ProtocolActionEnum.Broadcast, OnBroadcastAction },
+                { ProtocolActionEnum.AcceptInfo, OnAcceptInfoAction },
+                { ProtocolActionEnum.DeclineInfo, OnDeclineInfoAction },
                 { ProtocolActionEnum.Restart, OnRestartAction },
-                { ProtocolActionEnum.ValidationRequest, OnValidationRequestAction },
-                { ProtocolActionEnum.ValidationAccepted, OnValidationAcceptedAction },
+                //{ ProtocolActionEnum.ValidationRequest, OnValidationRequestAction },
+                //{ ProtocolActionEnum.ValidationAccepted, OnValidationAcceptedAction },
                 { ProtocolActionEnum.LobbyCheckFailed, OnLobbyCheckFailedAction },
                 { ProtocolActionEnum.LobbyCheckSuccessful, OnLobbyCheckSuccessfulAction }
             
@@ -102,13 +102,10 @@ namespace TCP_Client.Actions
         private void OnHelpTextAction(DataPackage data, ICommunication communication)
         {
             var helpText = MapProtocolToDto<HelpTextDTO>(data);
-            
-            
-            //_helpOutputView.SetUpdateContent(helpText._HelpText);
-            
+            string BeispielFürNico = helpText._HelpText;
         }
 
-        private void OnUpdateAction(DataPackage data, ICommunication communication)
+        public void OnUpdateAction(DataPackage data, ICommunication communication)
         {
             var updatedView = MapProtocolToDto<UpdateDTO>(data);
            
@@ -189,7 +186,7 @@ namespace TCP_Client.Actions
         private int keyIndex = 0;
 
 
-        private void OnBroadcastAction(DataPackage data, ICommunication communication)
+        public void OnBroadcastAction(DataPackage data, ICommunication communication)
         {
             var broadcast = MapProtocolToDto<BroadcastDTO>(data);
 
@@ -230,7 +227,7 @@ namespace TCP_Client.Actions
             //  2  [1/2]  LuL
         }
 
-        private void OnAcceptAction(DataPackage data, ICommunication communication)
+        public void OnAcceptInfoAction(DataPackage data, ICommunication communication)
 
         {
             var accept = MapProtocolToDto<AcceptDTO>(data);
@@ -238,7 +235,7 @@ namespace TCP_Client.Actions
             _infoOutputView.SetUpdateContent(accept._SmallUpdate);
         }
 
-        private void OnDeclineAction(DataPackage data, ICommunication communication)
+        public void OnDeclineInfoAction(DataPackage data, ICommunication communication)
         {
             _client._InputHandler.Declined = true;
             _client._InputHandler.isConnected = false;
@@ -249,7 +246,7 @@ namespace TCP_Client.Actions
    
         }
 
-        private void OnRestartAction(DataPackage obj, ICommunication communication)
+        public void OnRestartAction(DataPackage obj, ICommunication communication)
         {
                 _finishInfoView.viewEnabled = false;
                 _finishSkull1View.viewEnabled = false;
@@ -258,14 +255,14 @@ namespace TCP_Client.Actions
                 EnableViews();
         }
 
-        private void OnValidationRequestAction(DataPackage data, ICommunication communication)
+        public void OnValidationRequestAction(DataPackage data, ICommunication communication)
         {
             communication.Send(_clientDataPackageProvider.GetPackage("ValidationAnswer"));
         }
 
-        private void OnValidationAcceptedAction(DataPackage data, ICommunication communication)
+        public void OnValidationAcceptedAction(DataPackage data, ICommunication communication)
         {
-            _client.SwitchState(StateEnum.ClientStates.Connected);
+            _client.SwitchState(StateEnum.ClientStates.WaitingForLobbyCheck);
         }
 
         public void OnLobbyCheckFailedAction(DataPackage data, ICommunication communication)
