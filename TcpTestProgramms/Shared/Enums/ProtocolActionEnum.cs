@@ -18,6 +18,8 @@ namespace Shared.Enums
         HelpText = 205,
         Restart = 206,
         ValidationRequest = 207,
-        ValidationAccepted = 208
+        ValidationAccepted = 208,
+        LobbyCheckFailed = 209,
+        LobbyCheckSuccessful = 210
     }
 }

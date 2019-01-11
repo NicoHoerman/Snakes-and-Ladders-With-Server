@@ -76,7 +76,9 @@ namespace TCP_Client.Actions
                 { ProtocolActionEnum.Decline, OnDeclineAction },
                 { ProtocolActionEnum.Restart, OnRestartAction },
                 { ProtocolActionEnum.ValidationRequest, OnValidationRequestAction },
-                { ProtocolActionEnum.ValidationAccepted, OnValidationAcceptedAction }
+                { ProtocolActionEnum.ValidationAccepted, OnValidationAcceptedAction },
+                { ProtocolActionEnum.LobbyCheckFailed, OnLobbyCheckFailedAction },
+                { ProtocolActionEnum.LobbyCheckSuccessful, OnLobbyCheckSuccessfulAction }
             
             };
 
@@ -264,6 +266,16 @@ namespace TCP_Client.Actions
         private void OnValidationAcceptedAction(DataPackage data, ICommunication communication)
         {
             _client.SwitchState(StateEnum.ClientStates.Connected);
+        }
+
+        public void OnLobbyCheckFailedAction(DataPackage data, ICommunication communication)
+        {
+            _client.SwitchState(StateEnum.ClientStates.NotConnected);
+        }
+
+        public void OnLobbyCheckSuccessfulAction(DataPackage data, ICommunication communication)
+        {
+            _client.SwitchState(StateEnum.ClientStates.Lobby);
         }
 
         public void DisableViews()

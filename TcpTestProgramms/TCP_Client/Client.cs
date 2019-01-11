@@ -121,7 +121,7 @@ namespace TCP_Client
                     case ClientStates.Connected:
                         _InputHandler._inputActions.Add("/search", _InputHandler.OnSearchAction);
                         _InputHandler._inputActions.Add("/closegame", _InputHandler.OnCloseGameAction);
-                        while (state == ClientStates.Connected) //LobbyCheck() sollte wechseln, aber wie?
+                        while (state == ClientStates.Connected)
                         { }
                         break;
 
@@ -136,25 +136,13 @@ namespace TCP_Client
 
         }
 
-        private void WaitForHandshake()
-        {
-
-        }
-
         public void SwitchState(ClientStates newState)
         {
             state = newState;
         }
 
-        public void CloseCommunication()
-        {
-            _communication.Stop();
-           
-        }
-
         public void CloseClient()
-        {
-            
+        {          
             _ViewUpdater.isViewRunning = false;
             _communication.Stop();
             isRunning = false;

@@ -70,13 +70,29 @@ namespace TCP_Server.Test
             };
             validationAcceptedPackage.Size = validationAcceptedPackage.ToByteArray().Length;
 
+            var lobbyCheckFailedPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.LobbyCheckFailed,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
+            };
+            lobbyCheckFailedPackage.Size = lobbyCheckFailedPackage.ToByteArray().Length;
+
+            var lobbyCheckSuccessfulPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.LobbyCheckSuccessful,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
+            };
+            lobbyCheckSuccessfulPackage.Size = lobbyCheckSuccessfulPackage.ToByteArray().Length;
+
             _DataPackages = new Dictionary<string, DataPackage>
             {
                 {"AcceptedInfo" ,  accpetedInfoPackage },
                 {"DeclinedInfo" ,  declinedInfoPackage },
                 {"DeclineUpdate", declineUpdatePackage },
                 {"ValidationRequest", validationRequestPackage },
-                {"ValidationAccepted", validationAcceptedPackage }
+                {"ValidationAccepted", validationAcceptedPackage },
+                {"LobbyCheckFailed", lobbyCheckFailedPackage },
+                {"LobbyCheckSuccessful", lobbyCheckSuccessfulPackage }
             };
         }
 
