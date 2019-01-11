@@ -26,7 +26,6 @@ namespace TCP_Server
         private ServerInfo _serverInfo;
         public ServerActions _ActionsHandler;
         public ClientDisconnection _DisconnectionHandler;
-        public Game _game;
 
         public PackageQueue _queue;
         public PackageProcessing _process;
@@ -34,7 +33,7 @@ namespace TCP_Server
         public StateMachine _stateMachine;
         public ValidationSystem _validationSystem;
 
-        public Server(ServerActions actionHandler,Game game,ServerInfo serverInfo,StateMachine stateMachine,
+        public Server(ServerActions actionHandler,ServerInfo serverInfo,StateMachine stateMachine,
             ValidationSystem validationSystem,ClientDisconnection disconnectionHandler)
         {
             _stateMachine = stateMachine;
@@ -48,7 +47,6 @@ namespace TCP_Server
             bwValidationSystem.RunWorkerAsync();
             
             _serverInfo = serverInfo;
-            _game = game;
             _ActionsHandler = actionHandler;
             _DisconnectionHandler = disconnectionHandler;
 
@@ -113,10 +111,6 @@ namespace TCP_Server
             backgroundworkerConnection.DoWork += (obj, ea) => StartListening(_listener);
             backgroundworkerConnection.RunWorkerAsync();
 
-            var backgroundworkerGame = new BackgroundWorker();
-            backgroundworkerGame.DoWork += (obj, ea) => RunGame();
-            backgroundworkerGame.RunWorkerAsync();
-
             while (isRunning)
             { ShutdownServer(Console.ReadLine()); }
         }
@@ -144,13 +138,11 @@ namespace TCP_Server
                     }
                 });
 
-                // All elements that lost conenction!
                 if(_serverInfo.communicationsToRemove.Count > 0)
                     _DisconnectionHandler.RemoveFromLobby();
                 Thread.Sleep(1);
             }
         }
-
         
         private void ShutdownServer(string input)
         {
@@ -160,14 +152,5 @@ namespace TCP_Server
                 isRunning = false;
             }
         }
-
-        private void RunGame()
-        {
-            while (isRunning)
-            {
-                _game.Init();
-            }
-        }
-
     }
 }

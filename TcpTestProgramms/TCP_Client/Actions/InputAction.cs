@@ -63,7 +63,6 @@ namespace TCP_Client.Actions
             };
 
             _UdpListener = new UdpClientUnit();
-
         }
 
 
@@ -124,13 +123,11 @@ namespace TCP_Client.Actions
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
-
             communication.Send(_clientDataPackageProvider.GetPackage("RollDice"));
         }
 
         public void OnServerConnectAction(string input, ICommunication communication)
         {
-
             if (isConnected | !Searched | Declined)
             {
                 _errorView.viewEnabled = true;
@@ -156,17 +153,14 @@ namespace TCP_Client.Actions
                 //isConnected = true;
                 //_infoOutputView.viewEnabled = true;
                 //_infoOutputView.SetUpdateContent(AfterConnectMsg +"\nYou established a connection with the server. Verifying Player Information...");
-                
             }
             else
             {
                 _errorView.viewEnabled = true;
                 _errorView.SetContent(input, "There is no server with this ID");
             }
-
             //_inputView.SetInputLine("Type a command:", 16);
             //_serverTableView.viewEnabled = false;
-
         }
 
         public void OnSearchAction(string input, ICommunication communication)
@@ -201,7 +195,6 @@ namespace TCP_Client.Actions
             _inputView.viewEnabled = true;
             if(_ActionHandler._serverTable.Length != 0)
             _inputView.SetInputLine("Enter the server number you want to connect to.",49);
-            
         }
 
         public void OnCloseGameAction(string obj,ICommunication communication)
@@ -216,15 +209,12 @@ namespace TCP_Client.Actions
             communication.Send(_clientDataPackageProvider.GetPackage("CloseGame"));
             Thread.Sleep(5000);
             _client.CloseClient();
-
         }
 
         public void OnStartGameAction(string arg1, ICommunication communication)
         {
             if (isConnected)
-            {               
                 communication.Send(_clientDataPackageProvider.GetPackage("StartGame"));
-            }
         }
 
         public void OnClassicAction(string input, ICommunication communication)
@@ -232,12 +222,9 @@ namespace TCP_Client.Actions
             if (isConnected)
             {
                 _mainMenuOutputView.viewEnabled = false;
-
                 communication.Send(_clientDataPackageProvider.GetPackage("Classic"));
             }
         }
         #endregion
-
-
     }
 }

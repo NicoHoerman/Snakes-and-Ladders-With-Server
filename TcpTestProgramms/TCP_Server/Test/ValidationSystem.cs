@@ -9,19 +9,18 @@ namespace TCP_Server.Test
 {
     public class ValidationSystem
     {
-        private ServerInfo _serverInfo;
         private bool isRunning;
         private bool timerElapsed = false;
-        private ClientDisconnection _disconnectionHandler;
-        private ClientConnection _connectionHandler;
-        private ServerDataPackageProvider _dataPackageProvider;
-        public ICommunication currentcommunication;
         public static bool validationStatus = false;
-        private ServerActions _serverActions;
-        
 
+        private ServerInfo _serverInfo;
+        private ServerActions _serverActions;
+        private ServerDataPackageProvider _dataPackageProvider;
+        private ClientConnection _connectionHandler;
+        private ClientDisconnection _disconnectionHandler;
         private Timer timer;
 
+        public ICommunication currentcommunication;
 
         public ValidationSystem(ServerInfo serverInfo,ClientDisconnection disconnectionHandler
             , ClientConnection connectionHandler, ServerDataPackageProvider dataPackageProvider, ServerActions serverActions)
@@ -87,17 +86,12 @@ namespace TCP_Server.Test
             timer.Elapsed += timerSetter;
 
             while (!validationStatus && !timerElapsed)
-            {
-
-            }
-
+            { }
             if (validationStatus)
                 Core.ValidationStatus = ValidationEnum.LobbyCheck;
             else
                 Core.ValidationStatus = ValidationEnum.DeclineState;
-            
         }
-       
 
         private void timerSetter(Object source, ElapsedEventArgs e)
         {
