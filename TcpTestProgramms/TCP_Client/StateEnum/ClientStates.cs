@@ -9,7 +9,7 @@ namespace TCP_Client.StateEnum
         NotConnected,
         Connecting,
         Handshake,
-        Connected,
+        WaitingForLobbyCheck,
         Lobby,
         GameRunning,
         ClientClosing

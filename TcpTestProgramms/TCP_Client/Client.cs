@@ -99,34 +99,51 @@ namespace TCP_Client
                     case ClientStates.NotConnected:
                         _InputHandler._inputActions.Add("/search", _InputHandler.OnSearchAction);
                         _InputHandler._inputActions.Add("/someInt", _InputHandler.OnServerConnectAction);
-                        _InputHandler._inputActions.Add("/closegame", _InputHandler.OnCloseGameAction);                                               
+                        _InputHandler._inputActions.Add("/closegame", _InputHandler.OnCloseGameAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView, _ActionHandler.OnUpdateAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.Broadcast, _ActionHandler.OnBroadcastAction);
                         while (state == ClientStates.NotConnected)
                         { }
                         break;
 
                     case ClientStates.Connecting:
                         _InputHandler._inputActions.Clear();
-                        WaitForHandshake();
+                        _ActionHandler._protocolActions.Clear();
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.ValidationRequest, _ActionHandler.OnValidationRequestAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.ValidationAccepted, _ActionHandler.OnValidationAcceptedAction);
+                        while (state == ClientStates.Connecting)
+                        { }
                         break;
 
-                    case ClientStates.Connected:
-                        break;
-
-                    case ClientStates.GameRunning:
-                        break;
-
-                    case ClientStates.Handshake:
+                    case ClientStates.WaitingForLobbyCheck:                      
+                        _InputHandler._inputActions.Add("/closegame", _InputHandler.OnCloseGameAction);
+                        _ActionHandler._protocolActions.Clear();
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.AcceptInfo, _ActionHandler.OnAcceptInfoAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.DeclineInfo, _ActionHandler.OnDeclineInfoAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.LobbyCheckFailed, _ActionHandler.OnLobbyCheckFailedAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.LobbyCheckSuccessful, _ActionHandler.OnLobbyCheckSuccessfulAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView, _ActionHandler.OnUpdateAction);
+                        while (state == ClientStates.WaitingForLobbyCheck)
+                        { }
                         break;
 
                     case ClientStates.Lobby:
+                        _ActionHandler._protocolActions.Clear();
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView, _ActionHandler.OnUpdateAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.ServerStartingGame, _ActionHandler.OnServerStartingGameAction);
+                        _InputHandler._inputActions.Add("/startgame", _InputHandler.OnStartGameAction);
+                        _InputHandler._inputActions.Add("/classic", _InputHandler.OnClassicAction);
+                        while (state == ClientStates.Lobby)
+                        { }
                         break;
+
+                    case ClientStates.GameRunning:
+                        while (state == ClientStates.GameRunning)
+                        { }
+                        break;                  
+
                 }
             }
-        }
-
-        private void WaitForHandshake()
-        {
-
         }
 
         public void SwitchState(ClientStates newState)
@@ -134,14 +151,12 @@ namespace TCP_Client
             state = newState;
         }
 
-        public void CloseCommunication()
-        {
-            _communication.Stop();
-           
-        }
-
         public void CloseClient()
+<<<<<<< HEAD
         {
+=======
+        {          
+>>>>>>> LeonsDeafBranch
             _ViewUpdater.isViewRunning = false;
             _communication.Stop();
             isRunning = false;

@@ -13,6 +13,7 @@ using Wrapper.View;
 using Wrapper;
 using System.Threading;
 using Shared.Contract;
+using System.Linq;
 
 namespace TCP_Client.Actions
 {
@@ -69,12 +70,21 @@ namespace TCP_Client.Actions
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage,ICommunication>>
             {
                 { ProtocolActionEnum.HelpText, OnHelpTextAction},
-                { ProtocolActionEnum.UpdateView, OnUpdateAction},
-                { ProtocolActionEnum.Broadcast, OnBroadcastAction },
-                { ProtocolActionEnum.Accept, OnAcceptAction },
-                { ProtocolActionEnum.Decline, OnDeclineAction },
+                //{ ProtocolActionEnum.UpdateView, OnUpdateAction},
+                //{ ProtocolActionEnum.Broadcast, OnBroadcastAction },
+                //{ ProtocolActionEnum.AcceptInfo, OnAcceptInfoAction },
+                //{ ProtocolActionEnum.DeclineInfo, OnDeclineInfoAction },
                 { ProtocolActionEnum.Restart, OnRestartAction },
+<<<<<<< HEAD
                 { ProtocolActionEnum.ValidationRequest, OnValidationRequestAction }
+=======
+                //{ ProtocolActionEnum.ValidationRequest, OnValidationRequestAction },
+                //{ ProtocolActionEnum.ValidationAccepted, OnValidationAcceptedAction },
+                //{ ProtocolActionEnum.LobbyCheckFailed, OnLobbyCheckFailedAction },
+                //{ ProtocolActionEnum.LobbyCheckSuccessful, OnLobbyCheckSuccessfulAction },
+                //{ ProtocolActionEnum.ServerStartingGame, OnServerStartingGameAction }
+            
+>>>>>>> LeonsDeafBranch
             };
             outputWrapper = new OutputWrapper();
         }
@@ -214,7 +224,7 @@ namespace TCP_Client.Actions
             _serverTableView.viewEnabled = true;
         }
 
-        private void OnAcceptAction(DataPackage data, ICommunication communication)
+        public void OnAcceptInfoAction(DataPackage data, ICommunication communication)
 
         {
             var accept = MapProtocolToDto<AcceptDTO>(data);
@@ -222,7 +232,7 @@ namespace TCP_Client.Actions
             _infoOutputView.SetUpdateContent(accept._SmallUpdate);
         }
 
-        private void OnDeclineAction(DataPackage data, ICommunication communication)
+        public void OnDeclineInfoAction(DataPackage data, ICommunication communication)
         {
             _client._InputHandler.Declined = true;
             _client._InputHandler.isConnected = false;
@@ -233,7 +243,7 @@ namespace TCP_Client.Actions
    
         }
 
-        private void OnRestartAction(DataPackage obj, ICommunication communication)
+        public void OnRestartAction(DataPackage obj, ICommunication communication)
         {
                 _finishInfoView.viewEnabled = false;
                 _finishSkull1View.viewEnabled = false;
@@ -242,10 +252,29 @@ namespace TCP_Client.Actions
                 EnableViews();
         }
 
-        private void OnValidationRequestAction(DataPackage data, ICommunication communication)
+        public void OnValidationRequestAction(DataPackage data, ICommunication communication)
         {
             communication.Send(_clientDataPackageProvider.GetPackage("ValidationAnswer"));
+        }
 
+        public void OnValidationAcceptedAction(DataPackage data, ICommunication communication)
+        {
+            _client.SwitchState(StateEnum.ClientStates.WaitingForLobbyCheck);
+        }
+
+        public void OnLobbyCheckFailedAction(DataPackage data, ICommunication communication)
+        {
+            _client.SwitchState(StateEnum.ClientStates.NotConnected);
+        }
+
+        public void OnLobbyCheckSuccessfulAction(DataPackage data, ICommunication communication)
+        {
+            _client.SwitchState(StateEnum.ClientStates.Lobby);
+        }
+
+        public void OnServerStartingGameAction(DataPackage data, ICommunication communication)
+        {
+            _client.SwitchState(StateEnum.ClientStates.GameRunning);
         }
 
         public void DisableViews()

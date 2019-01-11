@@ -26,7 +26,7 @@ namespace TCP_Server.Test
 
             var accpetedInfoPackage  = new DataPackage
             {
-                Header = ProtocolActionEnum.Accept,
+                Header = ProtocolActionEnum.AcceptInfo,
                 Payload = JsonConvert.SerializeObject(new PROT_ACCEPT
                 {
                     _SmallUpdate = "You are connected to the Server and in the Lobby "
@@ -35,7 +35,7 @@ namespace TCP_Server.Test
             accpetedInfoPackage.Size = accpetedInfoPackage.ToByteArray().Length;
             var declinedInfoPackage  = new DataPackage
             {
-                Header = ProtocolActionEnum.Decline,
+                Header = ProtocolActionEnum.DeclineInfo,
                 Payload = JsonConvert.SerializeObject(new PROT_DECLINE
                 {
                     _SmallUpdate = "You got declind. Lobby is probably full"
@@ -107,17 +107,45 @@ namespace TCP_Server.Test
             gameEndedPackage.Size = gameEndedPackage.ToByteArrayUTF().Length;
             #endregion
 
+            var lobbyCheckFailedPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.LobbyCheckFailed,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
+            };
+            lobbyCheckFailedPackage.Size = lobbyCheckFailedPackage.ToByteArray().Length;
+
+            var lobbyCheckSuccessfulPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.LobbyCheckSuccessful,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
+            };
+            lobbyCheckSuccessfulPackage.Size = lobbyCheckSuccessfulPackage.ToByteArray().Length;
+
+            var serverStartingGamePackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.ServerStartingGame,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
+            };
+            serverStartingGamePackage.Size = serverStartingGamePackage.ToByteArray().Length;
+
             _DataPackages = new Dictionary<string, DataPackage>
             {
                 {"AcceptedInfo" ,  accpetedInfoPackage },
                 {"DeclinedInfo" ,  declinedInfoPackage },
                 {"DeclineUpdate", declineUpdatePackage },
                 {"ValidationRequest", validationRequestPackage },
+<<<<<<< HEAD
                 {"PlayerData",playerDataPackage },
                 {"NotEnoughInfo",notEnoughDP },
                 {"OnlyMasterStartInfo",onlyMasterStartDP},
                 {"OnlyMasterRuleInfo",onlyMasterRuleDP},
                 {"GameEndedInfo",gameEndedPackage }
+=======
+                {"ValidationAccepted", validationAcceptedPackage },
+                {"LobbyCheckFailed", lobbyCheckFailedPackage },
+                {"LobbyCheckSuccessful", lobbyCheckSuccessfulPackage },
+                {"ServerStartingGame", serverStartingGamePackage }
+>>>>>>> LeonsDeafBranch
             };
         }
 

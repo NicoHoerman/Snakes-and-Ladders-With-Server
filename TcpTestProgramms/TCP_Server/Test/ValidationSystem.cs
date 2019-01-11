@@ -64,11 +64,14 @@ namespace TCP_Server.Test
             if (_serverInfo.lobbylist[0].IsLobbyComplete())
             {
                 Core.ConnectionStatus = ClientConnectionStatus.Declined;
+                currentcommunication.Send(_dataPackageProvider.GetPackage("LobbyCheckFailed"));
                 _disconnectionHandler.Execute(currentcommunication);
+                
             }
             else
             {
                 Core.ConnectionStatus = ClientConnectionStatus.Accepted;
+                currentcommunication.Send(_dataPackageProvider.GetPackage("LobbyCheckSuccessful"));
                 _connectionHandler.Execute(currentcommunication);
             }
             Core.ValidationStatus = ValidationEnum.WaitingForPlayer;
