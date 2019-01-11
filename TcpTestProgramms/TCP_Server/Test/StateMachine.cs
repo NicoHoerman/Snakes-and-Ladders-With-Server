@@ -31,7 +31,7 @@ namespace TCP_Server.Test
                 {
                     case StateEnum.ServerRunningState:
                          _ActionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer, _ActionHandler.OnValidationAction);
-                         _serverinfo.lobbylist.Add(new Lobby("name", 2, 8080, _game));
+                         _serverinfo.lobbylist.Add(new Lobby("Nicos_TestLobby", 2, 8080, _game));
                         while (Core.State == StateEnum.ServerRunningState)
                         { }
                         break;
