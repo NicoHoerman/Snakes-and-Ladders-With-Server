@@ -24,6 +24,7 @@ namespace TCP_Server.Actions
         private Game _game;
         private ClientDisconnection _DisconnectionHandler;
         private ServerDataPackageProvider _dataPackageProvider;
+        private GameFinishedState finishedState;
 
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
         public static ManualResetEvent StateSwitched = new ManualResetEvent(false);
@@ -31,7 +32,9 @@ namespace TCP_Server.Actions
 
         public ServerActions(ServerInfo serverInfo, Game game,
             ClientDisconnection disconnectionHandler, ServerDataPackageProvider _dataPackageProvider)
-        {          
+        {
+            finishedState = new GameFinishedState(game, currentplayer);
+
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>();
             _DisconnectionHandler = disconnectionHandler;
             _serverInfo = serverInfo;

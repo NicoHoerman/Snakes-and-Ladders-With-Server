@@ -24,7 +24,7 @@ namespace TCP_Server.Test
 
             #region StaticDataPackages
 
-            var accpetedInfoPackage  = new DataPackage
+            var accpetedInfoPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.AcceptInfo,
                 Payload = JsonConvert.SerializeObject(new PROT_ACCEPT
@@ -34,7 +34,7 @@ namespace TCP_Server.Test
             };
             accpetedInfoPackage.Size = accpetedInfoPackage.ToByteArray().Length;
 
-            var declinedInfoPackage  = new DataPackage
+            var declinedInfoPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.DeclineInfo,
                 Payload = JsonConvert.SerializeObject(new PROT_DECLINE
@@ -109,18 +109,6 @@ namespace TCP_Server.Test
             };
             onlyMasterRuleDP.Size = onlyMasterRuleDP.ToByteArray().Length;
 
-            var gameEndedPackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.UpdateView,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                {
-                    _finishinfo = _game.State.FinishInfo,
-                    _finishskull1 = _game.State.Finishskull1,
-                    _finishskull2 = _game.State.Finishskull2
-                })
-            };
-            gameEndedPackage.Size = gameEndedPackage.ToByteArrayUTF().Length;
-
             var lobbyCheckFailedPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.LobbyCheckFailed,
@@ -141,7 +129,7 @@ namespace TCP_Server.Test
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
             };
             serverStartingGamePackage.Size = serverStartingGamePackage.ToByteArray().Length;
-            
+
             #endregion
 
             _DataPackages = new Dictionary<string, DataPackage>
@@ -155,7 +143,6 @@ namespace TCP_Server.Test
                 {"NotEnoughInfo",notEnoughDP },
                 {"OnlyMasterStartInfo",onlyMasterStartDP},
                 {"OnlyMasterRuleInfo",onlyMasterRuleDP},
-                {"GameEndedInfo",gameEndedPackage },
                 {"LobbyCheckFailed", lobbyCheckFailedPackage },
                 {"LobbyCheckSuccessful", lobbyCheckSuccessfulPackage },
                 {"ServerStartingGame", serverStartingGamePackage }
@@ -205,6 +192,21 @@ namespace TCP_Server.Test
             return boardPackage;
         }
 
-        #endregion
+        public DataPackage GameEndedDisplay()
+        {
+            var gameEndedPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.UpdateView,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                {
+                    _finishinfo = _game.State.FinishInfo,
+                    _finishskull1 = _game.State.Finishskull1,
+                    _finishskull2 = _game.State.Finishskull2
+                })
+            };
+            gameEndedPackage.Size = gameEndedPackage.ToByteArrayUTF().Length;
+            return gameEndedPackage;
+            #endregion
+        }
     }
 }
