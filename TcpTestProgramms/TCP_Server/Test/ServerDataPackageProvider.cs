@@ -84,6 +84,13 @@ namespace TCP_Server.Test
             };
             lobbyCheckSuccessfulPackage.Size = lobbyCheckSuccessfulPackage.ToByteArray().Length;
 
+            var serverStartingGamePackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.ServerStartingGame,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
+            };
+            serverStartingGamePackage.Size = serverStartingGamePackage.ToByteArray().Length;
+
             _DataPackages = new Dictionary<string, DataPackage>
             {
                 {"AcceptedInfo" ,  accpetedInfoPackage },
@@ -92,7 +99,8 @@ namespace TCP_Server.Test
                 {"ValidationRequest", validationRequestPackage },
                 {"ValidationAccepted", validationAcceptedPackage },
                 {"LobbyCheckFailed", lobbyCheckFailedPackage },
-                {"LobbyCheckSuccessful", lobbyCheckSuccessfulPackage }
+                {"LobbyCheckSuccessful", lobbyCheckSuccessfulPackage },
+                {"ServerStartingGame", serverStartingGamePackage }
             };
         }
 

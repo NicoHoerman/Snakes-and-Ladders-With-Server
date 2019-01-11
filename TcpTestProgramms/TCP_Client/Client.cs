@@ -130,12 +130,15 @@ namespace TCP_Client
                         _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.DeclineInfo, _ActionHandler.OnDeclineInfoAction);
                         _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.LobbyCheckFailed, _ActionHandler.OnLobbyCheckFailedAction);
                         _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.LobbyCheckSuccessful, _ActionHandler.OnLobbyCheckSuccessfulAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView, _ActionHandler.OnUpdateAction);
                         while (state == ClientStates.WaitingForLobbyCheck)
                         { }
                         break;
 
                     case ClientStates.Lobby:
                         _ActionHandler._protocolActions.Clear();
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView, _ActionHandler.OnUpdateAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.ServerStartingGame, _ActionHandler.OnServerStartingGameAction);
                         _InputHandler._inputActions.Add("/startgame", _InputHandler.OnStartGameAction);
                         _InputHandler._inputActions.Add("/classic", _InputHandler.OnClassicAction);
                         while (state == ClientStates.Lobby)
@@ -143,6 +146,8 @@ namespace TCP_Client
                         break;
 
                     case ClientStates.GameRunning:
+                        while (state == ClientStates.GameRunning)
+                        { }
                         break;                  
 
                 }

@@ -20,6 +20,7 @@ namespace Shared.Enums
         ValidationRequest = 207,
         ValidationAccepted = 208,
         LobbyCheckFailed = 209,
-        LobbyCheckSuccessful = 210
+        LobbyCheckSuccessful = 210,
+        ServerStartingGame = 211
     }
 }

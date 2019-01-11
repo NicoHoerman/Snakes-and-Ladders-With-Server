@@ -94,6 +94,8 @@ namespace TCP_Server.Actions
                             _serverInfo._communications[i].Send(playerDataPackage);
                     }
 
+                    communication.Send(_dataPackageProvider.GetPackage("ServerStartingGame"));
+
                     _game.State.ClearProperties();
                     gameStarted = true;
                     Core.State = StateEnum.GameRunningState;

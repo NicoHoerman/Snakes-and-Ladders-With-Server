@@ -72,13 +72,14 @@ namespace TCP_Client.Actions
                 { ProtocolActionEnum.HelpText, OnHelpTextAction},
                 //{ ProtocolActionEnum.UpdateView, OnUpdateAction},
                 //{ ProtocolActionEnum.Broadcast, OnBroadcastAction },
-                { ProtocolActionEnum.AcceptInfo, OnAcceptInfoAction },
-                { ProtocolActionEnum.DeclineInfo, OnDeclineInfoAction },
+                //{ ProtocolActionEnum.AcceptInfo, OnAcceptInfoAction },
+                //{ ProtocolActionEnum.DeclineInfo, OnDeclineInfoAction },
                 { ProtocolActionEnum.Restart, OnRestartAction },
                 //{ ProtocolActionEnum.ValidationRequest, OnValidationRequestAction },
                 //{ ProtocolActionEnum.ValidationAccepted, OnValidationAcceptedAction },
-                { ProtocolActionEnum.LobbyCheckFailed, OnLobbyCheckFailedAction },
-                { ProtocolActionEnum.LobbyCheckSuccessful, OnLobbyCheckSuccessfulAction }
+                //{ ProtocolActionEnum.LobbyCheckFailed, OnLobbyCheckFailedAction },
+                //{ ProtocolActionEnum.LobbyCheckSuccessful, OnLobbyCheckSuccessfulAction },
+                //{ ProtocolActionEnum.ServerStartingGame, OnServerStartingGameAction }
             
             };
 
@@ -273,6 +274,11 @@ namespace TCP_Client.Actions
         public void OnLobbyCheckSuccessfulAction(DataPackage data, ICommunication communication)
         {
             _client.SwitchState(StateEnum.ClientStates.Lobby);
+        }
+
+        public void OnServerStartingGameAction(DataPackage data, ICommunication communication)
+        {
+            _client.SwitchState(StateEnum.ClientStates.GameRunning);
         }
 
         public void DisableViews()
