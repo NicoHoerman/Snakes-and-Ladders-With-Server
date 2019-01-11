@@ -23,6 +23,7 @@ namespace TCP_Server.Actions
         private ServerInfo _serverInfo;
         private Game _game;
         private ClientDisconnection _DisconnectionHandler;
+        private ServerDataPackageProvider _dataPackageProvider;
 
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
         public static ManualResetEvent StateSwitched = new ManualResetEvent(false);
@@ -34,6 +35,7 @@ namespace TCP_Server.Actions
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>();
             _DisconnectionHandler = disconnectionHandler;
             _serverInfo = serverInfo;
+            this._dataPackageProvider = _dataPackageProvider;
             _game = game;
         }
 
@@ -55,27 +57,25 @@ namespace TCP_Server.Actions
                 {
                     gameStarted = true;
                     Core.State = StateEnum.GameRunningState;
+                    for (int i = 0; i <= _serverInfo._communications.Count  -1; i++)
+                    {
+                        if(!(_serverInfo._communications[i] == communication))
+                            communication.Send(_dataPackageProvider.GetPackage("PlayerData"));
+                    }
                 }
                 else
-                {
-                    
-                }
+                    communication.Send(_dataPackageProvider.GetPackage("NotEnoughInfo"));
             }
             else
-            {
-
-            }
+                communication.Send(_dataPackageProvider.GetPackage("OnlyMasterStartInfo"));
+            _game.State.ClearProperties(); 
         }
         public void OnRuleAction(ICommunication communication, DataPackage data)
         {
             if (communication.IsMaster)
-            {
                 ruleSet = true;
-            }
             else
-            {
-                //only master
-            }
+                communication.Send(_dataPackageProvider.GetPackage("OnlyMasterRuleInfo"));
         }
 
         public void OnRollDiceAction(ICommunication communication, DataPackage data)

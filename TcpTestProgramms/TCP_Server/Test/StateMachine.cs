@@ -56,10 +56,13 @@ namespace TCP_Server.Test
                 _ActionHandler.OnRuleAction);
             while (_ActionHandler.ruleSet == false)
             { }
+
+            _ActionHandler._protocolActions.Clear();
             _ActionHandler._protocolActions.Add(ProtocolActionEnum.StartGame,
                _ActionHandler.OnStartGameAction);
             while (_ActionHandler.gameStarted == false)
             { }
+
             _serverinfo.lobbylist[0].RunGame();
             _game.State.SetInput("/classic");
             while (Core.State == StateEnum.LobbyState)

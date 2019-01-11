@@ -214,9 +214,7 @@ namespace TCP_Client.Actions
         public void OnStartGameAction(string arg1, ICommunication communication)
         {
             if (isConnected)
-            {               
                 communication.Send(_clientDataPackageProvider.GetPackage("StartGame"));
-            }
         }
 
         public void OnClassicAction(string input, ICommunication communication)
@@ -224,7 +222,6 @@ namespace TCP_Client.Actions
             if (isConnected)
             {
                 _mainMenuOutputView.viewEnabled = false;
-
                 communication.Send(_clientDataPackageProvider.GetPackage("Classic"));
             }
         }

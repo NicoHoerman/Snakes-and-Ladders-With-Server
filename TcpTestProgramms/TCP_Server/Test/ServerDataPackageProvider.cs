@@ -145,22 +145,6 @@ namespace TCP_Server.Test
             return lobbyDisplayPackage;
         }
 
-        public DataPackage MasterData()
-        {
-            var masterDataPackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.UpdateView,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                {
-                    _mainMenuOutput = "Choose a rule.\nRuleslist:\n/classic",
-                    _error = _game.State.Error,
-                    _lastinput = _game.State.Lastinput
-                })
-            };
-            masterDataPackage.Size = masterDataPackage.ToByteArray().Length;
-            return masterDataPackage;
-        }
-
         public DataPackage BoardInfo()
         {
             var boardPackage = new DataPackage
