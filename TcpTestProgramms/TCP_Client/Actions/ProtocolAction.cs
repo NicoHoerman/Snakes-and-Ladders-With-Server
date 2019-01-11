@@ -75,16 +75,13 @@ namespace TCP_Client.Actions
                 //{ ProtocolActionEnum.AcceptInfo, OnAcceptInfoAction },
                 //{ ProtocolActionEnum.DeclineInfo, OnDeclineInfoAction },
                 { ProtocolActionEnum.Restart, OnRestartAction },
-<<<<<<< HEAD
                 { ProtocolActionEnum.ValidationRequest, OnValidationRequestAction }
-=======
                 //{ ProtocolActionEnum.ValidationRequest, OnValidationRequestAction },
                 //{ ProtocolActionEnum.ValidationAccepted, OnValidationAcceptedAction },
                 //{ ProtocolActionEnum.LobbyCheckFailed, OnLobbyCheckFailedAction },
                 //{ ProtocolActionEnum.LobbyCheckSuccessful, OnLobbyCheckSuccessfulAction },
                 //{ ProtocolActionEnum.ServerStartingGame, OnServerStartingGameAction }
             
->>>>>>> LeonsDeafBranch
             };
             outputWrapper = new OutputWrapper();
         }
@@ -102,13 +99,13 @@ namespace TCP_Client.Actions
 
         #region Protocol actions
 
-        private void OnHelpTextAction(DataPackage data, ICommunication communication)
+        public void OnHelpTextAction(DataPackage data, ICommunication communication)
         {
             var helpText = MapProtocolToDto<HelpTextDTO>(data);
             //_helpOutputView.SetUpdateContent(helpText._HelpText);
         }
 
-        private void OnUpdateAction(DataPackage data, ICommunication communication)
+        public void OnUpdateAction(DataPackage data, ICommunication communication)
         {
             var updatedView = MapProtocolToDto<UpdateDTO>(data);
            
@@ -187,7 +184,7 @@ namespace TCP_Client.Actions
         private int[] _CurrentPlayerCount = new int[100];
         private int keyIndex = 0;
 
-        private void OnBroadcastAction(DataPackage data, ICommunication communication)
+        public void OnBroadcastAction(DataPackage data, ICommunication communication)
         {
             var broadcast = MapProtocolToDto<BroadcastDTO>(data);
 

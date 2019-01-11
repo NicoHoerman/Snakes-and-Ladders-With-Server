@@ -52,6 +52,7 @@ namespace TCP_Server.Test
         }
         private void ExecuteLobbyState()
         {
+            _ActionHandler._protocolActions.Clear();
             _ActionHandler._protocolActions.Add(ProtocolActionEnum.Rule,
                 _ActionHandler.OnRuleAction);
             while (_ActionHandler.ruleSet == false)

@@ -61,6 +61,13 @@ namespace TCP_Server.Test
             };
             validationRequestPackage.Size = validationRequestPackage.ToByteArray().Length;
 
+            DataPackage validationAcceptedPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.ValidationAccepted,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
+            };
+            validationAcceptedPackage.Size = validationAcceptedPackage.ToByteArray().Length;
+
             var playerDataPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.UpdateView,
@@ -136,8 +143,6 @@ namespace TCP_Server.Test
             serverStartingGamePackage.Size = serverStartingGamePackage.ToByteArray().Length;
             
             #endregion
-
-
 
             _DataPackages = new Dictionary<string, DataPackage>
             {

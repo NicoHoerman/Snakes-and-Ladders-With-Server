@@ -135,7 +135,7 @@ namespace TCP_Server.Actions
 
                         Thread.Sleep(5000);
 
-                        //finishedState.reactivateViews(communication);
+                        finishedState.reactivateViews(communication);
                         Core.State = StateEnum.LobbyState;
                         _game.State.ClearProperties();
                     }
@@ -201,6 +201,7 @@ namespace TCP_Server.Actions
         public void OnCloseGameAction(ICommunication communication, DataPackage data)
         {
             _DisconnectionHandler.DisconnectClient();
+            _game.State.SetInput("/closegame");
         }
 
         public void OnValidationAction(ICommunication communication, DataPackage data)

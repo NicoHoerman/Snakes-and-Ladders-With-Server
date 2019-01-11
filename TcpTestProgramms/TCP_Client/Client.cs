@@ -152,11 +152,7 @@ namespace TCP_Client
         }
 
         public void CloseClient()
-<<<<<<< HEAD
-        {
-=======
         {          
->>>>>>> LeonsDeafBranch
             _ViewUpdater.isViewRunning = false;
             _communication.Stop();
             isRunning = false;
