@@ -84,21 +84,14 @@ namespace TCP_Server.Actions
 
         public void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
-            if (!ruleSet)
-            {
-                return;
-            }
             int currentCommunication = _serverInfo._communications.FindIndex(x => x == communication)+1;
-
             //if (_game.State.CurrentPlayer ==  currentCommunication)
-           //{
+            //{
+            ExecuteTurn();
                 _game.State.SetInput("/rolldice");
                 TurnFinished.WaitOne();
                 TurnFinished.Reset();
 
-                var test = _game.State.ToString();
-            if (test == "EandE_ServerModel.EandE.States.GameRunningState")
-            {
                 var turnPackage = new DataPackage
                 {
                     Header = ProtocolActionEnum.UpdateView,
@@ -144,11 +137,6 @@ namespace TCP_Server.Actions
                         _game.State.ClearProperties();
                     }
                 }
-            }
-            else
-            {
-                return;
-            }
             /* }
              else
              {
