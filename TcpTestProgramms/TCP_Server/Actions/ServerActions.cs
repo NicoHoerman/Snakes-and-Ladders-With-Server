@@ -87,7 +87,7 @@ namespace TCP_Server.Actions
             int currentCommunication = _serverInfo._communications.FindIndex(x => x == communication)+1;
             //if (_game.State.CurrentPlayer ==  currentCommunication)
             //{
-            ExecuteTurn();
+            //ExecuteTurn();
                 _game.State.SetInput("/rolldice");
                 TurnFinished.WaitOne();
                 TurnFinished.Reset();
