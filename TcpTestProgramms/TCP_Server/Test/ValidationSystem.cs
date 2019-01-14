@@ -1,6 +1,7 @@
 ﻿using Shared.Contract;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Timers;
 using TCP_Server.Actions;
 using TCP_Server.Enum;
@@ -18,7 +19,7 @@ namespace TCP_Server.Test
         private ServerDataPackageProvider _dataPackageProvider;
         private ClientConnection _connectionHandler;
         private ClientDisconnection _disconnectionHandler;
-        private Timer timer;
+        private System.Timers.Timer timer;
 
         public ICommunication currentcommunication;
 
@@ -81,7 +82,7 @@ namespace TCP_Server.Test
         {
             _serverInfo._communications.Last().SetNWStream();
 
-            timer = new Timer(5000);
+            timer = new System.Timers.Timer(10000);
             timer.Enabled = true;
             timer.AutoReset = false;
             timer.Elapsed += timerSetter;
@@ -89,9 +90,14 @@ namespace TCP_Server.Test
             while (!isValidated && !timerElapsed)
             {
                 _serverInfo._communications.Last().Send(_dataPackageProvider.GetPackage("ValidationRequest"));
+                Thread.Sleep(1000);
             }
-                if (isValidated)
+            if (isValidated)
+            {
+                _serverInfo._communications.Last().Send(_dataPackageProvider.GetPackage("ValidationAccepted"));
+                Thread.Sleep(3);
                 Core.ValidationStatus = ValidationEnum.LobbyCheck;
+            }
             else
                 Core.ValidationStatus = ValidationEnum.DeclineState;
         }

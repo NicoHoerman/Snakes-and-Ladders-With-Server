@@ -1,6 +1,7 @@
 ﻿using EandE_ServerModel.EandE.GameAndLogic;
 using Shared.Enums;
 using System;
+using System.Threading.Tasks;
 using TCP_Server.Actions;
 
 namespace TCP_Server.Test
@@ -53,25 +54,31 @@ namespace TCP_Server.Test
         private void ExecuteLobbyState()
         {
             _ActionHandler._protocolActions.Clear();
+            _ActionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer,
+                _ActionHandler.OnValidationAction);
             _ActionHandler._protocolActions.Add(ProtocolActionEnum.Rule,
                 _ActionHandler.OnRuleAction);
             while (_ActionHandler.ruleSet == false)
             { }
 
             _ActionHandler._protocolActions.Clear();
+            _ActionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer,
+                _ActionHandler.OnValidationAction);
             _ActionHandler._protocolActions.Add(ProtocolActionEnum.StartGame,
                _ActionHandler.OnStartGameAction);
             while (_ActionHandler.gameStarted == false)
             { }
 
-            _serverinfo.lobbylist[0].RunGame();
-            _game.State.SetInput("/classic");
+            Task.Run(() => _serverinfo.lobbylist[0].RunGame());
+            //_game.State.SetInput("/classic");
             while (Core.State == StateEnum.LobbyState)
             { }
             _ActionHandler._protocolActions.Clear();
         }
         private void ExecuteGameRunningState()
         {
+            _ActionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer,
+                _ActionHandler.OnValidationAction);
             _ActionHandler._protocolActions.Add(ProtocolActionEnum.RollDice
                 , _ActionHandler.OnRollDiceAction);
             _ActionHandler._protocolActions.Add(ProtocolActionEnum.GetHelp

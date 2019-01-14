@@ -45,7 +45,7 @@ namespace TCP_Server.Actions
         public void ExecuteDataActionFor(ICommunication communication, DataPackage data)
         {
             if (_protocolActions.TryGetValue(data.Header, out var protocolAction) == false)
-                throw new InvalidOperationException("Invalid communication");
+                return;
 
             protocolAction(communication, data);
         }
@@ -64,6 +64,7 @@ namespace TCP_Server.Actions
                     {
                         if(!(_serverInfo._communications[i] == communication))
                             communication.Send(_dataPackageProvider.GetPackage("PlayerData"));
+                        communication.Send(_dataPackageProvider.GetPackage("ServerStartingGame"));
                     }
                 }
                 else
@@ -71,7 +72,7 @@ namespace TCP_Server.Actions
             }
             else
                 communication.Send(_dataPackageProvider.GetPackage("OnlyMasterStartInfo"));
-            _game.State.ClearProperties(); 
+            //_game.State.ClearProperties(); 
         }
         public void OnRuleAction(ICommunication communication, DataPackage data)
         {

@@ -78,15 +78,15 @@ namespace EandE_ServerModel.EandE.States
                 parser.AddCommand("/classic", OnClassicCommand);
 
                 _mainMenuOutput = _dataProvider.GetText("mainmenuinfo");
+                rulesname = "/classic";
+                OnClassicCommand();
+                //while (Input == string.Empty)
+                //{
+                //}
 
-                while (Input == string.Empty)
-                {
-                }
-
-                rulesname = Input;
-                parser.Execute(Input);
-                Input = string.Empty;
-                
+                //rulesname = Input;
+                //parser.Execute(Input);
+                //Input = string.Empty;
             }
         }
 

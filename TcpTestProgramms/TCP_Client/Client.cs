@@ -28,7 +28,7 @@ namespace TCP_Client
         private ClientDataPackageProvider clientDataPackageProvider;
         string input = string.Empty;
 
-        ClientStates state { get; set; }
+        private  ClientStates state { get; set; }
 
 
 
@@ -73,7 +73,7 @@ namespace TCP_Client
 
             var backgroundworker3 = new BackgroundWorker();
 
-            backgroundworker3.DoWork += (obj, ea) => StateMachine(state);
+            backgroundworker3.DoWork += (obj, ea) => StateMachine();
             backgroundworker3.RunWorkerAsync();
 
             isRunning = true;
@@ -88,7 +88,7 @@ namespace TCP_Client
             }
         }
 
-        public void StateMachine(ClientStates state)
+        public void StateMachine()
         {
             state = ClientStates.NotConnected;
 
@@ -138,6 +138,19 @@ namespace TCP_Client
                         break;
 
                     case ClientStates.GameRunning:
+                        _ActionHandler._protocolActions.Clear();
+                        _InputHandler._inputActions.Clear();
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView
+                            ,_ActionHandler.OnUpdateAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.HelpText
+                            , _ActionHandler.OnHelpTextAction);
+                        _ActionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.Restart
+                            , _ActionHandler.OnRestartAction);
+
+                        _InputHandler._inputActions.Add("/rolldice", _InputHandler.OnInputRollDiceAction);
+                        _InputHandler._inputActions.Add("/help", _InputHandler.OnInputHelpAction);
+                        _InputHandler._inputActions.Add("/closegame", _InputHandler.OnCloseGameAction);
+
                         while (state == ClientStates.GameRunning)
                         { }
                         break;                  

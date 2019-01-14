@@ -53,6 +53,7 @@ namespace TCP_Server.Test
             _serverInfo.communicationsToRemove.Add(currentCommunication);
 
             RemoveFromList();
+            Core.ValidationStatus = ValidationEnum.WaitingForPlayer;
         }
     }
 }

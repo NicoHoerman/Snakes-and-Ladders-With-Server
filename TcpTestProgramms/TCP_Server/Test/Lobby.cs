@@ -9,7 +9,7 @@ namespace TCP_Server.Test
         private bool isRunning;
 
         public int _MaxPlayerCount { get; set; }
-        public int _CurrentPlayerCount { get; set; } = 0;
+        public int _CurrentPlayerCount { get; set; } = 1;
         public string _LobbyName { get; set; }
         public int _ServerPort { get; set; }
 
@@ -35,11 +35,10 @@ namespace TCP_Server.Test
 
         public void RunGame()
         {
+            isRunning = true;
             while (isRunning)
             {
-                var backgroundworkerGame = new BackgroundWorker();
-                backgroundworkerGame.DoWork += (obj, ea) => _game.Init(); ;
-                backgroundworkerGame.RunWorkerAsync();
+                _game.Init(); ;
             }
         }
 
