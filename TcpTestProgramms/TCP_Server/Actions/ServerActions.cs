@@ -26,20 +26,19 @@ namespace TCP_Server.Actions
         private ServerDataPackageProvider _dataPackageProvider;
         private GameFinishedState _finishedState;
 
-        public static ManualResetEvent MessageSent = new ManualResetEvent(false);
-        public static ManualResetEvent StateSwitched = new ManualResetEvent(false);
         public static ManualResetEvent TurnFinished = new ManualResetEvent(false);
 
         public ServerActions(ServerInfo serverInfo, Game game,
             ClientDisconnection disconnectionHandler, ServerDataPackageProvider _dataPackageProvider)
         {
-            _finishedState = new GameFinishedState(game, _currentplayer);
-
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>();
             _disconnectionHandler = disconnectionHandler;
             _serverInfo = serverInfo;
-            this._dataPackageProvider = _dataPackageProvider;
             _game = game;
+            this._dataPackageProvider = _dataPackageProvider;
+
+			_currentplayer = game.State.CurrentPlayer;
+			_finishedState = new GameFinishedState(game, _currentplayer);
         }
 
         public void ExecuteDataActionFor(ICommunication communication, DataPackage data)
