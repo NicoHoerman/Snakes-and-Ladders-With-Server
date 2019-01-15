@@ -22,7 +22,6 @@ namespace TCP_Client.Actions
         public bool isConnected = false;
         public bool Declined = false;
         private bool Searched = false;
-        private System.Timers.Timer timer;
 
         public string AfterConnectMsg { get; set; } = string.Empty;
 
