@@ -85,7 +85,7 @@ namespace Shared.Communications
         {
             lock (_lock)
             {
-                var element = _packageQueue.First();
+				DataPackage element = _packageQueue.First();
                 _packageQueue.RemoveAt(0);
                 return element;
             }
@@ -98,7 +98,7 @@ namespace Shared.Communications
 
         public void Send(DataPackage data)
         {
-            var bytesToSend = data.ToByteArrayUTF();
+			byte[] bytesToSend = data.ToByteArrayUTF();
             _nwStream.Write(bytesToSend, 0, bytesToSend.Length);
         }
 
@@ -133,10 +133,10 @@ namespace Shared.Communications
             {
                 try
                 {
-                    var client = _client.Client;
+					Socket client = _client.Client;
                     if (client.Poll(0, SelectMode.SelectRead))
                     {
-                        var buff = new byte[1];
+						byte[] buff = new byte[1];
                         if (client.Receive(buff, SocketFlags.Peek) == 0)
                         {
                             return false;
@@ -179,9 +179,9 @@ namespace Shared.Communications
                 {
                     _localBuffer.Position = 2 * sizeof(Int32);
 
-                    var sizeOfPayload = package.Size - 2 * sizeof(Int32);
+					int sizeOfPayload = package.Size - 2 * sizeof(Int32);
 
-                    var bytesToRead = new byte[sizeOfPayload];
+					byte[] bytesToRead = new byte[sizeOfPayload];
                     _localBuffer.Read(bytesToRead, 0, sizeOfPayload);
                     package.Payload = Encoding.UTF8.GetString(bytesToRead, 0, bytesToRead.Length);
 
@@ -197,7 +197,7 @@ namespace Shared.Communications
             if (_nwStream == null)
                 return;
 
-            var bytesToRead = new byte[_client.ReceiveBufferSize];
+			byte[] bytesToRead = new byte[_client.ReceiveBufferSize];
             _nwStream.Read(bytesToRead, 0, _client.ReceiveBufferSize);
 
             _localBuffer = new MemoryStream();

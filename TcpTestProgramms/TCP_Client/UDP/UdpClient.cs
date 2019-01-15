@@ -33,7 +33,7 @@ namespace TCP_Client.UDP
             if (!_closed)
             {
                 var _receiveEndPoint = new IPEndPoint(IPAddress.Any, 7070);
-                var bytes = _udpClient.EndReceive(ar, ref _receiveEndPoint);
+				byte[] bytes = _udpClient.EndReceive(ar, ref _receiveEndPoint);
 
                 //string message = Encoding.ASCII.GetString(bytes);
                 //Console.WriteLine(message);
@@ -55,8 +55,8 @@ namespace TCP_Client.UDP
                     if (package.Size <= localBuffer.Length)
                     {
                         localBuffer.Position = 2 * sizeof(Int32);
-                        var sizeOfPayload = package.Size - 2 * sizeof(Int32);
-                        var bytesToRead = new byte[sizeOfPayload];
+						int sizeOfPayload = package.Size - 2 * sizeof(Int32);
+						byte[] bytesToRead = new byte[sizeOfPayload];
                         localBuffer.Read(bytesToRead, 0, sizeOfPayload);
                         package.Payload = Encoding.ASCII.GetString(bytesToRead, 0, bytesToRead.Length);
 
@@ -80,8 +80,8 @@ namespace TCP_Client.UDP
         {
             if (!_closed)
             {
-                var  broadcastMessage = "is there a Server";
-                var bytes = Encoding.ASCII.GetBytes(broadcastMessage);
+				string broadcastMessage = "is there a Server";
+				byte[] bytes = Encoding.ASCII.GetBytes(broadcastMessage);
 
                 var _ipEndPoint = new IPEndPoint(IPAddress.Broadcast, 7070);
 

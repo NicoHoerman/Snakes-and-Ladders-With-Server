@@ -54,7 +54,7 @@ namespace TCP_Client
             {
                 if (_communication.IsDataAvailable())
                 {
-                    var data = _communication.Receive();
+					DataPackage data = _communication.Receive();
                     _actionHandler.ExecuteDataActionFor(data, _communication);
                 }
                 else

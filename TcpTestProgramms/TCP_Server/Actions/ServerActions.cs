@@ -44,7 +44,7 @@ namespace TCP_Server.Actions
 
         public void ExecuteDataActionFor(ICommunication communication, DataPackage data)
         {
-            if (_protocolActions.TryGetValue(data.Header, out var protocolAction) == false)
+            if (_protocolActions.TryGetValue(data.Header, out Action<ICommunication, DataPackage> protocolAction) == false)
                 return;
 
             protocolAction(communication, data);
@@ -60,7 +60,7 @@ namespace TCP_Server.Actions
                 {
                     _gameStarted = true;
                     Core.State = StateEnum.GameRunningState;
-                    for (var i = 0; i <= _serverInfo._communications.Count  -1; i++)
+                    for (int i = 0; i <= _serverInfo._communications.Count  -1; i++)
                     {
                         if(!(_serverInfo._communications[i] == communication))
                             communication.Send(_dataPackageProvider.GetPackage("PlayerData"));
@@ -84,7 +84,7 @@ namespace TCP_Server.Actions
 
         public void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
-            var currentCommunication = _serverInfo._communications.FindIndex(x => x == communication)+1;
+			int currentCommunication = _serverInfo._communications.FindIndex(x => x == communication)+1;
             //if (_game.State.CurrentPlayer ==  currentCommunication)
             //{
             //ExecuteTurn();
@@ -158,7 +158,7 @@ namespace TCP_Server.Actions
         public void OnGetHelpAction(ICommunication communication, DataPackage data)
         {
 
-            var clientId = CreateProtocol<PROT_HELPTEXT>(data);
+			PROT_HELPTEXT clientId = CreateProtocol<PROT_HELPTEXT>(data);
 
             _game.State.SetInput("/help");
 

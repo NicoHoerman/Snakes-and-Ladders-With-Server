@@ -31,7 +31,7 @@ namespace TCP_Server
             _isRunning = true;
             while (_isRunning)
             {
-                var package = _queue.WaitForNextPackage();
+				Shared.Contract.IPackage package = _queue.WaitForNextPackage();
                 Console.WriteLine($"Processing package number {package.Id}");
                 _actionHandler.ExecuteDataActionFor(package.Communication,package.Data);
             }

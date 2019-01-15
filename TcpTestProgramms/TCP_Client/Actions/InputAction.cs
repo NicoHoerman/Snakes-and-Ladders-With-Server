@@ -67,7 +67,7 @@ namespace TCP_Client.Actions
 
         public void ParseAndExecuteCommand(string input,ICommunication communication)
         {
-            var receivedInput = input;        
+			string receivedInput = input;        
             if (input == "")
                 return;
             if (input == "/someInt")
@@ -82,7 +82,7 @@ namespace TCP_Client.Actions
                 input = "/someInt";
             }
 
-            if (_inputActions.TryGetValue(input, out var action) == false)
+            if (_inputActions.TryGetValue(input, out Action<string, ICommunication> action) == false)
             {
                 _errorView.viewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
@@ -133,17 +133,17 @@ namespace TCP_Client.Actions
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
-            //if (input.Count != 2)
-            //{
-            //    _errorView.viewEnabled = true;
-            //    _errorView.SetContent(input, "Error: " + "Server id missing or too many parameters.");
-            //    return;
-            //}
-            var chosenServerId = Int32.Parse(input);
+			//if (input.Count != 2)
+			//{
+			//    _errorView.viewEnabled = true;
+			//    _errorView.SetContent(input, "Error: " + "Server id missing or too many parameters.");
+			//    return;
+			//}
+			int chosenServerId = Int32.Parse(input);
             if (_actionHandler._serverDictionary.Count >= chosenServerId)
             {
 
-                var current = _actionHandler.GetServer(chosenServerId-1);
+				BroadcastDTO current = _actionHandler.GetServer(chosenServerId-1);
                 communication._client.Connect(IPAddress.Parse(current._server_ip), current._server_Port);    
                 communication.SetNWStream();
                 _client.SwitchState(StateEnum.ClientStates.Connecting);
