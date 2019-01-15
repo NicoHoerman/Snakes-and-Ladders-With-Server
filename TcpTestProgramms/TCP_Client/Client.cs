@@ -40,7 +40,7 @@ namespace TCP_Client
             _inputHandler = new InputAction(_actionHandler, _viewDictionary._views, this, _clientDataPackageProvider);
             _outputWrapper = new OutputWrapper();
             _viewUpdater = new ViewUpdater(_viewDictionary._views);
-            _actionHandler._enterToRefreshView.viewEnabled = true;
+            _actionHandler._enterToRefreshView.ViewEnabled = true;
             _actionHandler._enterToRefreshView.SetUpdateContent("Press enter to refresh\nafter you typed a command.");
         }
 
@@ -164,7 +164,7 @@ namespace TCP_Client
 
         public void CloseClient()
         {          
-            _viewUpdater.isViewRunning = false;
+            _viewUpdater._isViewRunning = false;
             _communication.Stop();
             _isRunning = false;
         }

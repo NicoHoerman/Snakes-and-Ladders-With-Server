@@ -8,7 +8,7 @@ namespace EandE_ServerModel.EandE.ClassicEandE
     //Master
     public class ClassicBoard : IBoard
     {
-        public int size { get; } = 30;
+        public int Size { get; } = 30;
         public int MaxWidth { get; } = 8;
         public List<IPawn> Pawns { get; set; }
         public List<IEntity> Entities { get; set; }
@@ -23,7 +23,7 @@ namespace EandE_ServerModel.EandE.ClassicEandE
         public string CreateOutput()
         {
 
-            var fields = size;
+            var fields = Size;
             double ratio = 9.0 / 16.0;
 
             var fieldCount_x = Math.Min((int)Math.Sqrt(ratio * fields), MaxWidth);
@@ -34,7 +34,7 @@ namespace EandE_ServerModel.EandE.ClassicEandE
             string[,] array2D = new string[fieldCount_y, fieldCount_x];
             string result = "";
 
-            var counter = size;
+            var counter = Size;
 
             
 
@@ -59,9 +59,9 @@ namespace EandE_ServerModel.EandE.ClassicEandE
 
                     Entities.ForEach(entity =>
                     {
-                        if (entity.type == EntityType.Eel & entity.bottom_location == counter)
+                        if (entity.Type == EntityType.Eel & entity.Bottom_location == counter)
                             bottomSpace = "s";
-                        else if (entity.type == EntityType.Escalator & entity.bottom_location == counter)
+                        else if (entity.Type == EntityType.Escalator & entity.Bottom_location == counter)
                             bottomSpace = "e";                       
                     });
 
@@ -72,9 +72,9 @@ namespace EandE_ServerModel.EandE.ClassicEandE
 
                     Entities.ForEach(entity =>
                     {
-                        if (entity.type == EntityType.Eel & entity.top_location == counter)
+                        if (entity.Type == EntityType.Eel & entity.Top_location == counter)
                             topSpace = "S";
-                        else if (entity.type == EntityType.Escalator & entity.top_location == counter)
+                        else if (entity.Type == EntityType.Escalator & entity.Top_location == counter)
                             topSpace = "E";
                     });
 
@@ -85,10 +85,10 @@ namespace EandE_ServerModel.EandE.ClassicEandE
 
                     Pawns.ForEach(pawn =>
                     {
-                    if (pawn.location == counter & (firstPawnSpace.Length == 0 || firstPawnSpace == " "))
-                            firstPawnSpace = pawn.playerID.ToString();
-                        else if (pawn.location == counter & (secondPawnSpace.Length == 0 || secondPawnSpace == " "))
-                            secondPawnSpace = pawn.playerID.ToString();
+                    if (pawn.Location == counter & (firstPawnSpace.Length == 0 || firstPawnSpace == " "))
+                            firstPawnSpace = pawn.PlayerID.ToString();
+                        else if (pawn.Location == counter & (secondPawnSpace.Length == 0 || secondPawnSpace == " "))
+                            secondPawnSpace = pawn.PlayerID.ToString();
                     });
 
                     if (firstPawnSpace.Length == 0)

@@ -33,16 +33,16 @@ namespace TCP_Server.Test
 
         public void RemoveFromLobby()
         {
-            _serverInfo.communicationsToRemove.ForEach(x => _serverInfo.lobbylist[0]._CurrentPlayerCount--);
+            _serverInfo._communicationsToRemove.ForEach(x => _serverInfo._lobbylist[0]._CurrentPlayerCount--);
             RemoveFromList();
 
-            if (_game.isRunning)
+            if (_game._isRunning)
                 _game.State.SetInput("/closegame");
         }
 
         private void RemoveFromList()
         {
-            _serverInfo.communicationsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
+            _serverInfo._communicationsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
         }
 
         public void DisconnectClient()
@@ -50,7 +50,7 @@ namespace TCP_Server.Test
             var currentCommunication = _serverInfo._communications.Last();
             currentCommunication.Stop();
 
-            _serverInfo.communicationsToRemove.Add(currentCommunication);
+            _serverInfo._communicationsToRemove.Add(currentCommunication);
 
             RemoveFromList();
             Core.ValidationStatus = ValidationEnum.WaitingForPlayer;

@@ -56,7 +56,7 @@ namespace TCP_Server.Actions
         {
             if (communication.IsMaster)
             {
-                if (_serverInfo.lobbylist[0].IsLobbyComplete())
+                if (_serverInfo._lobbylist[0].IsLobbyComplete())
                 {
                     _gameStarted = true;
                     Core.State = StateEnum.GameRunningState;
@@ -109,7 +109,7 @@ namespace TCP_Server.Actions
 
                 communication.Send(turnPackage);
 
-                if(!GameRunningState.isRunning)
+                if(!GameRunningState._isRunning)
                     GameRunningState.GameFinished.Set();
 
                 Thread.Sleep(100);
@@ -132,7 +132,7 @@ namespace TCP_Server.Actions
 
                         Thread.Sleep(5000);
 
-                        _finishedState.reactivateViews(communication);
+                        _finishedState.ReactivateViews(communication);
                         Core.State = StateEnum.LobbyState;
                         _game.State.ClearProperties();
                     }
@@ -169,7 +169,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.HelpText,
                     Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
                     {
-                        _HelpText = _game.State.HelpOutput
+                        _helpText = _game.State.HelpOutput
                     })
                 };
                 dataPackage.Size = dataPackage.ToByteArray().Length;
@@ -182,7 +182,7 @@ namespace TCP_Server.Actions
                     Header = ProtocolActionEnum.HelpText,
                     Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
                     {
-                        _HelpText = _game.State.HelpOutput
+                        _helpText = _game.State.HelpOutput
                     })
                 };
                 dataPackage.Size = dataPackage.ToByteArray().Length;

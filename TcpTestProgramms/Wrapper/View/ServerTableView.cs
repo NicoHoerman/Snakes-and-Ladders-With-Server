@@ -9,25 +9,27 @@ namespace Wrapper.View
     {
         public const int DEFAULT_POSITION_X = 0;
         public const int DEFAULT_POSITION_Y = 5;
-        public const string DEFAULT_CONTENT = "";
+		public const string DEFAULT_STRING = "";
 
         private readonly IOutputWrapper _outputWrapper;       
-        private string _serverTableContent;
+        private string _serverTable;
         private string _memory;
         private int _posX;
         private int _posY;
-        StringBuilder serverTableContent;
+        StringBuilder _serverTableContent;
+		string _lobbyInfo;
 
-        public bool viewEnabled { get; set; } = false;
+        public bool ViewEnabled { get; set; } = false;
                               
         public ServerTableView(IOutputWrapper outputWrapper, int posX, int posY)
         {
             _outputWrapper = outputWrapper;
             _posX = posX;
             _posY = posY;
-            if(_serverTableContent == null || _serverTableContent.Length == 0)
-            _serverTableContent = DEFAULT_CONTENT;
-            serverTableContent = new StringBuilder();
+			if (_serverTableContent == null || _serverTableContent.Length == 0)
+				_serverTableContent = new StringBuilder("");
+			_lobbyInfo = DEFAULT_STRING;
+            _serverTableContent = new StringBuilder();
 
         }
 
@@ -38,22 +40,19 @@ namespace Wrapper.View
 
         public void SetUpdateContent(string serverTable)
         {
-            serverTableContent.Clear();
+            _serverTableContent.Clear();
             string tableHeader = string.Format("{2,3} {0,6}  {1,6}\n", "Player", "Server", "Key");
-            serverTableContent.Append(tableHeader);
+            _serverTableContent.Append(tableHeader);
 
-            _serverTableContent =  serverTableContent.Append(serverTable).ToString();
-            _memory = _serverTableContent;
+            _lobbyInfo =  _serverTableContent.Append(serverTable).ToString();
+            _memory = _lobbyInfo;
         }
 
         public void Show()
         {
             _outputWrapper.WriteOutput(_posX, _posY, _memory, ConsoleColor.Blue);
-            _serverTableContent = string.Empty;
+            _lobbyInfo = string.Empty;
         }
-       
     }
-
-
 }
 

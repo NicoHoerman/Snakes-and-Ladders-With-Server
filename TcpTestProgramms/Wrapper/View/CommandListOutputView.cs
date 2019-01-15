@@ -18,7 +18,7 @@ namespace Wrapper.View
         private int _posX;
         private int _posY;
 
-        public bool viewEnabled { get; set; } = false;
+        public bool ViewEnabled { get; set; } = false;
 
         public CommandListOutputView(IOutputWrapper outputWrapper, int posX, int posY)
         {

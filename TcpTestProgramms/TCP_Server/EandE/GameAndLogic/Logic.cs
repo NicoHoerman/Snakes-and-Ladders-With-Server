@@ -8,9 +8,9 @@ namespace EandE_ServerModel.EandE.GameAndLogic
     public class Logic
     {
         
-        public IPawn CurrentPawn;
-        private bool GameFinished;
-        public int numberOfPlayers;
+        public IPawn _currentPawn;
+        private bool _gameFinished;
+        public int _numberOfPlayers;
         public int CurrentPlayerID { get; set; } = 1;
         
         private readonly IGame _game;
@@ -25,7 +25,7 @@ namespace EandE_ServerModel.EandE.GameAndLogic
         {
             try
             {
-                return CurrentPawn =  _game.Board.Pawns.Find(x => x.playerID.Equals(CurrentPlayerID));
+                return _currentPawn =  _game.Board.Pawns.Find(x => x.PlayerID.Equals(CurrentPlayerID));
             }
             catch(Exception e)
             {
@@ -39,14 +39,14 @@ namespace EandE_ServerModel.EandE.GameAndLogic
         {
             try
             {
-                pawn = CurrentPawn;
+                pawn = _currentPawn;
 
-                if (pawn.location == _game.Board.size)
-                    GameFinished = true;
+                if (pawn.Location == _game.Board.Size)
+                    _gameFinished = true;
                 else
-                    GameFinished = false;
+                    _gameFinished = false;
 
-                if (GameFinished == true)
+                if (_gameFinished == true)
                     return TurnState.GameFinished;
                 else
                     return TurnState.TurnFinished;
@@ -65,16 +65,16 @@ namespace EandE_ServerModel.EandE.GameAndLogic
         
         public void NextPlayer()
         {
-            var orderedPlayers = _game.Board.Pawns.OrderBy(x => x.playerID).ToList();
+            var orderedPlayers = _game.Board.Pawns.OrderBy(x => x.PlayerID).ToList();
 
-            if (numberOfPlayers == 0)
-                numberOfPlayers = orderedPlayers[orderedPlayers.Count - 1].playerID;
+            if (_numberOfPlayers == 0)
+                _numberOfPlayers = orderedPlayers[orderedPlayers.Count - 1].PlayerID;
 
-            var nextPlayer = orderedPlayers.Where(x => x.playerID == CurrentPlayerID + 1).FirstOrDefault();
+            var nextPlayer = orderedPlayers.Where(x => x.PlayerID == CurrentPlayerID + 1).FirstOrDefault();
             if (nextPlayer == null)
-                CurrentPlayerID = orderedPlayers.First().playerID;
+                CurrentPlayerID = orderedPlayers.First().PlayerID;
             else
-                CurrentPlayerID = nextPlayer.playerID;
+                CurrentPlayerID = nextPlayer.PlayerID;
         }
 
 
@@ -89,29 +89,29 @@ namespace EandE_ServerModel.EandE.GameAndLogic
                 _game.Rules.RollDice();
 
                 //Check If Player Exceeds Board and Moves Pawn
-                if (CurrentPawn.location + _game.Rules.DiceResult > _game.Board.size)
+                if (_currentPawn.Location + _game.Rules.DiceResult > _game.Board.Size)
                 {
                     NextPlayer();
                     return TurnState.PlayerExceedsBoard;
                 }
                 else
-                    CurrentPawn.MovePawn(_game.Rules.DiceResult);
+                    _currentPawn.MovePawn(_game.Rules.DiceResult);
                 
                 //Entities check if the pawn is on them
                 _game.Board.Entities.ForEach(entity =>
                 {
-                    if (entity.OnSamePositionAs(CurrentPawn))
+                    if (entity.OnSamePositionAs(_currentPawn))
                     {
-                        entity.SetPawn(CurrentPawn);
+                        entity.SetPawn(_currentPawn);
                     }
                 });
 
                 
                 NextPlayer();
 
-                var CurrentState = CheckIfGameFinished(CurrentPawn);
+                var currentState = CheckIfGameFinished(_currentPawn);
 
-                return CurrentState;
+                return currentState;
 
             }
             catch(Exception e)

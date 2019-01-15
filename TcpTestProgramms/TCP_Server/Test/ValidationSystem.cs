@@ -62,7 +62,7 @@ namespace TCP_Server.Test
 
         private void LobbyCheck()
         {
-            if (_serverInfo.lobbylist[0].IsLobbyComplete())
+            if (_serverInfo._lobbylist[0].IsLobbyComplete())
             {
                 Core.ConnectionStatus = ClientConnectionStatus.Declined;
                 currentcommunication.Send(_dataPackageProvider.GetPackage("LobbyCheckFailed"));
@@ -85,7 +85,7 @@ namespace TCP_Server.Test
             timer = new System.Timers.Timer(10000);
             timer.Enabled = true;
             timer.AutoReset = false;
-            timer.Elapsed += timerSetter;
+            timer.Elapsed += TimerSetter;
 
             while (!isValidated && !timerElapsed)
             {
@@ -102,7 +102,7 @@ namespace TCP_Server.Test
                 Core.ValidationStatus = ValidationEnum.DeclineState;
         }
 
-        private void timerSetter(Object source, ElapsedEventArgs e)
+        private void TimerSetter(Object source, ElapsedEventArgs e)
         {
             timerElapsed = true;
         }

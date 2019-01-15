@@ -18,14 +18,14 @@ namespace TCP_Server
         private const string SERVER_IP_LAN_LEON = "172.22.23.87";
         private const string SERVER_IP_NETWORK = "194.205.205.2";
         
-        private bool isRunning;
+        private bool _isRunning;
 
-        public static ManualResetEvent tcpClientConnected = new ManualResetEvent(false);
+        public static ManualResetEvent TcpClientConnected = new ManualResetEvent(false);
         
         private TcpListener _listener;
         private ServerInfo _serverInfo;
-        public ServerActions _ActionsHandler;
-        public ClientDisconnection _DisconnectionHandler;
+        public ServerActions _actionsHandler;
+        public ClientDisconnection _disconnectionHandler;
 
         public PackageQueue _queue;
         public PackageProcessing _process;
@@ -47,11 +47,11 @@ namespace TCP_Server
             bwValidationSystem.RunWorkerAsync();
             
             _serverInfo = serverInfo;
-            _ActionsHandler = actionHandler;
-            _DisconnectionHandler = disconnectionHandler;
+            _actionsHandler = actionHandler;
+            _disconnectionHandler = disconnectionHandler;
 
             _queue = new PackageQueue();
-            _process = new PackageProcessing(_queue, _ActionsHandler);
+            _process = new PackageProcessing(_queue, _actionsHandler);
 
             _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_NICO), 8080);
         }
@@ -60,7 +60,7 @@ namespace TCP_Server
         {
             _listener.Start();
 
-            while (isRunning)
+            while (_isRunning)
             {
                 DoBeginAcceptTcpClient(listener);
             }
@@ -73,8 +73,8 @@ namespace TCP_Server
                 new AsyncCallback(DoAcceptTcpClientCallback),
                 listener);
 
-            tcpClientConnected.WaitOne();
-            tcpClientConnected.Reset();
+            TcpClientConnected.WaitOne();
+            TcpClientConnected.Reset();
         }
 
         public void DoAcceptTcpClientCallback(IAsyncResult ar)
@@ -82,7 +82,7 @@ namespace TCP_Server
             var listener = (TcpListener)ar.AsyncState;
             var client = listener.EndAcceptTcpClient(ar);
             AddCommunication(client);
-            tcpClientConnected.Set();
+            TcpClientConnected.Set();
             Core.ValidationStatus = ValidationEnum.ValidationState;
         }
 
@@ -101,7 +101,7 @@ namespace TCP_Server
 
         public void Run()
         {
-            isRunning = true;
+            _isRunning = true;
 
             var backgroundworkerUpdate = new BackgroundWorker();
             backgroundworkerUpdate.DoWork += (obj, ea) => CheckForUpdates();
@@ -111,21 +111,21 @@ namespace TCP_Server
             backgroundworkerConnection.DoWork += (obj, ea) => StartListening(_listener);
             backgroundworkerConnection.RunWorkerAsync();
 
-            while (isRunning)
+            while (_isRunning)
             { ShutdownServer(Console.ReadLine()); }
         }
 
         private void CheckForUpdates()
         {
-            while (isRunning)
+            while (_isRunning)
             {
-                _serverInfo.communicationsToRemove.Clear();
+                _serverInfo._communicationsToRemove.Clear();
                 _serverInfo._communications.ForEach(communication =>
                 {
                     if (!communication.IsConnected)
                     {
                         communication.Stop();
-                        _serverInfo.communicationsToRemove.Add(communication);
+                        _serverInfo._communicationsToRemove.Add(communication);
                     }
                     else if (communication.IsDataAvailable())
                     {
@@ -138,8 +138,8 @@ namespace TCP_Server
                     }
                 });
 
-                if(_serverInfo.communicationsToRemove.Count > 0)
-                    _DisconnectionHandler.RemoveFromLobby();
+                if(_serverInfo._communicationsToRemove.Count > 0)
+                    _disconnectionHandler.RemoveFromLobby();
                 Thread.Sleep(1);
             }
         }
@@ -149,7 +149,7 @@ namespace TCP_Server
             if(input == "shutdown")
             {
                 Core.State = StateEnum.ServerEndingState;
-                isRunning = false;
+                _isRunning = false;
             }
         }
     }

@@ -8,31 +8,31 @@ namespace TCP_Server.Test
 {
     public class StateMachine
     {
-        private bool isRunning;
+        private bool _isRunning;
 
         private ServerInfo _serverinfo;
-        private ServerActions _ActionHandler;
+        private ServerActions _actionHandler;
         private Game _game;
 
         public StateMachine(ServerInfo serverinfo,ServerActions serverActions, Game game)
         {
             _serverinfo = serverinfo;
-            _ActionHandler = serverActions;
+            _actionHandler = serverActions;
             _game = game;
         }
 
         public void Start()
         {
-            isRunning = true;
+            _isRunning = true;
             Core.State = StateEnum.ServerRunningState;
 
-            while (isRunning)
+            while (_isRunning)
             {
                 switch (Core.State)
                 {
                     case StateEnum.ServerRunningState:
-                         _ActionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer, _ActionHandler.OnValidationAction);
-                         _serverinfo.lobbylist.Add(new Lobby("Nicos_TestLobby", 2, 8080, _game));
+                         _actionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer, _actionHandler.OnValidationAction);
+                         _serverinfo._lobbylist.Add(new Lobby("Nicos_TestLobby", 2, 8080, _game));
                         while (Core.State == StateEnum.ServerRunningState)
                         { }
                         break;
@@ -53,38 +53,38 @@ namespace TCP_Server.Test
         }
         private void ExecuteLobbyState()
         {
-            _ActionHandler._protocolActions.Clear();
-            _ActionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer,
-                _ActionHandler.OnValidationAction);
-            _ActionHandler._protocolActions.Add(ProtocolActionEnum.Rule,
-                _ActionHandler.OnRuleAction);
-            while (_ActionHandler._ruleSet == false)
+            _actionHandler._protocolActions.Clear();
+            _actionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer,
+                _actionHandler.OnValidationAction);
+            _actionHandler._protocolActions.Add(ProtocolActionEnum.Rule,
+                _actionHandler.OnRuleAction);
+            while (_actionHandler._ruleSet == false)
             { }
 
-            _ActionHandler._protocolActions.Clear();
-            _ActionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer,
-                _ActionHandler.OnValidationAction);
-            _ActionHandler._protocolActions.Add(ProtocolActionEnum.StartGame,
-               _ActionHandler.OnStartGameAction);
-            while (_ActionHandler._gameStarted == false)
+            _actionHandler._protocolActions.Clear();
+            _actionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer,
+                _actionHandler.OnValidationAction);
+            _actionHandler._protocolActions.Add(ProtocolActionEnum.StartGame,
+               _actionHandler.OnStartGameAction);
+            while (_actionHandler._gameStarted == false)
             { }
 
-            Task.Run(() => _serverinfo.lobbylist[0].RunGame());
+            Task.Run(() => _serverinfo._lobbylist[0].RunGame());
             //_game.State.SetInput("/classic");
             while (Core.State == StateEnum.LobbyState)
             { }
-            _ActionHandler._protocolActions.Clear();
+            _actionHandler._protocolActions.Clear();
         }
         private void ExecuteGameRunningState()
         {
-            _ActionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer,
-                _ActionHandler.OnValidationAction);
-            _ActionHandler._protocolActions.Add(ProtocolActionEnum.RollDice
-                , _ActionHandler.OnRollDiceAction);
-            _ActionHandler._protocolActions.Add(ProtocolActionEnum.GetHelp
-                , _ActionHandler.OnGetHelpAction);
-            _ActionHandler._protocolActions.Add(ProtocolActionEnum.CloseGame
-                , _ActionHandler.OnCloseGameAction);
+            _actionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer,
+                _actionHandler.OnValidationAction);
+            _actionHandler._protocolActions.Add(ProtocolActionEnum.RollDice
+                , _actionHandler.OnRollDiceAction);
+            _actionHandler._protocolActions.Add(ProtocolActionEnum.GetHelp
+                , _actionHandler.OnGetHelpAction);
+            _actionHandler._protocolActions.Add(ProtocolActionEnum.CloseGame
+                , _actionHandler.OnCloseGameAction);
 
             while (Core.State == StateEnum.GameRunningState)
             { }

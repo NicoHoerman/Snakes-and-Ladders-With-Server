@@ -13,7 +13,7 @@ namespace TCP_Server.Test
 {
     public class ServerDataPackageProvider
     {
-        Dictionary<string, DataPackage> _DataPackages;
+        Dictionary<string, DataPackage> _dataPackages;
         private ServerInfo _serverInfo;
         private Game _game;
 
@@ -29,7 +29,7 @@ namespace TCP_Server.Test
                 Header = ProtocolActionEnum.AcceptInfo,
                 Payload = JsonConvert.SerializeObject(new PROT_ACCEPT
                 {
-                    _SmallUpdate = "You are connected to the Server and in the Lobby "
+                    _smallUpdate = "You are connected to the Server and in the Lobby "
                 })
             };
             accpetedInfoPackage.Size = accpetedInfoPackage.ToByteArray().Length;
@@ -39,7 +39,7 @@ namespace TCP_Server.Test
                 Header = ProtocolActionEnum.DeclineInfo,
                 Payload = JsonConvert.SerializeObject(new PROT_DECLINE
                 {
-                    _SmallUpdate = "You got declind. Lobby is probably full"
+                    _smallUpdate = "You got declind. Lobby is probably full"
                 })
             };
             declinedInfoPackage.Size = declinedInfoPackage.ToByteArray().Length;
@@ -132,7 +132,7 @@ namespace TCP_Server.Test
 
             #endregion
 
-            _DataPackages = new Dictionary<string, DataPackage>
+            _dataPackages = new Dictionary<string, DataPackage>
             {
                 {"AcceptedInfo" ,  accpetedInfoPackage },
                 {"DeclinedInfo" ,  declinedInfoPackage },
@@ -149,15 +149,15 @@ namespace TCP_Server.Test
             };
         }
 
-        public DataPackage GetPackage(string key) => _DataPackages[key];
+        public DataPackage GetPackage(string key) => _dataPackages[key];
 
         #region DataPackages
 
         public DataPackage LobbyDisplay()
         {
-            var servername = _serverInfo.lobbylist[0]._LobbyName;
-            var currentplayer = _serverInfo.lobbylist[0]._CurrentPlayerCount;
-            var maxplayer = _serverInfo.lobbylist[0]._MaxPlayerCount;
+            var servername = _serverInfo._lobbylist[0]._LobbyName;
+            var currentplayer = _serverInfo._lobbylist[0]._CurrentPlayerCount;
+            var maxplayer = _serverInfo._lobbylist[0]._MaxPlayerCount;
 
             var lobbyDisplayPackage = new DataPackage
             {

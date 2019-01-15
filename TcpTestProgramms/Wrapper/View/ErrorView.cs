@@ -15,7 +15,7 @@ namespace Wrapper.View
         private string _lastInput = string.Empty;
         private string _errorMessage = string.Empty;
 
-        public bool viewEnabled { get; set; }
+        public bool ViewEnabled { get; set; }
 
         public ErrorView(IOutputWrapper outputWrapper, int posX, int posY)
         {

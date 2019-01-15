@@ -13,7 +13,7 @@ namespace EandE_ServerModel.EandE.States
         private readonly ISourceWrapper _sourceWrapper;
         private readonly DataProvider _dataProvider;
         private readonly Logic _logic;
-        static public bool isRunning;
+        static public bool _isRunning;
         private string _error = string.Empty;
         private string _gameInfoOutput = string.Empty;
         private string _boardOutput = string.Empty;
@@ -47,7 +47,7 @@ namespace EandE_ServerModel.EandE.States
             _sourceWrapper = sourceWrapper;
             _dataProvider = dataProvider;
             _logic = logic;
-            isRunning = true;
+            _isRunning = true;
         }
 
         public GameRunningState(IGame game)
@@ -68,7 +68,7 @@ namespace EandE_ServerModel.EandE.States
                 _dataProvider.GetNumberLiteral(_logic.CurrentPlayerID));
             _boardOutput = _game.Board.CreateOutput();
 
-            while (isRunning)
+            while (_isRunning)
             {
                 SaveProperties(_lastInput,_error,_gameInfoOutput,_boardOutput,
                     _helpOutput,_afterTurnOutput,_afterBoardOutput,_logic.CurrentPlayerID);
@@ -102,7 +102,7 @@ namespace EandE_ServerModel.EandE.States
 
         private void OnCloseGameCommand()
         {
-            isRunning = false;
+            _isRunning = false;
                 
             _game.SwitchState(new GameEndingState(_game));
         }
@@ -119,11 +119,11 @@ namespace EandE_ServerModel.EandE.States
 
             int lastPlayer = _logic.CurrentPlayerID -1;
             if (_logic.CurrentPlayerID == 1)
-                lastPlayer =_logic.numberOfPlayers;
+                lastPlayer =_logic._numberOfPlayers;
 
             if (turnstate == TurnState.GameFinished)
             {
-                isRunning = false;
+                _isRunning = false;
                 _boardOutput = _game.Board.CreateOutput();
 
                 _afterBoardOutput = string.Empty;

@@ -72,7 +72,7 @@ namespace TCP_Client.Actions
                 return;
             if (input == "/someInt")
             {
-                _errorView.viewEnabled = true;
+                _errorView.ViewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
@@ -84,7 +84,7 @@ namespace TCP_Client.Actions
 
             if (_inputActions.TryGetValue(input, out Action<string, ICommunication> action) == false)
             {
-                _errorView.viewEnabled = true;
+                _errorView.ViewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
@@ -98,17 +98,17 @@ namespace TCP_Client.Actions
         {
             if (!_isConnected)
             {
-                _errorView.viewEnabled = true;
+                _errorView.ViewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
-            if (_commandListOutputView.viewEnabled)
+            if (_commandListOutputView.ViewEnabled)
             {
-                _commandListOutputView.viewEnabled = false;
+                _commandListOutputView.ViewEnabled = false;
             }
-            else if(!_commandListOutputView.viewEnabled)
+            else if(!_commandListOutputView.ViewEnabled)
             {
-                _commandListOutputView.viewEnabled = true;
+                _commandListOutputView.ViewEnabled = true;
             }                                      
 
             communication.Send(_clientDataPackageProvider.GetPackage("Help"));
@@ -118,7 +118,7 @@ namespace TCP_Client.Actions
         {
             if (!_isConnected)
             {
-                _errorView.viewEnabled = true;
+                _errorView.ViewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
@@ -129,7 +129,7 @@ namespace TCP_Client.Actions
         {
             if (_isConnected | !_searched | _declined)
             {
-                _errorView.viewEnabled = true;
+                _errorView.ViewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
@@ -155,7 +155,7 @@ namespace TCP_Client.Actions
             }
             else
             {
-                _errorView.viewEnabled = true;
+                _errorView.ViewEnabled = true;
                 _errorView.SetContent(input, "There is no server with this ID");
             }
             //_inputView.SetInputLine("Type a command:", 16);
@@ -166,7 +166,7 @@ namespace TCP_Client.Actions
         {
             if (_isConnected)
             {
-                _errorView.viewEnabled = true;
+                _errorView.ViewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
@@ -191,7 +191,7 @@ namespace TCP_Client.Actions
             _outputWrapper.Clear();
             _searched = true;
             _declined = false;
-            _inputView.viewEnabled = true;
+            _inputView.ViewEnabled = true;
             if(_actionHandler._serverTable.Length != 0)
             _inputView.SetInputLine("Enter the server number you want to connect to.",49);
         }
@@ -220,7 +220,7 @@ namespace TCP_Client.Actions
         {
             if (_isConnected)
             {
-                _mainMenuOutputView.viewEnabled = false;
+                _mainMenuOutputView.ViewEnabled = false;
                 communication.Send(_clientDataPackageProvider.GetPackage("Classic"));
             }
         }

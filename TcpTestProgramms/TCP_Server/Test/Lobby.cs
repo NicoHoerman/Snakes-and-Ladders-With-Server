@@ -6,7 +6,7 @@ namespace TCP_Server.Test
 {
     public class Lobby
     {
-        private bool isRunning;
+        private bool _isRunning;
 
         public int _MaxPlayerCount { get; set; }
         public int _CurrentPlayerCount { get; set; } = 1;
@@ -25,9 +25,9 @@ namespace TCP_Server.Test
 
         public void RunLobby()
         {
-            isRunning = true;
+            _isRunning = true;
 
-            while (isRunning)
+            while (_isRunning)
             {
                 
             }
@@ -35,8 +35,8 @@ namespace TCP_Server.Test
 
         public void RunGame()
         {
-            isRunning = true;
-            while (isRunning)
+            _isRunning = true;
+            while (_isRunning)
             {
                 _game.Init(); ;
             }

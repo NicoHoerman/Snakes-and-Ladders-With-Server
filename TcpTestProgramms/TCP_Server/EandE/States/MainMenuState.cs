@@ -16,7 +16,7 @@ namespace EandE_ServerModel.EandE.States
         private readonly ISourceWrapper _sourceWrapper;
         private readonly DataProvider _dataProvider;
 
-        private bool inMenu;
+        private bool _inMenu;
 
         private string _mainMenuOutput = string.Empty;
         public string Input { get; set; } = string.Empty;
@@ -43,7 +43,7 @@ namespace EandE_ServerModel.EandE.States
             { "classic", (game,configP) => new ClassicRules(game,configP) },
         //    { "fancy", (g) => new FancyRules(g) },
         };
-        private string rulesname;
+        private string _rulesname;
         public static ManualResetEvent StateFinished = new ManualResetEvent(false);
 
 
@@ -58,7 +58,7 @@ namespace EandE_ServerModel.EandE.States
             _sourceWrapper = sourceWrapper;
             _dataProvider = dataProvider;
             Input = string.Empty;
-            inMenu = true;
+            _inMenu = true;
         }
      
 
@@ -70,7 +70,7 @@ namespace EandE_ServerModel.EandE.States
         public void Execute()
         {
             
-            while (inMenu)
+            while (_inMenu)
             {
                 Console.BackgroundColor = ConsoleColor.Black;
                 var parser = new Parse();
@@ -78,7 +78,7 @@ namespace EandE_ServerModel.EandE.States
                 parser.AddCommand("/classic", OnClassicCommand);
 
                 _mainMenuOutput = _dataProvider.GetText("mainmenuinfo");
-                rulesname = "/classic";
+                _rulesname = "/classic";
                 OnClassicCommand();
                 //while (Input == string.Empty)
                 //{
@@ -106,14 +106,14 @@ namespace EandE_ServerModel.EandE.States
 
         private void OnCloseGameCommand()
         {
-            inMenu = false;
+            _inMenu = false;
             _game.SwitchState(new GameEndingState(_game));
         }
 
         private void OnClassicCommand()
         {
-            CreateNewRulesInGame(rulesname);
-            inMenu = false;
+            CreateNewRulesInGame(_rulesname);
+            _inMenu = false;
             StateFinished.Set();
             _game.SwitchState(new GameStartingState(_game));
         }
