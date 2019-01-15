@@ -33,7 +33,7 @@ namespace TCP_Server
             {
                 var package = _queue.WaitForNextPackage();
                 Console.WriteLine($"Processing package number {package.Id}");
-                _actionHandler.ExecuteDataActionFor(package.communication,package.data);
+                _actionHandler.ExecuteDataActionFor(package.Communication,package.Data);
             }
         }
 

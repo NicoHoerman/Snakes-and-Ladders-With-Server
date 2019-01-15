@@ -12,17 +12,17 @@ namespace TCP_Client
 {
     public class ClientDataPackageProvider
     {
-        Dictionary<string, DataPackage> _DataPackages;       
-        private DataPackage validationAnswerPackage;    
+        Dictionary<string, DataPackage> _dataPackages;       
+        private DataPackage _validationAnswerPackage;    
         
         public ClientDataPackageProvider()
         {                               
-            validationAnswerPackage = new DataPackage
+            _validationAnswerPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.ValidationAnswer,
                 Payload = JsonConvert.SerializeObject(new PROT_CONNECTION{})
             };
-            validationAnswerPackage.Size = validationAnswerPackage.ToByteArray().Length;
+            _validationAnswerPackage.Size = _validationAnswerPackage.ToByteArray().Length;
 
             var helpPackage = new DataPackage
             {
@@ -76,9 +76,9 @@ namespace TCP_Client
             };
             classicPackage.Size = classicPackage.ToByteArray().Length;
 
-            _DataPackages = new Dictionary<string, DataPackage>
+            _dataPackages = new Dictionary<string, DataPackage>
             {
-                {"ValidationAnswer", validationAnswerPackage },
+                {"ValidationAnswer", _validationAnswerPackage },
                 {"Help", helpPackage },
                 {"RollDice", rollDicePackage },
                 {"CloseGame", closeGamePackage },
@@ -87,7 +87,7 @@ namespace TCP_Client
             };
 
         }
-        public DataPackage GetPackage(string key) => _DataPackages[key];       
+        public DataPackage GetPackage(string key) => _dataPackages[key];       
     }
 
 }

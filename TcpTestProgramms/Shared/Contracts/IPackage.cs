@@ -5,7 +5,7 @@ namespace Shared.Contract
     public interface IPackage
     {
         int Id { get; }
-        DataPackage data { get; set; }
-        ICommunication communication { get; set; }
+        DataPackage Data { get; set; }
+        ICommunication Communication { get; set; }
     }
 }

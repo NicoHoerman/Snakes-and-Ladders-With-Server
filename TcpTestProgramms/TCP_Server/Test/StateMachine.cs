@@ -58,7 +58,7 @@ namespace TCP_Server.Test
                 _ActionHandler.OnValidationAction);
             _ActionHandler._protocolActions.Add(ProtocolActionEnum.Rule,
                 _ActionHandler.OnRuleAction);
-            while (_ActionHandler.ruleSet == false)
+            while (_ActionHandler._ruleSet == false)
             { }
 
             _ActionHandler._protocolActions.Clear();
@@ -66,7 +66,7 @@ namespace TCP_Server.Test
                 _ActionHandler.OnValidationAction);
             _ActionHandler._protocolActions.Add(ProtocolActionEnum.StartGame,
                _ActionHandler.OnStartGameAction);
-            while (_ActionHandler.gameStarted == false)
+            while (_ActionHandler._gameStarted == false)
             { }
 
             Task.Run(() => _serverinfo.lobbylist[0].RunGame());

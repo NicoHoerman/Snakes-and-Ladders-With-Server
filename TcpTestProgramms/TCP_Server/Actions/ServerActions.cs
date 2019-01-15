@@ -15,16 +15,16 @@ namespace TCP_Server.Actions
 {
     public class ServerActions
     {
-        private int currentplayer;
-        public bool gameStarted = false;
-        public bool ruleSet = false;
+        private int _currentplayer;
+        public bool _gameStarted = false;
+        public bool _ruleSet = false;
         
         public Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>> _protocolActions;
         private ServerInfo _serverInfo;
         private Game _game;
-        private ClientDisconnection _DisconnectionHandler;
+        private ClientDisconnection _disconnectionHandler;
         private ServerDataPackageProvider _dataPackageProvider;
-        private GameFinishedState finishedState;
+        private GameFinishedState _finishedState;
 
         public static ManualResetEvent MessageSent = new ManualResetEvent(false);
         public static ManualResetEvent StateSwitched = new ManualResetEvent(false);
@@ -33,10 +33,10 @@ namespace TCP_Server.Actions
         public ServerActions(ServerInfo serverInfo, Game game,
             ClientDisconnection disconnectionHandler, ServerDataPackageProvider _dataPackageProvider)
         {
-            finishedState = new GameFinishedState(game, currentplayer);
+            _finishedState = new GameFinishedState(game, _currentplayer);
 
             _protocolActions = new Dictionary<ProtocolActionEnum, Action<ICommunication, DataPackage>>();
-            _DisconnectionHandler = disconnectionHandler;
+            _disconnectionHandler = disconnectionHandler;
             _serverInfo = serverInfo;
             this._dataPackageProvider = _dataPackageProvider;
             _game = game;
@@ -58,9 +58,9 @@ namespace TCP_Server.Actions
             {
                 if (_serverInfo.lobbylist[0].IsLobbyComplete())
                 {
-                    gameStarted = true;
+                    _gameStarted = true;
                     Core.State = StateEnum.GameRunningState;
-                    for (int i = 0; i <= _serverInfo._communications.Count  -1; i++)
+                    for (var i = 0; i <= _serverInfo._communications.Count  -1; i++)
                     {
                         if(!(_serverInfo._communications[i] == communication))
                             communication.Send(_dataPackageProvider.GetPackage("PlayerData"));
@@ -77,14 +77,14 @@ namespace TCP_Server.Actions
         public void OnRuleAction(ICommunication communication, DataPackage data)
         {
             if (communication.IsMaster)
-                ruleSet = true;
+                _ruleSet = true;
             else
                 communication.Send(_dataPackageProvider.GetPackage("OnlyMasterRuleInfo"));
         }
 
         public void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
-            int currentCommunication = _serverInfo._communications.FindIndex(x => x == communication)+1;
+            var currentCommunication = _serverInfo._communications.FindIndex(x => x == communication)+1;
             //if (_game.State.CurrentPlayer ==  currentCommunication)
             //{
             //ExecuteTurn();
@@ -132,7 +132,7 @@ namespace TCP_Server.Actions
 
                         Thread.Sleep(5000);
 
-                        finishedState.reactivateViews(communication);
+                        _finishedState.reactivateViews(communication);
                         Core.State = StateEnum.LobbyState;
                         _game.State.ClearProperties();
                     }
@@ -192,7 +192,7 @@ namespace TCP_Server.Actions
 
         public void OnCloseGameAction(ICommunication communication, DataPackage data)
         {
-            _DisconnectionHandler.DisconnectClient();
+            _disconnectionHandler.DisconnectClient();
             _game.State.SetInput("/closegame");
         }
 

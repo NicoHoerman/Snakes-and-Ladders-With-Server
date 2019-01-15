@@ -186,14 +186,14 @@ namespace TCP_Client.Actions
         {
             var broadcast = MapProtocolToDto<BroadcastDTO>(data);
 
-            var currentIPEndPoint = new IPEndPoint(IPAddress.Parse(broadcast._Server_ip),broadcast._Server_Port);
+            var currentIPEndPoint = new IPEndPoint(IPAddress.Parse(broadcast._server_ip),broadcast._server_Port);
 
             if (_ServerEndpoints.Contains(currentIPEndPoint))
             {
                 var servernumber = _ServerEndpoints.IndexOf(currentIPEndPoint);
-                _Servernames[servernumber] = broadcast._Server_name;
-                _MaxPlayerCount[servernumber] = broadcast._MaxPlayerCount;
-                _CurrentPlayerCount[servernumber] = broadcast._CurrentPlayerCount;
+                _Servernames[servernumber] = broadcast._server_name;
+                _MaxPlayerCount[servernumber] = broadcast._maxPlayerCount;
+                _CurrentPlayerCount[servernumber] = broadcast._currentPlayerCount;
             }
             else
             {
@@ -201,9 +201,9 @@ namespace TCP_Client.Actions
 
                 _serverDictionary.Add(keyIndex, broadcast);
 
-                _Servernames[keyIndex] = broadcast._Server_name;
-                _MaxPlayerCount[keyIndex] = broadcast._MaxPlayerCount;
-                _CurrentPlayerCount[keyIndex] = broadcast._CurrentPlayerCount;
+                _Servernames[keyIndex] = broadcast._server_name;
+                _MaxPlayerCount[keyIndex] = broadcast._maxPlayerCount;
+                _CurrentPlayerCount[keyIndex] = broadcast._currentPlayerCount;
                 keyIndex++;
             }
 
@@ -224,17 +224,17 @@ namespace TCP_Client.Actions
         {
             var accept = MapProtocolToDto<AcceptDTO>(data);
             _infoOutputView.viewEnabled = true;
-            _infoOutputView.SetUpdateContent(accept._SmallUpdate);
+            _infoOutputView.SetUpdateContent(accept._smallUpdate);
         }
 
         public void OnDeclineInfoAction(DataPackage data, ICommunication communication)
         {
-            _client._InputHandler.Declined = true;
-            _client._InputHandler.isConnected = false;
+            _client._inputHandler._declined = true;
+            _client._inputHandler._isConnected = false;
 
             var decline = MapProtocolToDto<DeclineDTO>(data);
             _infoOutputView.viewEnabled = true;
-            _infoOutputView.SetUpdateContent(decline._SmallUpdate);
+            _infoOutputView.SetUpdateContent(decline._smallUpdate);
    
         }
 

@@ -7,10 +7,10 @@ namespace TCP_Client.DTO
 {
     public class BroadcastDTO : IProtocol
     {
-        public string _Server_name;
-        public string _Server_ip;
-        public int _Server_Port;
-        public int _CurrentPlayerCount;
-        public int _MaxPlayerCount;
+        public string _server_name;
+        public string _server_ip;
+        public int _server_Port;
+        public int _currentPlayerCount;
+        public int _maxPlayerCount;
     }
 }

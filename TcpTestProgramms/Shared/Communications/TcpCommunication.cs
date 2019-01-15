@@ -18,7 +18,7 @@ namespace Shared.Communications
     {
         public TcpClient _client { get; set; }
         private NetworkStream _nwStream;
-        private bool _NWStreamNotSet = true;
+        private bool _nwStreamNotSet = true;
         public bool IsMaster { get; set; } = false;
        
         private MemoryStream _localBuffer;
@@ -28,7 +28,7 @@ namespace Shared.Communications
         private BackgroundWorker _backgroundWorker;
         private BackgroundWorker _backgroundWorker2;
 
-        private bool IsCommunicationRunning = true;
+        private bool _isCommunicationRunning = true;
 
         public TcpCommunication()
             : this(new TcpClient())
@@ -52,11 +52,11 @@ namespace Shared.Communications
 
         private void GetStreamWithStyle()
         {
-            while (_NWStreamNotSet)
+            while (_nwStreamNotSet)
                 try
                 {
                     _nwStream = _client.GetStream();
-                    _NWStreamNotSet = false;
+                    _nwStreamNotSet = false;
                 }
                 catch
                 {
@@ -107,7 +107,7 @@ namespace Shared.Communications
             //if (_NWStreamNotSet)
             //    return;
 
-            while (IsCommunicationRunning)
+            while (_isCommunicationRunning)
             {
                 try
                 {
@@ -136,7 +136,7 @@ namespace Shared.Communications
                     var client = _client.Client;
                     if (client.Poll(0, SelectMode.SelectRead))
                     {
-                        byte[] buff = new byte[1];
+                        var buff = new byte[1];
                         if (client.Receive(buff, SocketFlags.Peek) == 0)
                         {
                             return false;
@@ -153,7 +153,7 @@ namespace Shared.Communications
 
         public void Stop()
         {
-            IsCommunicationRunning = false;
+            _isCommunicationRunning = false;
             _client.Close();
             //_nwStream.Close();
         }
@@ -170,9 +170,11 @@ namespace Shared.Communications
 
             using (var reader = new BinaryReader(_localBuffer))
             {
-                var package = new DataPackage();
-                package.Size = reader.ReadInt32();
-                package.Header = (ProtocolActionEnum)reader.ReadInt32();
+                var package = new DataPackage
+                {
+                    Size = reader.ReadInt32(),
+                    Header = (ProtocolActionEnum)reader.ReadInt32()
+                };
                 if (package.Size <= _localBuffer.Length)
                 {
                     _localBuffer.Position = 2 * sizeof(Int32);
