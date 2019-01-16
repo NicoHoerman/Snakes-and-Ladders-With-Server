@@ -37,7 +37,7 @@ namespace TCP_Server.Actions
             _game = game;
             this._dataPackageProvider = _dataPackageProvider;
 
-			_currentplayer = game.State.CurrentPlayer;
+			//_currentplayer = game.State.CurrentPlayer;
 			_finishedState = new GameFinishedState(game, _currentplayer);
         }
 
