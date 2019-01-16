@@ -91,7 +91,7 @@ namespace TCP_Server
             _serverInfo._communications.Add(
                 new TcpCommunication(client));
 
-            _validationSystem.currentcommunication = _serverInfo._communications.Last();
+            _validationSystem._currentcommunication = _serverInfo._communications.Last();
 
             if (_serverInfo._communications.Count == 1)
                 _serverInfo._communications[0].IsMaster = true;

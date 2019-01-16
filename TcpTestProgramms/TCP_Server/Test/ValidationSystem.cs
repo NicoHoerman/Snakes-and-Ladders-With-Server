@@ -10,18 +10,18 @@ namespace TCP_Server.Test
 {
     public class ValidationSystem
     {
-        private bool isRunning;
-        private bool timerElapsed = false;
-        public static bool isValidated = false;
+        private bool _isRunning;
+        private bool _timerElapsed = false;
+        public static bool _isValidated = false;
 
         private ServerInfo _serverInfo;
         private ServerActions _serverActions;
         private ServerDataPackageProvider _dataPackageProvider;
         private ClientConnection _connectionHandler;
         private ClientDisconnection _disconnectionHandler;
-        private System.Timers.Timer timer;
+        private System.Timers.Timer _timer;
 
-        public ICommunication currentcommunication;
+        public ICommunication _currentcommunication;
 
         public ValidationSystem(ServerInfo serverInfo,ClientDisconnection disconnectionHandler
             , ClientConnection connectionHandler, ServerDataPackageProvider dataPackageProvider, ServerActions serverActions)
@@ -35,10 +35,10 @@ namespace TCP_Server.Test
 
         public void Start()
         {
-            isRunning = true;
+            _isRunning = true;
             Core.ValidationStatus = ValidationEnum.WaitingForPlayer;
 
-            while (isRunning)
+            while (_isRunning)
             {
                 switch (Core.ValidationStatus)
                 {
@@ -65,15 +65,15 @@ namespace TCP_Server.Test
             if (_serverInfo._lobbylist[0].IsLobbyComplete())
             {
                 Core.ConnectionStatus = ClientConnectionStatus.Declined;
-                currentcommunication.Send(_dataPackageProvider.GetPackage("LobbyCheckFailed"));
-                _disconnectionHandler.Execute(currentcommunication);
+                _currentcommunication.Send(_dataPackageProvider.GetPackage("LobbyCheckFailed"));
+                _disconnectionHandler.Execute(_currentcommunication);
                 
             }
             else
             {
                 Core.ConnectionStatus = ClientConnectionStatus.Accepted;
-                currentcommunication.Send(_dataPackageProvider.GetPackage("LobbyCheckSuccessful"));
-                _connectionHandler.Execute(currentcommunication);
+                _currentcommunication.Send(_dataPackageProvider.GetPackage("LobbyCheckSuccessful"));
+                _connectionHandler.Execute(_currentcommunication);
             }
             Core.ValidationStatus = ValidationEnum.WaitingForPlayer;
         }
@@ -82,17 +82,17 @@ namespace TCP_Server.Test
         {
             _serverInfo._communications.Last().SetNWStream();
 
-            timer = new System.Timers.Timer(10000);
-            timer.Enabled = true;
-            timer.AutoReset = false;
-            timer.Elapsed += TimerSetter;
+            _timer = new System.Timers.Timer(10000);
+            _timer.Enabled = true;
+            _timer.AutoReset = false;
+            _timer.Elapsed += TimerSetter;
 
-            while (!isValidated && !timerElapsed)
+            while (!_isValidated && !_timerElapsed)
             {
                 _serverInfo._communications.Last().Send(_dataPackageProvider.GetPackage("ValidationRequest"));
                 Thread.Sleep(1000);
             }
-            if (isValidated)
+            if (_isValidated)
             {
                 _serverInfo._communications.Last().Send(_dataPackageProvider.GetPackage("ValidationAccepted"));
                 Thread.Sleep(3);
@@ -104,7 +104,7 @@ namespace TCP_Server.Test
 
         private void TimerSetter(Object source, ElapsedEventArgs e)
         {
-            timerElapsed = true;
+            _timerElapsed = true;
         }
     }
 }

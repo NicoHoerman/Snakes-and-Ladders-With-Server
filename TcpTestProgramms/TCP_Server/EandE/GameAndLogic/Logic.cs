@@ -7,7 +7,6 @@ namespace EandE_ServerModel.EandE.GameAndLogic
 
     public class Logic
     {
-        
         public IPawn _currentPawn;
         private bool _gameFinished;
         public int _numberOfPlayers;
@@ -17,52 +16,34 @@ namespace EandE_ServerModel.EandE.GameAndLogic
         public Logic(IGame game)
         {
             _game = game;
-            
         }
 
         //Gets the Pawn with the matching playerID from the Pawns List
-        public IPawn GetPawn()
+        public void GetPawn()
         {
             try
             {
-                return _currentPawn =  _game.Board.Pawns.Find(x => x.PlayerID.Equals(CurrentPlayerID));
+                 _currentPawn =  _game.Board.Pawns.Find(x => x.PlayerID.Equals(CurrentPlayerID));
             }
             catch(Exception e)
             {
                 throw new InvalidOperationException($"Nothing Found with PlayerID {CurrentPlayerID} ",e);
             }
-
         }
 
-
-        public TurnState CheckIfGameFinished(IPawn pawn)
+        public TurnState CheckIfGameFinished()
         {
-            try
-            {
-                pawn = _currentPawn;
+            if (_currentPawn.Location == _game.Board.Size)
+                _gameFinished = true;
+            else
+                _gameFinished = false;
 
-                if (pawn.Location == _game.Board.Size)
-                    _gameFinished = true;
-                else
-                    _gameFinished = false;
-
-                if (_gameFinished == true)
-                    return TurnState.GameFinished;
-                else
-                    return TurnState.TurnFinished;
-                        
-
-                //GameFinished = CurrentPawn.location == _game.Board.size ? true : false;
-                //return GameFinished == true ? TurnState.GameFinished : TurnState.TurnFinished;
-            }
-            catch
-            {
-                throw new Exception();
-            }
-
+            if (_gameFinished == true)
+                return TurnState.GameFinished;
+            else
+                return TurnState.TurnFinished;
         }
 
-        
         public void NextPlayer()
         {
             var orderedPlayers = _game.Board.Pawns.OrderBy(x => x.PlayerID).ToList();
@@ -77,17 +58,18 @@ namespace EandE_ServerModel.EandE.GameAndLogic
                 CurrentPlayerID = nextPlayer.PlayerID;
         }
 
-
         public TurnState MakeTurn()
         {
-
             try
             {
+				//
                 //Get current Pawn 
                 GetPawn();
+				//Server
                 //Roll Dice
                 _game.Rules.RollDice();
 
+				//Server
                 //Check If Player Exceeds Board and Moves Pawn
                 if (_currentPawn.Location + _game.Rules.DiceResult > _game.Board.Size)
                 {
@@ -95,8 +77,10 @@ namespace EandE_ServerModel.EandE.GameAndLogic
                     return TurnState.PlayerExceedsBoard;
                 }
                 else
+					//Client
                     _currentPawn.MovePawn(_game.Rules.DiceResult);
                 
+				//Client
                 //Entities check if the pawn is on them
                 _game.Board.Entities.ForEach(entity =>
                 {
@@ -106,20 +90,17 @@ namespace EandE_ServerModel.EandE.GameAndLogic
                     }
                 });
 
-                
+				//Server
                 NextPlayer();
-
-                var currentState = CheckIfGameFinished(_currentPawn);
+				//Server
+                var currentState = CheckIfGameFinished();
 
                 return currentState;
-
             }
             catch(Exception e)
             {
                 throw new InvalidOperationException($"Could not Return a TurnState",e);
             }
-
         }
-
     }
 }
