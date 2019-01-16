@@ -44,7 +44,7 @@ namespace TCP_Client.Actions
 
         public string _serverTable =string.Empty;
 
-        private OutputWrapper outputWrapper;
+        private OutputWrapper _outputWrapper;
 
         public ProtocolAction(Dictionary<ClientView, IView> views, Client client, ClientDataPackageProvider clientDataPackageProvider)
         {
@@ -82,7 +82,7 @@ namespace TCP_Client.Actions
                 //{ ProtocolActionEnum.ServerStartingGame, OnServerStartingGameAction }
             
             };
-            outputWrapper = new OutputWrapper();
+            _outputWrapper = new OutputWrapper();
         }
 
         public void ExecuteDataActionFor(DataPackage data,  ICommunication communication)
@@ -176,11 +176,11 @@ namespace TCP_Client.Actions
             }
         }
 
-        private List<IPEndPoint> _ServerEndpoints = new List<IPEndPoint>(); 
-        private string[] _Servernames = new string[100];
-        private int[] _MaxPlayerCount = new int[100];
-        private int[] _CurrentPlayerCount = new int[100];
-        private int keyIndex = 0;
+        private List<IPEndPoint> _serverEndpoints = new List<IPEndPoint>(); 
+        private string[] _servernames = new string[100];
+        private int[] _maxPlayerCount = new int[100];
+        private int[] _currentPlayerCount = new int[100];
+        private int _keyIndex = 0;
 
         public void OnBroadcastAction(DataPackage data, ICommunication communication)
         {
@@ -188,30 +188,30 @@ namespace TCP_Client.Actions
 
             var currentIPEndPoint = new IPEndPoint(IPAddress.Parse(broadcast._server_ip),broadcast._server_Port);
 
-            if (_ServerEndpoints.Contains(currentIPEndPoint))
+            if (_serverEndpoints.Contains(currentIPEndPoint))
             {
-                var servernumber = _ServerEndpoints.IndexOf(currentIPEndPoint);
-                _Servernames[servernumber] = broadcast._server_name;
-                _MaxPlayerCount[servernumber] = broadcast._maxPlayerCount;
-                _CurrentPlayerCount[servernumber] = broadcast._currentPlayerCount;
+                var servernumber = _serverEndpoints.IndexOf(currentIPEndPoint);
+                _servernames[servernumber] = broadcast._server_name;
+                _maxPlayerCount[servernumber] = broadcast._maxPlayerCount;
+                _currentPlayerCount[servernumber] = broadcast._currentPlayerCount;
             }
             else
             {
-                _ServerEndpoints.Add(currentIPEndPoint);
+                _serverEndpoints.Add(currentIPEndPoint);
 
-                _serverDictionary.Add(keyIndex, broadcast);
+                _serverDictionary.Add(_keyIndex, broadcast);
 
-                _Servernames[keyIndex] = broadcast._server_name;
-                _MaxPlayerCount[keyIndex] = broadcast._maxPlayerCount;
-                _CurrentPlayerCount[keyIndex] = broadcast._currentPlayerCount;
-                keyIndex++;
+                _servernames[_keyIndex] = broadcast._server_name;
+                _maxPlayerCount[_keyIndex] = broadcast._maxPlayerCount;
+                _currentPlayerCount[_keyIndex] = broadcast._currentPlayerCount;
+                _keyIndex++;
             }
 
             var outputFormat = new StringBuilder();
 
             for (int index = 0; index < _serverDictionary.Count; index++)
-                outputFormat.Append(string.Format("{3,2}  [{0,1}/{1,1}]   {2,20}\n", _CurrentPlayerCount[index],
-                    _MaxPlayerCount[index], _Servernames[index].PadRight(20),(index+1)));
+                outputFormat.Append(string.Format("{3,2}  [{0,1}/{1,1}]   {2,20}\n", _currentPlayerCount[index],
+                    _maxPlayerCount[index], _servernames[index].PadRight(20),(index+1)));
 
             _serverTable = outputFormat.ToString();
             _serverTableView.SetUpdateContent(_serverTable);
@@ -264,11 +264,20 @@ namespace TCP_Client.Actions
 
         public void OnLobbyCheckSuccessfulAction(DataPackage data, ICommunication communication)
         {
-            _client.SwitchState(StateEnum.ClientStates.Lobby);
+			//var blub = MapProtocolToDto<UpdateDTO>(data);
+			_client.SwitchState(StateEnum.ClientStates.Lobby);
+			_lobbyInfoDisplayView.ViewEnabled = true;
+			_lobbyInfoDisplayView.SetUpdateContent("You are in the Lobby. Select a rule.");
+			_commandListOutputView.ViewEnabled = true;
+			_commandListOutputView.SetUpdateContent("Commands:\n/search\n/classic\n/startgame\n/closegame");
+			_infoOutputView.ViewEnabled = false;
         }
 
         public void OnServerStartingGameAction(DataPackage data, ICommunication communication)
         {
+			var idk = MapProtocolToDto<UpdateDTO>(data);
+			_boardOutputView.ViewEnabled = true;
+			_boardOutputView.SetUpdateContent(idk._boardOutput);
             _client.SwitchState(StateEnum.ClientStates.GameRunning);
         }
 

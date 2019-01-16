@@ -8,7 +8,7 @@ namespace EandE_ServerModel.EandE.EandEContracts
 
         IRules Rules { get; }
         IBoard Board { get; set; }
-        IState State { get; }
+        IState State { get;}
 
         void Init();
         void InitializeGame();

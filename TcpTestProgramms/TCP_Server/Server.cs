@@ -53,7 +53,7 @@ namespace TCP_Server
             _queue = new PackageQueue();
             _process = new PackageProcessing(_queue, _actionsHandler);
 
-            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_NICO), 8080);
+            _listener = new TcpListener(IPAddress.Parse(SERVER_IP_LAN_LEON), 8080);
         }
 
         public void StartListening(TcpListener listener)
@@ -91,7 +91,7 @@ namespace TCP_Server
             _serverInfo._communications.Add(
                 new TcpCommunication(client));
 
-            _validationSystem.currentcommunication = _serverInfo._communications.Last();
+            _validationSystem._currentcommunication = _serverInfo._communications.Last();
 
             if (_serverInfo._communications.Count == 1)
                 _serverInfo._communications[0].IsMaster = true;

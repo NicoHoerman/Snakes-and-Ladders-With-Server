@@ -37,7 +37,7 @@ namespace TCP_Server.Actions
             _game = game;
             this._dataPackageProvider = _dataPackageProvider;
 
-			_currentplayer = game.State.CurrentPlayer;
+			//_currentplayer = game.State.CurrentPlayer;
 			_finishedState = new GameFinishedState(game, _currentplayer);
         }
 
@@ -63,7 +63,8 @@ namespace TCP_Server.Actions
                     {
                         if(!(_serverInfo._communications[i] == communication))
                             communication.Send(_dataPackageProvider.GetPackage("PlayerData"));
-                        communication.Send(_dataPackageProvider.GetPackage("ServerStartingGame"));
+						Thread.Sleep(1000);
+						communication.Send(_dataPackageProvider.ServerStartingGame());
                     }
                 }
                 else

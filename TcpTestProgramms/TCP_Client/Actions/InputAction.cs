@@ -35,6 +35,7 @@ namespace TCP_Client.Actions
         private readonly IUpdateOutputView _serverTableView;
         private readonly IUpdateOutputView _infoOutputView;
         private readonly IUpdateOutputView _mainMenuOutputView;
+		private readonly IUpdateOutputView _lobbyDisplayInfoView;
         private Client _client;
         
         private OutputWrapper _outputWrapper;  
@@ -53,6 +54,7 @@ namespace TCP_Client.Actions
             _serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
             _infoOutputView = views[ClientView.InfoOutput] as IUpdateOutputView;
             _mainMenuOutputView = views[ClientView.MenuOutput] as IUpdateOutputView;
+			_lobbyDisplayInfoView = views[ClientView.LobbyInfoDisplay] as IUpdateOutputView;
 
             _outputWrapper = new OutputWrapper();
 
@@ -149,9 +151,9 @@ namespace TCP_Client.Actions
                 _client.SwitchState(StateEnum.ClientStates.Connecting);
                 _isConnected = true;
                 //fertig 
-                //AfterConnectMsg = $"Server {chosenServerId} chosen";
-                //_infoOutputView.viewEnabled = true;
-                //_infoOutputView.SetUpdateContent(AfterConnectMsg +"\nYou established a connection with the server. Verifying Player Information...");
+                AfterConnectMsg = $"Server {chosenServerId} chosen";
+                _infoOutputView.ViewEnabled = true;
+                _infoOutputView.SetUpdateContent(AfterConnectMsg +"\nYou established a connection with the server. Verifying Player Information...");
             }
             else
             {
@@ -159,7 +161,7 @@ namespace TCP_Client.Actions
                 _errorView.SetContent(input, "There is no server with this ID");
             }
             //_inputView.SetInputLine("Type a command:", 16);
-            //_serverTableView.viewEnabled = false;
+            _serverTableView.ViewEnabled = false;
         }
 
         public void OnSearchAction(string input, ICommunication communication)
@@ -221,6 +223,10 @@ namespace TCP_Client.Actions
             if (_isConnected)
             {
                 _mainMenuOutputView.ViewEnabled = false;
+				_infoOutputView.ViewEnabled = true;
+				_infoOutputView.SetUpdateContent("Rule chosen, you can now start the game.");
+				_lobbyDisplayInfoView.ViewEnabled = false;
+				
                 communication.Send(_clientDataPackageProvider.GetPackage("Classic"));
             }
         }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TCP_Server.PROTOCOLS;
+using System.Threading;
 
 namespace TCP_Server.Test
 {
@@ -123,13 +124,6 @@ namespace TCP_Server.Test
             };
             lobbyCheckSuccessfulPackage.Size = lobbyCheckSuccessfulPackage.ToByteArray().Length;
 
-            var serverStartingGamePackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.ServerStartingGame,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
-            };
-            serverStartingGamePackage.Size = serverStartingGamePackage.ToByteArray().Length;
-
             #endregion
 
             _dataPackages = new Dictionary<string, DataPackage>
@@ -144,8 +138,7 @@ namespace TCP_Server.Test
                 {"OnlyMasterStartInfo",onlyMasterStartDP},
                 {"OnlyMasterRuleInfo",onlyMasterRuleDP},
                 {"LobbyCheckFailed", lobbyCheckFailedPackage },
-                {"LobbyCheckSuccessful", lobbyCheckSuccessfulPackage },
-                {"ServerStartingGame", serverStartingGamePackage }
+                {"LobbyCheckSuccessful", lobbyCheckSuccessfulPackage }            
             };
         }
 
@@ -208,5 +201,20 @@ namespace TCP_Server.Test
             return gameEndedPackage;
             #endregion
         }
+
+		public DataPackage ServerStartingGame()
+		{
+			var _serverStartingGamePackage = new DataPackage
+			{
+				Header = ProtocolActionEnum.ServerStartingGame,
+				Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+				{
+					_boardOutput = _game.State.BoardOutput
+				})
+			};
+			_serverStartingGamePackage.Size = _serverStartingGamePackage.ToByteArray().Length;
+
+			return _serverStartingGamePackage;
+		}
     }
 }

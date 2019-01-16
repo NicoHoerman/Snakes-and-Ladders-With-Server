@@ -38,7 +38,7 @@ namespace TCP_Server.Test
             _isRunning = true;
             while (_isRunning)
             {
-                _game.Init(); ;
+                _game.Init();
             }
         }
 
