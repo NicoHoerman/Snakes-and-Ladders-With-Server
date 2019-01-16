@@ -4,6 +4,7 @@ using System.Linq;
 using System.Timers;
 using TCP_Server.Actions;
 using TCP_Server.Enum;
+using System.Threading;
 
 namespace TCP_Server.Test
 {
@@ -20,7 +21,7 @@ namespace TCP_Server.Test
         private ServerActions _serverActions;
         
 
-        private Timer timer;
+        private System.Timers.Timer timer;
 
 
         public ValidationSystem(ServerInfo serverInfo,ClientDisconnection disconnectionHandler
@@ -81,10 +82,10 @@ namespace TCP_Server.Test
         public void ValidateClient()
         {
             _serverInfo._communications.Last().SetNWStream();
-            
+            Thread.Sleep(1000);
             _serverInfo._communications.Last().Send(_dataPackageProvider.GetPackage("ValidationRequest"));
 
-            timer = new Timer(5000);
+            timer = new System.Timers.Timer(5000);
             timer.Enabled = true;
             timer.AutoReset = false;
             timer.Elapsed += timerSetter;
