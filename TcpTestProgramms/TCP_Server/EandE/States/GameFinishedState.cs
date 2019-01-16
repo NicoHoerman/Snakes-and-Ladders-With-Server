@@ -18,13 +18,8 @@ namespace EandE_ServerModel.EandE.States
         private readonly IGame _game;
         private readonly ISourceWrapper _sourceWrapper;
         private readonly DataProvider _dataProvider;
-        
 
-        public bool isFinished;
-        public string _finishinfo = string.Empty;
-        private string _finishskull1 = string.Empty;
-        private string _finishskull2 = string.Empty;
-        public int _winner;
+        public bool _isFinished;
 
         #region Properties
         public string FinishInfo { get; set; } = string.Empty;
@@ -43,62 +38,31 @@ namespace EandE_ServerModel.EandE.States
         public int CurrentPlayer { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
 
-        public GameFinishedState(IGame game, ISourceWrapper sourceWrapper, DataProvider dataProvider, int winner)
+        public GameFinishedState(IGame game, ISourceWrapper sourceWrapper, DataProvider dataProvider)
         {
             _game = game;
             _sourceWrapper = sourceWrapper;
             _dataProvider = dataProvider;        
-            isFinished = true;
-            _winner = winner;
+            _isFinished = true;
         }
 
-        public GameFinishedState(IGame game,int winner)
-            : this(game, new SourceWrapper(), new DataProvider(),winner)
+        public GameFinishedState(IGame game)
+            : this(game, new SourceWrapper(), new DataProvider())
         { }
 
         public void Execute()
         {
-            _finishinfo = string.Format(
-                _dataProvider.GetText("playerwins"),
-                _dataProvider.GetNumberLiteral(_winner));
-            _finishskull1 = string.Format(
-                _dataProvider.GetText("finishskull1"));
-            _finishskull2 = string.Format(
-                _dataProvider.GetText("finishskull2"));
-
-            SaveProperties(_finishinfo,_finishskull1,_finishskull2);
-
-            Stopwatch stopwatch = new Stopwatch();
+            var stopwatch = new Stopwatch();
             stopwatch.Start();
-            while (isFinished)
+            while (_isFinished)
             {
                 if (stopwatch.ElapsedMilliseconds > 1000 * 10)
                 {
-                    isFinished = false;
+                    _isFinished = false;
                     _game.SwitchState(new GameEndingState(_game));
                 }
             }
         }
-
-        public void ClearProperties()
-        {
-            FinishInfo = string.Empty;
-            Finishskull1 = string.Empty;
-            Finishskull2 = string.Empty;
-        }
-
-        public void SaveProperties(string _finshinfo,string _finishskull1,string _finishskull2)
-        {
-            FinishInfo = _finishinfo;
-            Finishskull1 = _finishskull1;
-            Finishskull2 = _finishskull2;
-        }
-
-        public void SetInput(string input)
-        {
-            Input = input;
-        }
-
         public void ReactivateViews(ICommunication communication)
         {
             var reactivationPackage = new DataPackage
@@ -114,5 +78,10 @@ namespace EandE_ServerModel.EandE.States
 
             communication.Send(reactivationPackage);
         }
-    }
+
+		public void ExecuteStateAction(string input)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

@@ -86,62 +86,15 @@ namespace TCP_Server.Actions
 			int currentCommunication = _serverInfo._communications.FindIndex(x => x == communication)+1;
             //if (_game.State.CurrentPlayer ==  currentCommunication)
             //{
-            //ExecuteTurn();
-                _game.State.SetInput("/rolldice");
-                TurnFinished.WaitOne();
-                TurnFinished.Reset();
+				_game.State.ExecuteStateAction("rolldice");
 
-                var turnPackage = new DataPackage
-                {
-                    Header = ProtocolActionEnum.UpdateView,
-                    Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                    {
-                        _gameInfoOutput = _game.State.GameInfoOuptput,
-                        _boardOutput = _game.State.BoardOutput,
-                        _error = _game.State.Error,
-                        _lastinput = _game.State.Lastinput,
-                        _turnInfoOutput = _game.State.TurnInfoOutput,
-                        _afterTurnOutput = _game.State.AfterTurnOutput,
-                    })
-                };
-                turnPackage.Size = turnPackage.ToByteArray().Length;
+                communication.Send(_dataPackageProvider.TurnInfo());
 
-                communication.Send(turnPackage);
-
-                if(!GameRunningState._isRunning)
-                    GameRunningState.GameFinished.Set();
-
-                Thread.Sleep(100);
-                if (_game.State.ToString() == "EandE_ServerModel.EandE.States.GameFinishedState")
-                {
-                    {
-                        var gameEndedPackage = new DataPackage
-                        {
-                            Header = ProtocolActionEnum.UpdateView,
-                            Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                            {
-                                _finishinfo = _game.State.FinishInfo,
-                                _finishskull1 = _game.State.Finishskull1,
-                                _finishskull2 = _game.State.Finishskull2
-                            })
-                        };
-                        gameEndedPackage.Size = gameEndedPackage.ToByteArrayUTF().Length;
-
-                        communication.Send(gameEndedPackage);
-
-                        Thread.Sleep(5000);
-
-                        _finishedState.ReactivateViews(communication);
-                        Core.State = StateEnum.LobbyState;
-                        _game.State.ClearProperties();
-                    }
-                }
             /* }
              else
              {
                  var dataPackage = new DataPackage
                  {
-
                      Header = ProtocolActionEnum.UpdateView,
                      Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                      {
@@ -154,46 +107,10 @@ namespace TCP_Server.Actions
              }*/
         }
 
-        public void OnGetHelpAction(ICommunication communication, DataPackage data)
-        {
-
-			PROT_HELPTEXT clientId = CreateProtocol<PROT_HELPTEXT>(data);
-
-            _game.State.SetInput("/help");
-
-            if (communication.IsMaster)
-            {
-                var dataPackage = new DataPackage
-                {
-                    Header = ProtocolActionEnum.HelpText,
-                    Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
-                    {
-                        _helpText = _game.State.HelpOutput
-                    })
-                };
-                dataPackage.Size = dataPackage.ToByteArray().Length;
-                communication.Send(dataPackage);
-            }
-            else
-            {
-                var dataPackage = new DataPackage
-                {
-                    Header = ProtocolActionEnum.HelpText,
-                    Payload = JsonConvert.SerializeObject(new PROT_HELPTEXT
-                    {
-                        _helpText = _game.State.HelpOutput
-                    })
-                };
-                dataPackage.Size = dataPackage.ToByteArray().Length;
-                communication.Send(dataPackage);
-            }
-        }
-
         public void OnCloseGameAction(ICommunication communication, DataPackage data)
         {
             _disconnectionHandler.DisconnectClient();
-            _game.State.SetInput("/closegame");
-        }
+		}
 
         public void OnValidationAction(ICommunication communication, DataPackage data)
         {

@@ -60,7 +60,6 @@ namespace EandE_ServerModel.EandE.States
             Input = string.Empty;
             _inMenu = true;
         }
-     
 
         public MainMenuState(IGame game)
             : this(game, new ConfigurationProvider(), new SourceWrapper(), new DataProvider())
@@ -69,54 +68,39 @@ namespace EandE_ServerModel.EandE.States
 
         public void Execute()
         {
-            
             while (_inMenu)
             {
-                Console.BackgroundColor = ConsoleColor.Black;
-                var parser = new Parse();
-                parser.AddCommand("/closegame", OnCloseGameCommand);
-                parser.AddCommand("/classic", OnClassicCommand);
 
-                _mainMenuOutput = _dataProvider.GetText("mainmenuinfo");
-                _rulesname = "/classic";
-                OnClassicCommand();
-                //while (Input == string.Empty)
-                //{
-                //}
-
-                //rulesname = Input;
-                //parser.Execute(Input);
-                //Input = string.Empty;
             }
         }
 
-        private void SaveProperties(string lastInput, string error, string mainmenuInfo)
-        {
-            Lastinput = lastInput;
-            Error = error;
-            MainMenuOuput = mainmenuInfo;
-        }
-
-        public void ClearProperties()
-        {
-            Lastinput = string.Empty;
-            Error = string.Empty;
-            MainMenuOuput = string.Empty;
-        }
-
-        private void OnCloseGameCommand()
+        public void OnCloseGameCommand()
         {
             _inMenu = false;
             _game.SwitchState(new GameEndingState(_game));
         }
 
-        private void OnClassicCommand()
+        public void OnClassicCommand()
         {
             CreateNewRulesInGame(_rulesname);
             _inMenu = false;
             StateFinished.Set();
             _game.SwitchState(new GameStartingState(_game));
         }
+		public void ExecuteStateAction(string input)
+		{
+			switch (input)
+			{
+				case "classic":
+					OnClassicCommand();
+					break;
+				case "close":
+					OnCloseGameCommand();
+					break;
+				default:
+					break;
+			}
+		}
         
         private void CreateNewRulesInGame(string rulesname)
         {
@@ -130,5 +114,6 @@ namespace EandE_ServerModel.EandE.States
         {
             Input = input;
         }
-    }
+
+	}
 }

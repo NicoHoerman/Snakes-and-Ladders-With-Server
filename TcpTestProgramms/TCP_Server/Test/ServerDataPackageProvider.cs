@@ -173,40 +173,20 @@ namespace TCP_Server.Test
             return lobbyDisplayPackage;
         }
 
-        public DataPackage BoardInfo()
+        public DataPackage TurnInfo()
         {
-            var boardPackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.UpdateView,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                {
-                    _gameInfoOutput = _game.State.GameInfoOuptput,
-                    _boardOutput = _game.State.BoardOutput,
-                    _error = _game.State.Error,
-                    _lastinput = _game.State.Lastinput,
-                    _turnInfoOutput = _game.State.TurnInfoOutput,
-                    _afterTurnOutput = _game.State.AfterTurnOutput,
+			var turninfoPackage = new DataPackage
+			{
+				Header = ProtocolActionEnum.UpdateView,
+				Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+				{
+					_diceResult = _game.Rules.DiceResult,
+					_lastPlayer = _game.State.LastPlayer
                 })
             };
-            boardPackage.Size = boardPackage.ToByteArray().Length;
-            return boardPackage;
+            turninfoPackage.Size = turninfoPackage.ToByteArray().Length;
+            return turninfoPackage;
         }
-
-        public DataPackage GameEndedDisplay()
-        {
-            var gameEndedPackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.UpdateView,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                {
-                    _finishinfo = _game.State.FinishInfo,
-                    _finishskull1 = _game.State.Finishskull1,
-                    _finishskull2 = _game.State.Finishskull2
-                })
-            };
-            gameEndedPackage.Size = gameEndedPackage.ToByteArrayUTF().Length;
-            return gameEndedPackage;
             #endregion
-        }
     }
 }

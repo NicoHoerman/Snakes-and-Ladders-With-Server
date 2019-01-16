@@ -66,13 +66,10 @@ namespace TCP_Server.Test
                 _actionHandler.OnValidationAction);
             _actionHandler._protocolActions.Add(ProtocolActionEnum.StartGame,
                _actionHandler.OnStartGameAction);
-            while (_actionHandler._gameStarted == false)
-            { }
-
-            Task.Run(() => _serverinfo._lobbylist[0].RunGame());
-            //_game.State.SetInput("/classic");
             while (Core.State == StateEnum.LobbyState)
             { }
+            Task.Run(() => _serverinfo._lobbylist[0].RunGame());
+			_game.State.ExecuteStateAction("classic");
             _actionHandler._protocolActions.Clear();
         }
         private void ExecuteGameRunningState()
@@ -81,8 +78,6 @@ namespace TCP_Server.Test
                 _actionHandler.OnValidationAction);
             _actionHandler._protocolActions.Add(ProtocolActionEnum.RollDice
                 , _actionHandler.OnRollDiceAction);
-            _actionHandler._protocolActions.Add(ProtocolActionEnum.GetHelp
-                , _actionHandler.OnGetHelpAction);
             _actionHandler._protocolActions.Add(ProtocolActionEnum.CloseGame
                 , _actionHandler.OnCloseGameAction);
 
