@@ -65,6 +65,7 @@ namespace TCP_Server.Actions
                             communication.Send(_dataPackageProvider.GetPackage("PlayerData"));
 						Thread.Sleep(1000);
 						communication.Send(_dataPackageProvider.ServerStartingGame());
+						communication.Send(_dataPackageProvider.BoardInfo());
                     }
                 }
                 else
@@ -200,6 +201,7 @@ namespace TCP_Server.Actions
         {
             ValidationSystem.isValidated = true;
             Core.State = StateEnum.LobbyState;
+			communication.Send(_dataPackageProvider.LobbyDisplay());
         }
 
         #endregion

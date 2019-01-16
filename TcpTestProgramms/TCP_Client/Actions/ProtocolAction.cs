@@ -264,20 +264,20 @@ namespace TCP_Client.Actions
 
         public void OnLobbyCheckSuccessfulAction(DataPackage data, ICommunication communication)
         {
-			//var blub = MapProtocolToDto<UpdateDTO>(data);
+			
 			_client.SwitchState(StateEnum.ClientStates.Lobby);
-			_lobbyInfoDisplayView.ViewEnabled = true;
-			_lobbyInfoDisplayView.SetUpdateContent("You are in the Lobby. Select a rule.");
-			_commandListOutputView.ViewEnabled = true;
-			_commandListOutputView.SetUpdateContent("Commands:\n/search\n/classic\n/startgame\n/closegame");
-			_infoOutputView.ViewEnabled = false;
+			//_lobbyInfoDisplayView.ViewEnabled = true;
+			//_lobbyInfoDisplayView.SetUpdateContent("You are in the Lobby. Select a rule.");
+			//_commandListOutputView.ViewEnabled = true;
+			//_commandListOutputView.SetUpdateContent("Commands:\n/search\n/classic\n/startgame\n/closegame");
+			//_infoOutputView.ViewEnabled = false;
         }
 
         public void OnServerStartingGameAction(DataPackage data, ICommunication communication)
         {
-			var idk = MapProtocolToDto<UpdateDTO>(data);
-			_boardOutputView.ViewEnabled = true;
-			_boardOutputView.SetUpdateContent(idk._boardOutput);
+			//var idk = MapProtocolToDto<UpdateDTO>(data);
+			//_boardOutputView.ViewEnabled = true;
+			//_boardOutputView.SetUpdateContent(idk._boardOutput);
             _client.SwitchState(StateEnum.ClientStates.GameRunning);
         }
 

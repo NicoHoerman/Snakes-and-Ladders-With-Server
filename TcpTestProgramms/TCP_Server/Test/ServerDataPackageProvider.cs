@@ -40,7 +40,7 @@ namespace TCP_Server.Test
                 Header = ProtocolActionEnum.DeclineInfo,
                 Payload = JsonConvert.SerializeObject(new PROT_DECLINE
                 {
-                    _smallUpdate = "You got declind. Lobby is probably full"
+                    _smallUpdate = "You got declined. Lobby is probably full"
                 })
             };
             declinedInfoPackage.Size = declinedInfoPackage.ToByteArray().Length;
@@ -62,7 +62,7 @@ namespace TCP_Server.Test
             };
             validationRequestPackage.Size = validationRequestPackage.ToByteArray().Length;
 
-            DataPackage validationAcceptedPackage = new DataPackage
+            var validationAcceptedPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.ValidationAccepted,
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
@@ -209,7 +209,7 @@ namespace TCP_Server.Test
 				Header = ProtocolActionEnum.ServerStartingGame,
 				Payload = JsonConvert.SerializeObject(new PROT_UPDATE
 				{
-					_boardOutput = _game.State.BoardOutput
+					
 				})
 			};
 			_serverStartingGamePackage.Size = _serverStartingGamePackage.ToByteArray().Length;
