@@ -12,33 +12,33 @@ namespace TCP_Client.UDP
 {
     public class UdpClientUnit
     {
-        private UdpClient _UdpClient;
-        public List<DataPackage> _DataList;
+        private UdpClient _udpClient;
+        public List<DataPackage> _dataList;
         public bool _closed = false;
 
         public UdpClientUnit()
         {
-            _UdpClient = new UdpClient(7075);
-            _DataList = new List<DataPackage>();
+            _udpClient = new UdpClient(7075);
+            _dataList = new List<DataPackage>();
         }
 
         public void StartListening()
         {
-            if (_UdpClient.Client != null)
-                _UdpClient.BeginReceive(Receive, new object());
+            if (_udpClient.Client != null)
+                _udpClient.BeginReceive(Receive, new object());
         }
 
         public void Receive(IAsyncResult ar)
         {
             if (!_closed)
             {
-                IPEndPoint _receiveEndPoint = new IPEndPoint(IPAddress.Any, 7070);
-                byte[] bytes = _UdpClient.EndReceive(ar, ref _receiveEndPoint);
+                var _receiveEndPoint = new IPEndPoint(IPAddress.Any, 7070);
+				byte[] bytes = _udpClient.EndReceive(ar, ref _receiveEndPoint);
 
                 //string message = Encoding.ASCII.GetString(bytes);
                 //Console.WriteLine(message);
 
-                MemoryStream localBuffer = new MemoryStream();
+                var localBuffer = new MemoryStream();
                 localBuffer.Write(bytes, 0, bytes.Length);
 
                 if (localBuffer.Length < 2 * sizeof(Int32))
@@ -47,18 +47,20 @@ namespace TCP_Client.UDP
                 localBuffer.Seek(0, SeekOrigin.Begin);
                 using (var reader = new BinaryReader(localBuffer))
                 {
-                    var package = new DataPackage();
-                    package.Size = reader.ReadInt32();
-                    package.Header = (ProtocolActionEnum)reader.ReadInt32();
+                    var package = new DataPackage
+                    {
+                        Size = reader.ReadInt32(),
+                        Header = (ProtocolActionEnum)reader.ReadInt32()
+                    };
                     if (package.Size <= localBuffer.Length)
                     {
                         localBuffer.Position = 2 * sizeof(Int32);
-                        var sizeOfPayload = package.Size - 2 * sizeof(Int32);
-                        var bytesToRead = new byte[sizeOfPayload];
+						int sizeOfPayload = package.Size - 2 * sizeof(Int32);
+						byte[] bytesToRead = new byte[sizeOfPayload];
                         localBuffer.Read(bytesToRead, 0, sizeOfPayload);
                         package.Payload = Encoding.ASCII.GetString(bytesToRead, 0, bytesToRead.Length);
 
-                        _DataList.Add(package);
+                        _dataList.Add(package);
                         Thread.Sleep(1);
                         SendRequest();
                     }
@@ -78,12 +80,12 @@ namespace TCP_Client.UDP
         {
             if (!_closed)
             {
-                string  broadcastMessage = "is there a Server";
-                var bytes = Encoding.ASCII.GetBytes(broadcastMessage);
+				string broadcastMessage = "is there a Server";
+				byte[] bytes = Encoding.ASCII.GetBytes(broadcastMessage);
 
-                IPEndPoint _ipEndPoint = new IPEndPoint(IPAddress.Broadcast, 7070);
+                var _ipEndPoint = new IPEndPoint(IPAddress.Broadcast, 7070);
 
-                _UdpClient.Send(bytes,bytes.Length, _ipEndPoint);
+                _udpClient.Send(bytes,bytes.Length, _ipEndPoint);
                 StartListening();
             }
         }

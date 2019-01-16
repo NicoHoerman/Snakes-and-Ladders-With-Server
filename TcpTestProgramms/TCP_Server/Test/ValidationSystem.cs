@@ -1,28 +1,27 @@
 ﻿using Shared.Contract;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Timers;
 using TCP_Server.Actions;
 using TCP_Server.Enum;
-using System.Threading;
 
 namespace TCP_Server.Test
 {
     public class ValidationSystem
     {
-        private ServerInfo _serverInfo;
         private bool isRunning;
         private bool timerElapsed = false;
-        private ClientDisconnection _disconnectionHandler;
-        private ClientConnection _connectionHandler;
-        private ServerDataPackageProvider _dataPackageProvider;
-        public ICommunication currentcommunication;
-        public static bool validationStatus = false;
-        private ServerActions _serverActions;
-        
+        public static bool isValidated = false;
 
+        private ServerInfo _serverInfo;
+        private ServerActions _serverActions;
+        private ServerDataPackageProvider _dataPackageProvider;
+        private ClientConnection _connectionHandler;
+        private ClientDisconnection _disconnectionHandler;
         private System.Timers.Timer timer;
 
+        public ICommunication currentcommunication;
 
         public ValidationSystem(ServerInfo serverInfo,ClientDisconnection disconnectionHandler
             , ClientConnection connectionHandler, ServerDataPackageProvider dataPackageProvider, ServerActions serverActions)
@@ -63,7 +62,7 @@ namespace TCP_Server.Test
 
         private void LobbyCheck()
         {
-            if (_serverInfo.lobbylist[0].IsLobbyComplete())
+            if (_serverInfo._lobbylist[0].IsLobbyComplete())
             {
                 Core.ConnectionStatus = ClientConnectionStatus.Declined;
                 currentcommunication.Send(_dataPackageProvider.GetPackage("LobbyCheckFailed"));
@@ -82,28 +81,28 @@ namespace TCP_Server.Test
         public void ValidateClient()
         {
             _serverInfo._communications.Last().SetNWStream();
-            Thread.Sleep(1000);
-            _serverInfo._communications.Last().Send(_dataPackageProvider.GetPackage("ValidationRequest"));
 
-            timer = new System.Timers.Timer(5000);
+            timer = new System.Timers.Timer(10000);
             timer.Enabled = true;
             timer.AutoReset = false;
-            timer.Elapsed += timerSetter;
+            timer.Elapsed += TimerSetter;
 
-            while (!validationStatus && !timerElapsed)
+            while (!isValidated && !timerElapsed)
             {
-
+                _serverInfo._communications.Last().Send(_dataPackageProvider.GetPackage("ValidationRequest"));
+                Thread.Sleep(1000);
             }
-
-            if (validationStatus)
+            if (isValidated)
+            {
+                _serverInfo._communications.Last().Send(_dataPackageProvider.GetPackage("ValidationAccepted"));
+                Thread.Sleep(3);
                 Core.ValidationStatus = ValidationEnum.LobbyCheck;
+            }
             else
                 Core.ValidationStatus = ValidationEnum.DeclineState;
-            
         }
-       
 
-        private void timerSetter(Object source, ElapsedEventArgs e)
+        private void TimerSetter(Object source, ElapsedEventArgs e)
         {
             timerElapsed = true;
         }

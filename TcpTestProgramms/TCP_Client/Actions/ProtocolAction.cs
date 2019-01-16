@@ -39,7 +39,6 @@ namespace TCP_Client.Actions
         private readonly IUpdateOutputView _finishSkull2View;
         private readonly IUpdateOutputView _finishSkull3View;
         public readonly IUpdateOutputView _enterToRefreshView;
-        
 
         private readonly Client _client;
 
@@ -83,16 +82,14 @@ namespace TCP_Client.Actions
                 //{ ProtocolActionEnum.ServerStartingGame, OnServerStartingGameAction }
             
             };
-
             outputWrapper = new OutputWrapper();
         }
 
         public void ExecuteDataActionFor(DataPackage data,  ICommunication communication)
         {
-            //weißt dem packet die richtige funktion zu
             if (_protocolActions.TryGetValue(data.Header, out var protocolAction) == false)
-                throw new InvalidOperationException("Invalid communication");
-            //führt die bekommene methode mit dem datapackage aus
+                return;
+
             protocolAction(data, communication);
         }
 
@@ -100,84 +97,81 @@ namespace TCP_Client.Actions
 
         #region Protocol actions
 
-
-        private void OnHelpTextAction(DataPackage data, ICommunication communication)
+        public void OnHelpTextAction(DataPackage data, ICommunication communication)
         {
             var helpText = MapProtocolToDto<HelpTextDTO>(data);
-            string BeispielFürNico = helpText._HelpText;
+            //_helpOutputView.SetUpdateContent(helpText._HelpText);
         }
 
         public void OnUpdateAction(DataPackage data, ICommunication communication)
-        {            
-
-            var updatedView = MapProtocolToDto<UpdateDTO>(data);            
-
+        {
+            var updatedView = MapProtocolToDto<UpdateDTO>(data);
+           
             if(!(updatedView._mainMenuOutput == null || updatedView._mainMenuOutput.Length == 0))
             {
-                _mainMenuOutputView.viewEnabled = true;
+                _mainMenuOutputView.ViewEnabled = true;
                 _mainMenuOutputView.SetUpdateContent(updatedView._mainMenuOutput);
             }
-
             //_lobbyInfoDisplayView.viewEnabled = updatedView._lobbyDisplay != null && updatedView._lobbyDisplay.Length != 0; ;
             //_lobbyInfoDisplayView.SetUpdateContent(updatedView._lobbyDisplay);
             if (!(updatedView._lobbyDisplay == null || updatedView._lobbyDisplay.Length == 0))
             {
-                _lobbyInfoDisplayView.viewEnabled = true;
+                _lobbyInfoDisplayView.ViewEnabled = true;
                 _lobbyInfoDisplayView.SetUpdateContent(updatedView._lobbyDisplay);
             }
 
             if (!(updatedView._boardOutput == null || updatedView._boardOutput.Length == 0))
             {
-                _boardOutputView.viewEnabled = true;
+                _boardOutputView.ViewEnabled = true;
                 _boardOutputView.SetUpdateContent(updatedView._boardOutput);
             }      
             if(!(updatedView._error == null || updatedView._error.Length == 0))
             {
-                _errorView.viewEnabled = true;
+                _errorView.ViewEnabled = true;
                 _errorView.SetContent(updatedView._lastinput, updatedView._error);
             }
             if(!(updatedView._gameInfoOutput == null || updatedView._gameInfoOutput.Length == 0))
             {
-                _gameInfoOutputView.viewEnabled = true;
+                _gameInfoOutputView.ViewEnabled = true;
                 _gameInfoOutputView.SetUpdateContent(updatedView._gameInfoOutput);
             }
             if(!(updatedView._turnInfoOutput == null || updatedView._turnInfoOutput.Length == 0))
             {
-                _turnInfoOutputView.viewEnabled = true;
+                _turnInfoOutputView.ViewEnabled = true;
                 _turnInfoOutputView.SetUpdateContent(updatedView._turnInfoOutput);
             }
             if(!(updatedView._afterTurnOutput == null || updatedView._afterTurnOutput.Length == 0))
             {
-                _afterTurnOutputView.viewEnabled = true;
+                _afterTurnOutputView.ViewEnabled = true;
                 _afterTurnOutputView.SetUpdateContent(updatedView._afterTurnOutput);
             }
             if(!(updatedView._commandList == null || updatedView._commandList.Length == 0))
             {
-                _commandListOutputView.viewEnabled = true;
+                _commandListOutputView.ViewEnabled = true;
                 _commandListOutputView.SetUpdateContent(updatedView._commandList);
             }
             if(!(updatedView._infoOutput == null || updatedView._infoOutput.Length == 0))
             {
-                _infoOutputView.viewEnabled = true;
+                _infoOutputView.ViewEnabled = true;
                 _infoOutputView.SetUpdateContent(updatedView._infoOutput);
             }
             if(!(updatedView._finishinfo == null || updatedView._finishinfo.Length == 0))
             {
                 DisableViews(); 
                 
-                _finishInfoView.viewEnabled = true;
+                _finishInfoView.ViewEnabled = true;
                 _finishInfoView.SetUpdateContent(updatedView._finishinfo);
             }
             if(!(updatedView._finishskull1 == null || updatedView._finishskull1.Length == 0))
             {
-                _finishSkull1View.viewEnabled = true;
-                _finishSkull3View.viewEnabled = true;
+                _finishSkull1View.ViewEnabled = true;
+                _finishSkull3View.ViewEnabled = true;
                 _finishSkull1View.SetUpdateContent(updatedView._finishskull1);
                 _finishSkull3View.SetUpdateContent(updatedView._finishskull1);
             }
             if(!(updatedView._finishskull2 == null || updatedView._finishskull2.Length == 0))
             {
-                _finishSkull2View.viewEnabled = true;
+                _finishSkull2View.ViewEnabled = true;
                 _finishSkull2View.SetUpdateContent(updatedView._finishskull2);
             }
         }
@@ -188,19 +182,18 @@ namespace TCP_Client.Actions
         private int[] _CurrentPlayerCount = new int[100];
         private int keyIndex = 0;
 
-
         public void OnBroadcastAction(DataPackage data, ICommunication communication)
         {
             var broadcast = MapProtocolToDto<BroadcastDTO>(data);
 
-            var currentIPEndPoint = new IPEndPoint(IPAddress.Parse(broadcast._Server_ip),broadcast._Server_Port);
+            var currentIPEndPoint = new IPEndPoint(IPAddress.Parse(broadcast._server_ip),broadcast._server_Port);
 
             if (_ServerEndpoints.Contains(currentIPEndPoint))
             {
                 var servernumber = _ServerEndpoints.IndexOf(currentIPEndPoint);
-                _Servernames[servernumber] = broadcast._Server_name;
-                _MaxPlayerCount[servernumber] = broadcast._MaxPlayerCount;
-                _CurrentPlayerCount[servernumber] = broadcast._CurrentPlayerCount;
+                _Servernames[servernumber] = broadcast._server_name;
+                _MaxPlayerCount[servernumber] = broadcast._maxPlayerCount;
+                _CurrentPlayerCount[servernumber] = broadcast._currentPlayerCount;
             }
             else
             {
@@ -208,9 +201,9 @@ namespace TCP_Client.Actions
 
                 _serverDictionary.Add(keyIndex, broadcast);
 
-                _Servernames[keyIndex] = broadcast._Server_name;
-                _MaxPlayerCount[keyIndex] = broadcast._MaxPlayerCount;
-                _CurrentPlayerCount[keyIndex] = broadcast._CurrentPlayerCount;
+                _Servernames[keyIndex] = broadcast._server_name;
+                _MaxPlayerCount[keyIndex] = broadcast._maxPlayerCount;
+                _CurrentPlayerCount[keyIndex] = broadcast._currentPlayerCount;
                 keyIndex++;
             }
 
@@ -223,38 +216,34 @@ namespace TCP_Client.Actions
             _serverTable = outputFormat.ToString();
             _serverTableView.SetUpdateContent(_serverTable);
             _serverTable = string.Empty;
-            _serverTableView.viewEnabled = true;
-            // Key Player Server 
-            //
-            //  1  [0/4]  XD
-            //  2  [1/2]  LuL
+            _serverTableView.ViewEnabled = true;
         }
 
         public void OnAcceptInfoAction(DataPackage data, ICommunication communication)
 
         {
             var accept = MapProtocolToDto<AcceptDTO>(data);
-            _infoOutputView.viewEnabled = true;
-            _infoOutputView.SetUpdateContent(accept._SmallUpdate);
+            _infoOutputView.ViewEnabled = true;
+            _infoOutputView.SetUpdateContent(accept._smallUpdate);
         }
 
         public void OnDeclineInfoAction(DataPackage data, ICommunication communication)
         {
-            _client._InputHandler.Declined = true;
-            _client._InputHandler.isConnected = false;
+            _client._inputHandler._declined = true;
+            _client._inputHandler._isConnected = false;
 
             var decline = MapProtocolToDto<DeclineDTO>(data);
-            _infoOutputView.viewEnabled = true;
-            _infoOutputView.SetUpdateContent(decline._SmallUpdate);
+            _infoOutputView.ViewEnabled = true;
+            _infoOutputView.SetUpdateContent(decline._smallUpdate);
    
         }
 
         public void OnRestartAction(DataPackage obj, ICommunication communication)
         {
-                _finishInfoView.viewEnabled = false;
-                _finishSkull1View.viewEnabled = false;
-                _finishSkull2View.viewEnabled = false;
-                _finishSkull3View.viewEnabled = false;
+                _finishInfoView.ViewEnabled = false;
+                _finishSkull1View.ViewEnabled = false;
+                _finishSkull2View.ViewEnabled = false;
+                _finishSkull3View.ViewEnabled = false;
                 EnableViews();
         }
 
@@ -285,32 +274,29 @@ namespace TCP_Client.Actions
 
         public void DisableViews()
         {
-            
-            _commandListOutputView.viewEnabled = false;
-            _errorView.viewEnabled = false;
-            _gameInfoOutputView.viewEnabled = false;
-            _infoOutputView.viewEnabled = false;
-            _mainMenuOutputView.viewEnabled = false;
-            _boardOutputView.viewEnabled = false;
-            _afterTurnOutputView.viewEnabled = false;
-            _lobbyInfoDisplayView.viewEnabled = false;
-            _turnInfoOutputView.viewEnabled = false;
-            _enterToRefreshView.viewEnabled = false;
+            _commandListOutputView.ViewEnabled = false;
+            _errorView.ViewEnabled = false;
+            _gameInfoOutputView.ViewEnabled = false;
+            _infoOutputView.ViewEnabled = false;
+            _mainMenuOutputView.ViewEnabled = false;
+            _boardOutputView.ViewEnabled = false;
+            _afterTurnOutputView.ViewEnabled = false;
+            _lobbyInfoDisplayView.ViewEnabled = false;
+            _turnInfoOutputView.ViewEnabled = false;
+            _enterToRefreshView.ViewEnabled = false;
         }
 
         public void EnableViews()
         {
-            _commandListOutputView.viewEnabled = true;
-            _enterToRefreshView.viewEnabled = true;
+            _commandListOutputView.ViewEnabled = true;
+            _enterToRefreshView.ViewEnabled = true;
 
-            _infoOutputView.viewEnabled = true;
-            _mainMenuOutputView.viewEnabled = true;
-            _lobbyInfoDisplayView.viewEnabled = true;
+            _infoOutputView.ViewEnabled = true;
+            _mainMenuOutputView.ViewEnabled = true;
+            _lobbyInfoDisplayView.ViewEnabled = true;
 
-            _errorView.viewEnabled = true;
+            _errorView.ViewEnabled = true;
         }
-
-        
         #endregion
 
         #region Static helper functions

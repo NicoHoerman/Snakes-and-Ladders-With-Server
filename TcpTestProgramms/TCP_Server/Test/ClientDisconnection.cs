@@ -25,29 +25,24 @@ namespace TCP_Server.Test
 
         public void Execute(ICommunication communication )
         {
-            DataPackage declinedInfoPackage = _dataPackageProvider.GetPackage("DeclinedInfo");
-            communication.Send(declinedInfoPackage);
+            communication.Send(_dataPackageProvider.GetPackage("DeclinedInfo"));
             DisconnectClient();
-            
-            DataPackage declineUpdatePackage = _dataPackageProvider.GetPackage("DeclineUpdate");
             for (int i = 0; i <= _serverInfo._communications.Count - 1; i++)
-            {
-                _serverInfo._communications[i].Send(declineUpdatePackage);
-            }
+                _serverInfo._communications[i].Send(_dataPackageProvider.GetPackage("DeclineUpdate"));
         }
 
         public void RemoveFromLobby()
         {
-            _serverInfo.communicationsToRemove.ForEach(x => _serverInfo.lobbylist[0]._CurrentPlayerCount--);
+            _serverInfo._communicationsToRemove.ForEach(x => _serverInfo._lobbylist[0]._CurrentPlayerCount--);
             RemoveFromList();
 
-            if (_game.isRunning)
+            if (_game._isRunning)
                 _game.State.SetInput("/closegame");
         }
 
         private void RemoveFromList()
         {
-            _serverInfo.communicationsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
+            _serverInfo._communicationsToRemove.ForEach(x => _serverInfo._communications.Remove(x));
         }
 
         public void DisconnectClient()
@@ -55,9 +50,10 @@ namespace TCP_Server.Test
             var currentCommunication = _serverInfo._communications.Last();
             currentCommunication.Stop();
 
-            _serverInfo.communicationsToRemove.Add(currentCommunication);
+            _serverInfo._communicationsToRemove.Add(currentCommunication);
 
             RemoveFromList();
+            Core.ValidationStatus = ValidationEnum.WaitingForPlayer;
         }
     }
 }

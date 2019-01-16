@@ -19,10 +19,9 @@ namespace TCP_Client.Actions
 {
     public class InputAction
     {
-        public bool isConnected = false;
-        public bool Declined = false;
-        private bool Searched = false;
-        private System.Timers.Timer timer;
+        public bool _isConnected = false;
+        public bool _declined = false;
+        private bool _searched = false;
 
         public string AfterConnectMsg { get; set; } = string.Empty;
 
@@ -38,15 +37,15 @@ namespace TCP_Client.Actions
         private readonly IUpdateOutputView _mainMenuOutputView;
         private Client _client;
         
-        private OutputWrapper _OutputWrapper;  
-        private ProtocolAction _ActionHandler;
-        private UdpClientUnit _UdpListener;
+        private OutputWrapper _outputWrapper;  
+        private ProtocolAction _actionHandler;
+        private UdpClientUnit _udpListener;
 
         public InputAction(ProtocolAction protocolAction, Dictionary<ClientView, IView> views,Client client, ClientDataPackageProvider clientDataPackageProvider)
         {
             _clientDataPackageProvider = clientDataPackageProvider;
             _client = client;
-            _ActionHandler = protocolAction;
+            _actionHandler = protocolAction;
             _views = views;
             _errorView = views[ClientView.Error] as IErrorView; // Potential null exception error.
             _commandListOutputView = views[ClientView.CommandList] as IUpdateOutputView; //Potenzieller Null Ausnahmen Fehler
@@ -55,26 +54,25 @@ namespace TCP_Client.Actions
             _infoOutputView = views[ClientView.InfoOutput] as IUpdateOutputView;
             _mainMenuOutputView = views[ClientView.MenuOutput] as IUpdateOutputView;
 
-            _OutputWrapper = new OutputWrapper();
+            _outputWrapper = new OutputWrapper();
 
             _inputActions = new Dictionary<string, Action<string,ICommunication>>
             {
                 
             };
 
-            _UdpListener = new UdpClientUnit();
-
+            _udpListener = new UdpClientUnit();
         }
 
 
         public void ParseAndExecuteCommand(string input,ICommunication communication)
         {
-            var receivedInput = input;        
+			string receivedInput = input;        
             if (input == "")
                 return;
             if (input == "/someInt")
             {
-                _errorView.viewEnabled = true;
+                _errorView.ViewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
@@ -84,9 +82,9 @@ namespace TCP_Client.Actions
                 input = "/someInt";
             }
 
-            if (_inputActions.TryGetValue(input, out var action) == false)
+            if (_inputActions.TryGetValue(input, out Action<string, ICommunication> action) == false)
             {
-                _errorView.viewEnabled = true;
+                _errorView.ViewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
@@ -98,19 +96,19 @@ namespace TCP_Client.Actions
 
         public void OnInputHelpAction(string input, ICommunication communication)
         {
-            if (!isConnected)
+            if (!_isConnected)
             {
-                _errorView.viewEnabled = true;
+                _errorView.ViewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
-            if (_commandListOutputView.viewEnabled)
+            if (_commandListOutputView.ViewEnabled)
             {
-                _commandListOutputView.viewEnabled = false;
+                _commandListOutputView.ViewEnabled = false;
             }
-            else if(!_commandListOutputView.viewEnabled)
+            else if(!_commandListOutputView.ViewEnabled)
             {
-                _commandListOutputView.viewEnabled = true;
+                _commandListOutputView.ViewEnabled = true;
             }                                      
 
             communication.Send(_clientDataPackageProvider.GetPackage("Help"));
@@ -118,95 +116,89 @@ namespace TCP_Client.Actions
 
         public void OnInputRollDiceAction(string input, ICommunication communication)
         {
-            if (!isConnected)
+            if (!_isConnected)
             {
-                _errorView.viewEnabled = true;
+                _errorView.ViewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
-
             communication.Send(_clientDataPackageProvider.GetPackage("RollDice"));
         }
 
         public void OnServerConnectAction(string input, ICommunication communication)
         {
-
-            if (isConnected | !Searched | Declined)
+            if (_isConnected | !_searched | _declined)
             {
-                _errorView.viewEnabled = true;
+                _errorView.ViewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
-            //if (input.Count != 2)
-            //{
-            //    _errorView.viewEnabled = true;
-            //    _errorView.SetContent(input, "Error: " + "Server id missing or too many parameters.");
-            //    return;
-            //}
-            int chosenServerId = Int32.Parse(input);
-            if (_ActionHandler._serverDictionary.Count >= chosenServerId)
+			//if (input.Count != 2)
+			//{
+			//    _errorView.viewEnabled = true;
+			//    _errorView.SetContent(input, "Error: " + "Server id missing or too many parameters.");
+			//    return;
+			//}
+			int chosenServerId = Int32.Parse(input);
+            if (_actionHandler._serverDictionary.Count >= chosenServerId)
             {
-                _client.SwitchState(StateEnum.ClientStates.Connecting);
 
-                BroadcastDTO current = _ActionHandler.GetServer(chosenServerId-1);
-                communication._client.Connect(IPAddress.Parse(current._Server_ip), current._Server_Port);    
+				BroadcastDTO current = _actionHandler.GetServer(chosenServerId-1);
+                communication._client.Connect(IPAddress.Parse(current._server_ip), current._server_Port);    
                 communication.SetNWStream();
+                _client.SwitchState(StateEnum.ClientStates.Connecting);
+                _isConnected = true;
                 //fertig 
                 //AfterConnectMsg = $"Server {chosenServerId} chosen";
-                //isConnected = true;
                 //_infoOutputView.viewEnabled = true;
                 //_infoOutputView.SetUpdateContent(AfterConnectMsg +"\nYou established a connection with the server. Verifying Player Information...");
-                
             }
             else
             {
-                _errorView.viewEnabled = true;
+                _errorView.ViewEnabled = true;
                 _errorView.SetContent(input, "There is no server with this ID");
             }
-
             //_inputView.SetInputLine("Type a command:", 16);
             //_serverTableView.viewEnabled = false;
-
         }
 
         public void OnSearchAction(string input, ICommunication communication)
         {
-            if (isConnected)
+            if (_isConnected)
             {
-                _errorView.viewEnabled = true;
+                _errorView.ViewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
 
-            _OutputWrapper.WriteOutput(0, 1, "Searching...", ConsoleColor.DarkGray);                                                                                   
+            _outputWrapper.WriteOutput(0, 1, "Searching...", ConsoleColor.DarkGray);                                                                                   
 
-            Stopwatch stopwatch = new Stopwatch();
+            var stopwatch = new Stopwatch();
             stopwatch.Start();
-            _UdpListener._closed = false;
-            _UdpListener.SendRequest();
+            _udpListener._closed = false;
+            _udpListener.SendRequest();
 
             while (stopwatch.ElapsedMilliseconds < 3000)
             {
-                if (_UdpListener._DataList.Count > 0)
+                if (_udpListener._dataList.Count > 0)
                 {
-                    communication.AddPackage(_UdpListener._DataList.First());
-                    _UdpListener._DataList.RemoveAt(0);
+                    communication.AddPackage(_udpListener._dataList.First());
+                    _udpListener._dataList.RemoveAt(0);
                 }
             }
             stopwatch.Stop();
-            _UdpListener.StopListening();
-            _OutputWrapper.Clear();
-            Searched = true;
-            Declined = false;
-            _inputView.viewEnabled = true;
-            if(_ActionHandler._serverTable.Length != 0)
+            _udpListener.StopListening();
+            _outputWrapper.Clear();
+            _searched = true;
+            _declined = false;
+            _inputView.ViewEnabled = true;
+            if(_actionHandler._serverTable.Length != 0)
             _inputView.SetInputLine("Enter the server number you want to connect to.",49);
-            
         }
 
         public void OnCloseGameAction(string obj,ICommunication communication)
         {
-            if (!isConnected)
+            if (!_isConnected)
             {
                 Thread.Sleep(5000);
                 _client.CloseClient();
@@ -216,28 +208,22 @@ namespace TCP_Client.Actions
             communication.Send(_clientDataPackageProvider.GetPackage("CloseGame"));
             Thread.Sleep(5000);
             _client.CloseClient();
-
         }
 
         public void OnStartGameAction(string arg1, ICommunication communication)
         {
-            if (isConnected)
-            {               
+            if (_isConnected)
                 communication.Send(_clientDataPackageProvider.GetPackage("StartGame"));
-            }
         }
 
         public void OnClassicAction(string input, ICommunication communication)
         {
-            if (isConnected)
+            if (_isConnected)
             {
-                _mainMenuOutputView.viewEnabled = false;
-
+                _mainMenuOutputView.ViewEnabled = false;
                 communication.Send(_clientDataPackageProvider.GetPackage("Classic"));
             }
         }
         #endregion
-
-
     }
 }

@@ -97,6 +97,7 @@
     <Compile Include="UDP\UdpBroadcast.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".editorconfig" />
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>

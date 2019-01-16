@@ -7,6 +7,6 @@ namespace TCP_Client.DTO
 {
     public class DeclineDTO : IProtocol
     {
-        public string _SmallUpdate;
+        public string _smallUpdate;
     }
 }

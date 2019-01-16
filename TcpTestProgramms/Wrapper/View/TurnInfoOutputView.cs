@@ -19,7 +19,7 @@ namespace Wrapper.View
         private int _posY;
 
         private string _content;
-        public bool viewEnabled { get; set; }
+        public bool ViewEnabled { get; set; }
 
         public TurnInfoOutputView(IOutputWrapper outputWrapper, int posX, int posY)
         {

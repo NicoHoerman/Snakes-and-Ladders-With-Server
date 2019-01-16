@@ -4,7 +4,7 @@ namespace EandE_ServerModel.EandE.EandEContracts
     public interface IGame
     {
 
-        bool isRunning { get; set; }
+        bool _isRunning { get; set; }
 
         IRules Rules { get; }
         IBoard Board { get; set; }

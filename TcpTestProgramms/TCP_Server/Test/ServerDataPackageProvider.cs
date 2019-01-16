@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using EandE_ServerModel.EandE.GameAndLogic;
+using Newtonsoft.Json;
 using Shared.Communications;
 using Shared.Enums;
 using System;
@@ -12,41 +13,38 @@ namespace TCP_Server.Test
 {
     public class ServerDataPackageProvider
     {
-        Dictionary<string, DataPackage> _DataPackages;
-        private DataPackage accpetedInfoPackage;
-        private DataPackage declinedInfoPackage;
-        private DataPackage lobbyDisplayPackage;
-        private DataPackage declineUpdatePackage;
-        private DataPackage validationRequestPackage;
+        Dictionary<string, DataPackage> _dataPackages;
         private ServerInfo _serverInfo;
+        private Game _game;
 
-        private string servername = string.Empty;
-        private int currentplayer;
-        private int maxplayer;
-
-        public ServerDataPackageProvider(ServerInfo serverInfo)
+        public ServerDataPackageProvider(ServerInfo serverInfo, Game game)
         {
             _serverInfo = serverInfo;
-            
-            accpetedInfoPackage  = new DataPackage
+            _game = game;
+
+            #region StaticDataPackages
+
+            var accpetedInfoPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.AcceptInfo,
                 Payload = JsonConvert.SerializeObject(new PROT_ACCEPT
                 {
-                    _SmallUpdate = "You are connected to the Server and in the Lobby "
+                    _smallUpdate = "You are connected to the Server and in the Lobby "
                 })
             };
             accpetedInfoPackage.Size = accpetedInfoPackage.ToByteArray().Length;
-            declinedInfoPackage  = new DataPackage
+
+            var declinedInfoPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.DeclineInfo,
                 Payload = JsonConvert.SerializeObject(new PROT_DECLINE
                 {
-                    _SmallUpdate = "You got declind. Lobby is probably full"
+                    _smallUpdate = "You got declind. Lobby is probably full"
                 })
             };
             declinedInfoPackage.Size = declinedInfoPackage.ToByteArray().Length;
-            declineUpdatePackage = new DataPackage
+
+            var declineUpdatePackage = new DataPackage
             {
                 Header = ProtocolActionEnum.UpdateView,
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE
@@ -56,7 +54,7 @@ namespace TCP_Server.Test
             };
             declineUpdatePackage.Size = declineUpdatePackage.ToByteArray().Length;
 
-            validationRequestPackage = new DataPackage
+            var validationRequestPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.ValidationRequest,
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
@@ -69,6 +67,47 @@ namespace TCP_Server.Test
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
             };
             validationAcceptedPackage.Size = validationAcceptedPackage.ToByteArray().Length;
+
+            var playerDataPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.UpdateView,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                {
+                    _infoOutput = "Master is starting the Game"
+                })
+            };
+            playerDataPackage.Size = playerDataPackage.ToByteArray().Length;
+
+            var notEnoughDP = new DataPackage
+            {
+                Header = ProtocolActionEnum.UpdateView,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                {
+                    _infoOutput = "Not enough Players to start the game "
+                })
+            };
+            notEnoughDP.Size = notEnoughDP.ToByteArray().Length;
+
+            var onlyMasterStartDP = new DataPackage
+            {
+
+                Header = ProtocolActionEnum.UpdateView,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                {
+                    _infoOutput = "Only the Master can start the Game"
+                })
+            };
+            onlyMasterStartDP.Size = onlyMasterStartDP.ToByteArray().Length;
+
+            var onlyMasterRuleDP = new DataPackage
+            {
+                Header = ProtocolActionEnum.UpdateView,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                {
+                    _infoOutput = "Only the Master can set the rules"
+                })
+            };
+            onlyMasterRuleDP.Size = onlyMasterRuleDP.ToByteArray().Length;
 
             var lobbyCheckFailedPackage = new DataPackage
             {
@@ -91,28 +130,36 @@ namespace TCP_Server.Test
             };
             serverStartingGamePackage.Size = serverStartingGamePackage.ToByteArray().Length;
 
-            _DataPackages = new Dictionary<string, DataPackage>
+            #endregion
+
+            _dataPackages = new Dictionary<string, DataPackage>
             {
                 {"AcceptedInfo" ,  accpetedInfoPackage },
                 {"DeclinedInfo" ,  declinedInfoPackage },
                 {"DeclineUpdate", declineUpdatePackage },
                 {"ValidationRequest", validationRequestPackage },
                 {"ValidationAccepted", validationAcceptedPackage },
+                {"PlayerData",playerDataPackage },
+                {"NotEnoughInfo",notEnoughDP },
+                {"OnlyMasterStartInfo",onlyMasterStartDP},
+                {"OnlyMasterRuleInfo",onlyMasterRuleDP},
                 {"LobbyCheckFailed", lobbyCheckFailedPackage },
                 {"LobbyCheckSuccessful", lobbyCheckSuccessfulPackage },
                 {"ServerStartingGame", serverStartingGamePackage }
             };
         }
 
-        public DataPackage GetPackage(string key) => _DataPackages[key];
+        public DataPackage GetPackage(string key) => _dataPackages[key];
+
+        #region DataPackages
 
         public DataPackage LobbyDisplay()
         {
-            servername = _serverInfo.lobbylist[0]._LobbyName;
-            currentplayer = _serverInfo.lobbylist[0]._CurrentPlayerCount;
-            maxplayer = _serverInfo.lobbylist[0]._MaxPlayerCount;
+            var servername = _serverInfo._lobbylist[0]._LobbyName;
+            var currentplayer = _serverInfo._lobbylist[0]._CurrentPlayerCount;
+            var maxplayer = _serverInfo._lobbylist[0]._MaxPlayerCount;
 
-            lobbyDisplayPackage = new DataPackage
+            var lobbyDisplayPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.UpdateView,
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE
@@ -125,8 +172,41 @@ namespace TCP_Server.Test
             lobbyDisplayPackage.Size = lobbyDisplayPackage.ToByteArray().Length;
             return lobbyDisplayPackage;
         }
-       
-    }
 
-    
+        public DataPackage BoardInfo()
+        {
+            var boardPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.UpdateView,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                {
+                    _gameInfoOutput = _game.State.GameInfoOuptput,
+                    _boardOutput = _game.State.BoardOutput,
+                    _error = _game.State.Error,
+                    _lastinput = _game.State.Lastinput,
+                    _turnInfoOutput = _game.State.TurnInfoOutput,
+                    _afterTurnOutput = _game.State.AfterTurnOutput,
+                })
+            };
+            boardPackage.Size = boardPackage.ToByteArray().Length;
+            return boardPackage;
+        }
+
+        public DataPackage GameEndedDisplay()
+        {
+            var gameEndedPackage = new DataPackage
+            {
+                Header = ProtocolActionEnum.UpdateView,
+                Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+                {
+                    _finishinfo = _game.State.FinishInfo,
+                    _finishskull1 = _game.State.Finishskull1,
+                    _finishskull2 = _game.State.Finishskull2
+                })
+            };
+            gameEndedPackage.Size = gameEndedPackage.ToByteArrayUTF().Length;
+            return gameEndedPackage;
+            #endregion
+        }
+    }
 }

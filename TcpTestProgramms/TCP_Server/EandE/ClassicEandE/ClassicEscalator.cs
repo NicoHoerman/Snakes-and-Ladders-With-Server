@@ -5,10 +5,10 @@ namespace EandE_ServerModel.EandE.ClassicEandE
 
     public class ClassicEscalator : IEntity
     {
-        public int top_location { get; set; }
-        public int bottom_location { get; set; }
+        public int Top_location { get; set; }
+        public int Bottom_location { get; set; }
 
-        public EntityType type => EntityType.Escalator;
+        public EntityType Type => EntityType.Escalator;
 
         public long Id { get; set; }
 
@@ -19,12 +19,12 @@ namespace EandE_ServerModel.EandE.ClassicEandE
 
         public void SetPawn(IPawn pawn)
         {
-          pawn.location = top_location;
+          pawn.Location = Top_location;
         }
 
         public bool OnSamePositionAs(IPawn pawn)
         {
-          return bottom_location == pawn.location ? true : false;
+          return Bottom_location == pawn.Location ? true : false;
         }
     }
 }

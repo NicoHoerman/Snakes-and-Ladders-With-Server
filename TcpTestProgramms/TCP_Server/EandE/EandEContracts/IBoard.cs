@@ -4,7 +4,7 @@ namespace EandE_ServerModel.EandE.EandEContracts
 {
     public interface IBoard
     {
-        int size { get; }
+        int Size { get; }
         int MaxWidth { get; }
         List<IPawn> Pawns { get; set; }
         List<IEntity> Entities { get; set; }

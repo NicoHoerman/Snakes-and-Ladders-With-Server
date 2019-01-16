@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Net.Sockets;
 using Shared.Communications;
@@ -21,15 +21,11 @@ namespace TCP_Server.Test
 
         public void Execute(ICommunication communication)
         {
-            _serverInfo.lobbylist[0]._CurrentPlayerCount++;
-            DataPackage acceptedInfoPackage = _dataPackageProvider.GetPackage("AcceptedInfo");
-            communication.Send(acceptedInfoPackage);
-
-            DataPackage lobbyDisplayPackage = _dataPackageProvider.LobbyDisplay();
+            _serverInfo._lobbylist[0]._CurrentPlayerCount++;
+            communication.Send(_dataPackageProvider.GetPackage("AcceptedInfo"));
+            
             for (int i = 0; i <= _serverInfo._communications.Count - 1; i++)
-            {
-                _serverInfo._communications[i].Send(lobbyDisplayPackage);
-            }
+                _serverInfo._communications[i].Send(_dataPackageProvider.LobbyDisplay());
         }
 	}
 }

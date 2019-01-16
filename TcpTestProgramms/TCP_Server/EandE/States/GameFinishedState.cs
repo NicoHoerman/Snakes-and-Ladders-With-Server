@@ -99,7 +99,7 @@ namespace EandE_ServerModel.EandE.States
             Input = input;
         }
 
-        public void reactivateViews(ICommunication communication)
+        public void ReactivateViews(ICommunication communication)
         {
             var reactivationPackage = new DataPackage
             {

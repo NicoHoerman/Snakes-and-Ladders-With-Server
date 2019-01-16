@@ -1,33 +1,38 @@
-﻿using Shared.Enums;
+﻿using EandE_ServerModel.EandE.GameAndLogic;
+using Shared.Enums;
 using System;
+using System.Threading.Tasks;
 using TCP_Server.Actions;
 
 namespace TCP_Server.Test
 {
     public class StateMachine
     {
-        private ServerInfo _serverinfo;
-        private bool isRunning;
-        private ServerActions _ActionHandler;
+        private bool _isRunning;
 
-        public StateMachine(ServerInfo serverinfo,ServerActions serverActions)
+        private ServerInfo _serverinfo;
+        private ServerActions _actionHandler;
+        private Game _game;
+
+        public StateMachine(ServerInfo serverinfo,ServerActions serverActions, Game game)
         {
             _serverinfo = serverinfo;
-            _ActionHandler = serverActions;
+            _actionHandler = serverActions;
+            _game = game;
         }
 
         public void Start()
         {
-            isRunning = true;
+            _isRunning = true;
             Core.State = StateEnum.ServerRunningState;
 
-            while (isRunning)
+            while (_isRunning)
             {
                 switch (Core.State)
                 {
                     case StateEnum.ServerRunningState:
-                         _serverinfo.lobbylist.Add(new Lobby("name", 2, 8080));
-                         _ActionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer, _ActionHandler.OnValidationAction);
+                         _actionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer, _actionHandler.OnValidationAction);
+                         _serverinfo._lobbylist.Add(new Lobby("Nicos_TestLobby", 2, 8080, _game));
                         while (Core.State == StateEnum.ServerRunningState)
                         { }
                         break;
@@ -39,6 +44,7 @@ namespace TCP_Server.Test
                         
                         break;
                     case StateEnum.ServerEndingState:
+
                         break;
                     default:
                         break;
@@ -47,22 +53,38 @@ namespace TCP_Server.Test
         }
         private void ExecuteLobbyState()
         {
-            _ActionHandler._protocolActions.Add(ProtocolActionEnum.StartGame
-                             , _ActionHandler.OnStartGameAction);
-            _ActionHandler._protocolActions.Add(ProtocolActionEnum.Rule,
-                _ActionHandler.OnRuleAction);
+            _actionHandler._protocolActions.Clear();
+            _actionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer,
+                _actionHandler.OnValidationAction);
+            _actionHandler._protocolActions.Add(ProtocolActionEnum.Rule,
+                _actionHandler.OnRuleAction);
+            while (_actionHandler._ruleSet == false)
+            { }
+
+            _actionHandler._protocolActions.Clear();
+            _actionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer,
+                _actionHandler.OnValidationAction);
+            _actionHandler._protocolActions.Add(ProtocolActionEnum.StartGame,
+               _actionHandler.OnStartGameAction);
+            while (_actionHandler._gameStarted == false)
+            { }
+
+            Task.Run(() => _serverinfo._lobbylist[0].RunGame());
+            //_game.State.SetInput("/classic");
             while (Core.State == StateEnum.LobbyState)
             { }
-            _ActionHandler._protocolActions.Clear();
+            _actionHandler._protocolActions.Clear();
         }
         private void ExecuteGameRunningState()
         {
-            _ActionHandler._protocolActions.Add(ProtocolActionEnum.RollDice
-                , _ActionHandler.OnRollDiceAction);
-            _ActionHandler._protocolActions.Add(ProtocolActionEnum.GetHelp
-                , _ActionHandler.OnGetHelpAction);
-            _ActionHandler._protocolActions.Add(ProtocolActionEnum.CloseGame
-                , _ActionHandler.OnCloseGameAction);
+            _actionHandler._protocolActions.Add(ProtocolActionEnum.ValidationAnswer,
+                _actionHandler.OnValidationAction);
+            _actionHandler._protocolActions.Add(ProtocolActionEnum.RollDice
+                , _actionHandler.OnRollDiceAction);
+            _actionHandler._protocolActions.Add(ProtocolActionEnum.GetHelp
+                , _actionHandler.OnGetHelpAction);
+            _actionHandler._protocolActions.Add(ProtocolActionEnum.CloseGame
+                , _actionHandler.OnCloseGameAction);
 
             while (Core.State == StateEnum.GameRunningState)
             { }

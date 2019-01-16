@@ -5,11 +5,11 @@ namespace EandE_ServerModel.EandE.ClassicEandE
 
     public class ClassicPawn : IPawn
     {
-        public int location { get; set; }
-        public int color { get; set; }
-        public int playerID { get; set; }
+        public int Location { get; set; }
+        public int Color { get; set; }
+        public int PlayerID { get; set; }
         public long Id { get; set; }
-        public EntityType type => EntityType.Pawn;
+        public EntityType Type => EntityType.Pawn;
 
         public ClassicPawn()
         {
@@ -17,7 +17,7 @@ namespace EandE_ServerModel.EandE.ClassicEandE
 
         public void MovePawn(int fieldsToMove)
         {
-            location += fieldsToMove;
+            Location += fieldsToMove;
         }
     }
 }

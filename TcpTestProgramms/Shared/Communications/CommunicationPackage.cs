@@ -10,17 +10,17 @@ namespace Shared.Communications
 
     public class CommunicationPackage : IPackage
     {
-        private static int _idCounter;
+        private static int s_idCounter;
         public int Id { get; }
-        public DataPackage data { get; set; }
-        public ICommunication communication { get; set; }
+        public DataPackage Data { get; set; }
+        public ICommunication Communication { get; set; }
 
         public CommunicationPackage(ICommunication _communication, DataPackage _data)
         {
-            Id = _idCounter;
-            _idCounter++;
-            communication = _communication;
-            data = _data;
+            Id = s_idCounter;
+            s_idCounter++;
+            Communication = _communication;
+            Data = _data;
         }
     }
 }

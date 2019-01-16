@@ -9,13 +9,13 @@ namespace TCP_Server
     public class ServerInfo
     {
         public List<ICommunication> _communications { get; set; }
-        public List<ICommunication> communicationsToRemove { get; set; }
-        public List<Lobby> lobbylist { get; set; }
+        public List<ICommunication> _communicationsToRemove { get; set; }
+        public List<Lobby> _lobbylist { get; set; }
         public ServerInfo()
         {
             _communications = new List<ICommunication>();
-            communicationsToRemove = new List<ICommunication>();
-            lobbylist = new List<Lobby>();
+            _communicationsToRemove = new List<ICommunication>();
+            _lobbylist = new List<Lobby>();
         }
 
         public void PrintPlayerIP()
