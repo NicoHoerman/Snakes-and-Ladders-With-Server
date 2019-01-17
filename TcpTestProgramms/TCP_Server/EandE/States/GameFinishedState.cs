@@ -1,5 +1,4 @@
 ﻿using EandE_ServerModel.EandE.EandEContracts;
-using EandE_ServerModel.EandE.StuffFromEandE;
 using System;
 using System.Diagnostics;
 
@@ -8,7 +7,6 @@ namespace EandE_ServerModel.EandE.States
 	public class GameFinishedState : IState
     {
         private readonly IGame _game;
-        private readonly ISourceWrapper _sourceWrapper;
         public bool _isFinished;
 
         #region Properties
@@ -17,18 +15,13 @@ namespace EandE_ServerModel.EandE.States
 		public string TurnStateProp { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 		#endregion
 
-		public GameFinishedState(IGame game, ISourceWrapper sourceWrapper)
+		public GameFinishedState(IGame game)
         {
             _game = game;
-            _sourceWrapper = sourceWrapper;
             _isFinished = true;
         }
 
-        public GameFinishedState(IGame game)
-            : this(game, new SourceWrapper())
-        { }
-
-        public void Execute()
+		public void Execute()
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();

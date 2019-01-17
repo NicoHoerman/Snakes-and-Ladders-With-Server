@@ -3,7 +3,9 @@ using System.Linq;
 using System.Net.Sockets;
 using Shared.Communications;
 using Shared.Contract;
+using TCP_Server.DataProvider;
 using TCP_Server.Enum;
+using TCP_Server.Support;
 
 namespace TCP_Server.Test
 {

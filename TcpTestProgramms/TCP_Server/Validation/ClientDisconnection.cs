@@ -1,16 +1,13 @@
 ﻿using EandE_ServerModel.EandE.GameAndLogic;
-using Shared.Communications;
 using Shared.Contract;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TCP_Server.UDP;
+using TCP_Server.DataProvider;
+using TCP_Server.Enum;
+using TCP_Server.Support;
 
 namespace TCP_Server.Test
 {
-    public class ClientDisconnection
+	public class ClientDisconnection
     {
         public Game _game;
         public ServerInfo _serverInfo;

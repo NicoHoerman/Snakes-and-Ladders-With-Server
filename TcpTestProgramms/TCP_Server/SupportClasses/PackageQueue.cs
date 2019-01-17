@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace TCP_Server
+namespace TCP_Server.Support
 {
     public class PackageQueue
     {

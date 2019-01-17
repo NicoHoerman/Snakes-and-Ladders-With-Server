@@ -91,11 +91,6 @@ namespace Shared.Communications
             }
         }
 
-        public void ReceiveCallback(Action<DataPackage> receiveCallback)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Send(DataPackage data)
         {
 			byte[] bytesToSend = data.ToByteArrayUTF();

@@ -1,14 +1,11 @@
 ﻿using EandE_ServerModel.EandE.EandEContracts;
 using EandE_ServerModel.EandE.GameAndLogic;
-using EandE_ServerModel.EandE.StuffFromEandE;
 
 namespace EandE_ServerModel.EandE.States
 {
 	public class GameRunningState : IState
 	{
 		private readonly IGame _game;
-		private readonly ISourceWrapper _sourceWrapper;
-		private readonly DataProvider _dataProvider;
 		private readonly Logic _logic;
 		static public bool _isRunning;
 
@@ -18,17 +15,15 @@ namespace EandE_ServerModel.EandE.States
 		public string TurnStateProp { get; set; }
 		#endregion
 
-		public GameRunningState(IGame game, ISourceWrapper sourceWrapper, DataProvider dataProvider, Logic logic)
+		public GameRunningState(IGame game, Logic logic)
 		{
 			_game = game;
-			_sourceWrapper = sourceWrapper;
-			_dataProvider = dataProvider;
 			_logic = logic;
 			_isRunning = true;
 		}
 
 		public GameRunningState(IGame game)
-			: this(game, new SourceWrapper(), new DataProvider(), new Logic(game))
+			: this(game, new Logic(game))
 		{ }
 
 		public void Execute()

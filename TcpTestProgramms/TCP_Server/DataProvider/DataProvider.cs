@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
-namespace EandE_ServerModel.EandE.StuffFromEandE
-{
+namespace EandE_ServerModel.DataProvider
+{ 
     public class DataProvider
     {
         private Dictionary<string, string> _text = new Dictionary<string, string>

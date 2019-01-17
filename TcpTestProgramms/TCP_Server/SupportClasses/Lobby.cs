@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel;
 
-namespace TCP_Server.Test
+namespace TCP_Server.Support
 {
     public class Lobby
     {

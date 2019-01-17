@@ -106,44 +106,22 @@ namespace TCP_Client.Actions
         public void OnUpdateAction(DataPackage data, ICommunication communication)
         {
             var updatedView = MapProtocolToDto<UpdateDTO>(data);
+
+			//updatedView._commandList;
+			//updatedView._diceResult;
+			//updatedView._infoOutput;
+			//updatedView._lastPlayer;
+			//updatedView._lobbyDisplay;
+			//updatedView._turnstate;
+
+
+
+
            
-            if(!(updatedView._mainMenuOutput == null || updatedView._mainMenuOutput.Length == 0))
-            {
-                _mainMenuOutputView.ViewEnabled = true;
-                _mainMenuOutputView.SetUpdateContent(updatedView._mainMenuOutput);
-            }
-            //_lobbyInfoDisplayView.viewEnabled = updatedView._lobbyDisplay != null && updatedView._lobbyDisplay.Length != 0; ;
-            //_lobbyInfoDisplayView.SetUpdateContent(updatedView._lobbyDisplay);
             if (!(updatedView._lobbyDisplay == null || updatedView._lobbyDisplay.Length == 0))
             {
                 _lobbyInfoDisplayView.ViewEnabled = true;
                 _lobbyInfoDisplayView.SetUpdateContent(updatedView._lobbyDisplay);
-            }
-
-            if (!(updatedView._boardOutput == null || updatedView._boardOutput.Length == 0))
-            {
-                _boardOutputView.ViewEnabled = true;
-                _boardOutputView.SetUpdateContent(updatedView._boardOutput);
-            }      
-            if(!(updatedView._error == null || updatedView._error.Length == 0))
-            {
-                _errorView.ViewEnabled = true;
-                _errorView.SetContent(updatedView._lastinput, updatedView._error);
-            }
-            if(!(updatedView._gameInfoOutput == null || updatedView._gameInfoOutput.Length == 0))
-            {
-                _gameInfoOutputView.ViewEnabled = true;
-                _gameInfoOutputView.SetUpdateContent(updatedView._gameInfoOutput);
-            }
-            if(!(updatedView._turnInfoOutput == null || updatedView._turnInfoOutput.Length == 0))
-            {
-                _turnInfoOutputView.ViewEnabled = true;
-                _turnInfoOutputView.SetUpdateContent(updatedView._turnInfoOutput);
-            }
-            if(!(updatedView._afterTurnOutput == null || updatedView._afterTurnOutput.Length == 0))
-            {
-                _afterTurnOutputView.ViewEnabled = true;
-                _afterTurnOutputView.SetUpdateContent(updatedView._afterTurnOutput);
             }
             if(!(updatedView._commandList == null || updatedView._commandList.Length == 0))
             {
@@ -155,25 +133,8 @@ namespace TCP_Client.Actions
                 _infoOutputView.ViewEnabled = true;
                 _infoOutputView.SetUpdateContent(updatedView._infoOutput);
             }
-            if(!(updatedView._finishinfo == null || updatedView._finishinfo.Length == 0))
-            {
-                DisableViews(); 
-                
-                _finishInfoView.ViewEnabled = true;
-                _finishInfoView.SetUpdateContent(updatedView._finishinfo);
-            }
-            if(!(updatedView._finishskull1 == null || updatedView._finishskull1.Length == 0))
-            {
-                _finishSkull1View.ViewEnabled = true;
-                _finishSkull3View.ViewEnabled = true;
-                _finishSkull1View.SetUpdateContent(updatedView._finishskull1);
-                _finishSkull3View.SetUpdateContent(updatedView._finishskull1);
-            }
-            if(!(updatedView._finishskull2 == null || updatedView._finishskull2.Length == 0))
-            {
-                _finishSkull2View.ViewEnabled = true;
-                _finishSkull2View.SetUpdateContent(updatedView._finishskull2);
-            }
+
+
         }
 
         private List<IPEndPoint> _serverEndpoints = new List<IPEndPoint>(); 

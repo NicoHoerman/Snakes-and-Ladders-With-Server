@@ -1,6 +1,5 @@
 ﻿using EandE_ServerModel.EandE.ClassicEandE;
 using EandE_ServerModel.EandE.EandEContracts;
-using EandE_ServerModel.EandE.StuffFromEandE;
 using EandE_ServerModel.EandE.XML_Config;
 using System;
 using System.Collections.Generic;
@@ -9,13 +8,10 @@ using System.Threading;
 namespace EandE_ServerModel.EandE.States
 {
 
-    public class MainMenuState : IState
+	public class MainMenuState : IState
     {
         private readonly IGame _game;
         private readonly IConfigurationProvider _configurationProvider;
-        private readonly ISourceWrapper _sourceWrapper;
-        private readonly DataProvider _dataProvider;
-
         private bool _inMenu;
         private string _mainMenuOutput = string.Empty;
         public string Input { get; set; } = string.Empty;
@@ -35,31 +31,22 @@ namespace EandE_ServerModel.EandE.States
         public static ManualResetEvent StateFinished = new ManualResetEvent(false);
 
 
-        public MainMenuState(
-            IGame game, 
-            IConfigurationProvider configurationProvider, 
-            ISourceWrapper sourceWrapper,
-            DataProvider dataProvider)
-        {
+        public MainMenuState(IGame game, IConfigurationProvider configurationProvider)
+		{
             _game = game;
             _configurationProvider = configurationProvider;
-            _sourceWrapper = sourceWrapper;
-            _dataProvider = dataProvider;
             Input = string.Empty;
             _inMenu = true;
         }
 
-        public MainMenuState(IGame game)
-            : this(game, new ConfigurationProvider(), new SourceWrapper(), new DataProvider())
-
+		public MainMenuState(IGame game)
+			: this(game, new ConfigurationProvider())
         { }
 
         public void Execute()
         {
-            while (_inMenu)
-            {
-
-            }
+			while (_inMenu)
+			{ }
         }
 
         public void OnCloseGameCommand()

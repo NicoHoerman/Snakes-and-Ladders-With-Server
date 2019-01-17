@@ -2,16 +2,13 @@
 using Newtonsoft.Json;
 using Shared.Communications;
 using Shared.Enums;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TCP_Server.PROTOCOLS;
+using TCP_Server.Support;
 
-namespace TCP_Server.Test
+namespace TCP_Server.DataProvider
 {
-    public class ServerDataPackageProvider
+	public class ServerDataPackageProvider
     {
         Dictionary<string, DataPackage> _dataPackages;
         private ServerInfo _serverInfo;

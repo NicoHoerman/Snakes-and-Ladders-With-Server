@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TCP_Server.Actions;
 
-namespace TCP_Server
+namespace TCP_Server.Support
 {
     public class PackageProcessing
     {

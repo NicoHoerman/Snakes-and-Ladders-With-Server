@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TCP_Server.Test
+namespace TCP_Server.Enum
 {
 
     public enum ValidationEnum

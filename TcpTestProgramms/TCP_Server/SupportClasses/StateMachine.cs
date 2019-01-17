@@ -3,8 +3,9 @@ using Shared.Enums;
 using System;
 using System.Threading.Tasks;
 using TCP_Server.Actions;
+using TCP_Server.Enum;
 
-namespace TCP_Server.Test
+namespace TCP_Server.Support
 {
     public class StateMachine
     {
