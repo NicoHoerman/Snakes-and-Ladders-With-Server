@@ -80,7 +80,6 @@
     <Compile Include="PROTOCOLS\PROT_ACCEPT.cs" />
     <Compile Include="PROTOCOLS\PROT_BROADCAST.cs" />
     <Compile Include="PROTOCOLS\PROT_DECLINE.cs" />
-    <Compile Include="PROTOCOLS\PROT_HELPTEXT.cs" />
     <Compile Include="PROTOCOLS\PROT_RESTART.cs" />
     <Compile Include="PROTOCOLS\PROT_UPDATE.cs" />
     <Compile Include="Server.cs" />

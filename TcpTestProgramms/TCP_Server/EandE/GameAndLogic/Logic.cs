@@ -66,7 +66,6 @@ namespace EandE_ServerModel.EandE.GameAndLogic
 			return CurrentPlayerID - 1;
 		}
 
-
 		public TurnState MakeTurn()
         {
             try

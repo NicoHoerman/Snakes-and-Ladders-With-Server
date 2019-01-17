@@ -1,9 +1,6 @@
 ﻿using EandE_ServerModel.EandE.EandEContracts;
 using EandE_ServerModel.EandE.GameAndLogic;
 using EandE_ServerModel.EandE.StuffFromEandE;
-using System;
-using System.Threading;
-using TCP_Server.Actions;
 
 namespace EandE_ServerModel.EandE.States
 {
@@ -17,6 +14,8 @@ namespace EandE_ServerModel.EandE.States
 
 		#region Properties
 		public int LastPlayer { get; set; }
+		public int CurrentPlayer { get; set; }
+		public string TurnStateProp { get; set; }
 		#endregion
 
 		public GameRunningState(IGame game, ISourceWrapper sourceWrapper, DataProvider dataProvider, Logic logic)
@@ -37,13 +36,24 @@ namespace EandE_ServerModel.EandE.States
 			while (_isRunning) { }
 		}
 
-		public void OnRollDiceCommand()
+		private void OnRollDiceCommand()
 		{
 			var turnstate = _logic.MakeTurn();
-			if (turnstate == TurnState.GameFinished)
+			CurrentPlayer = _logic.CurrentPlayerID;
+			LastPlayer = _logic.LastPlayer();
+			switch (turnstate)
 			{
-				_isRunning = false;
-				_game.SwitchState(new GameFinishedState(_game));
+				case TurnState.TurnFinished:
+					TurnStateProp = turnstate.ToString();
+					break;
+				case TurnState.PlayerExceedsBoard:
+					TurnStateProp = turnstate.ToString();
+					break;
+				case TurnState.GameFinished:
+					TurnStateProp = turnstate.ToString();
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -58,16 +68,24 @@ namespace EandE_ServerModel.EandE.States
 				case "close":
 					OnCloseGameCommand();
 					break;
-
+				case "finish":
+					FinishGame();
+					break;
 				default:
 					break;
 			}
 		}
 
-		public void OnCloseGameCommand()
+		private void OnCloseGameCommand()
 		{
 			_isRunning = false;
 			_game.SwitchState(new GameEndingState(_game));
+		}
+
+		private void FinishGame()
+		{
+			_isRunning = false;
+			_game.SwitchState(new GameFinishedState(_game));
 		}
 	}
 }

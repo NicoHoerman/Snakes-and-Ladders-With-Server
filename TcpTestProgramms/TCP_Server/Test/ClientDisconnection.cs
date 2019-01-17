@@ -37,7 +37,7 @@ namespace TCP_Server.Test
             RemoveFromList();
 
             if (_game._isRunning)
-                _game.State.SetInput("/closegame");
+                _game.State.ExecuteStateAction("close");
         }
 
         private void RemoveFromList()

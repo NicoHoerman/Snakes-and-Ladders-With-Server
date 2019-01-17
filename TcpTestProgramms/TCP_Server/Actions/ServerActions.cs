@@ -15,7 +15,6 @@ namespace TCP_Server.Actions
 {
     public class ServerActions
     {
-        private int _currentplayer;
         public bool _gameStarted = false;
         public bool _ruleSet = false;
         
@@ -24,7 +23,6 @@ namespace TCP_Server.Actions
         private Game _game;
         private ClientDisconnection _disconnectionHandler;
         private ServerDataPackageProvider _dataPackageProvider;
-        private GameFinishedState _finishedState;
 
         public static ManualResetEvent TurnFinished = new ManualResetEvent(false);
 
@@ -36,9 +34,6 @@ namespace TCP_Server.Actions
             _serverInfo = serverInfo;
             _game = game;
             this._dataPackageProvider = _dataPackageProvider;
-
-			//_currentplayer = game.State.CurrentPlayer;
-			_finishedState = new GameFinishedState(game, _currentplayer);
         }
 
         public void ExecuteDataActionFor(ICommunication communication, DataPackage data)
@@ -71,7 +66,6 @@ namespace TCP_Server.Actions
             }
             else
                 communication.Send(_dataPackageProvider.GetPackage("OnlyMasterStartInfo"));
-            //_game.State.ClearProperties(); 
         }
         public void OnRuleAction(ICommunication communication, DataPackage data)
         {
@@ -84,31 +78,28 @@ namespace TCP_Server.Actions
         public void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
 			int currentCommunication = _serverInfo._communications.FindIndex(x => x == communication)+1;
-            //if (_game.State.CurrentPlayer ==  currentCommunication)
-            //{
+            if (_game.State.CurrentPlayer ==  currentCommunication)
+            {
 				_game.State.ExecuteStateAction("rolldice");
 
                 communication.Send(_dataPackageProvider.TurnInfo());
+            }
+            else
+               communication.Send(_dataPackageProvider.GetPackage("NotYourTurn"));
 
-            /* }
-             else
-             {
-                 var dataPackage = new DataPackage
-                 {
-                     Header = ProtocolActionEnum.UpdateView,
-                     Payload = JsonConvert.SerializeObject(new PROT_UPDATE
-                     {
-                         _infoOutput = "Not your Turn"
-                     })
-                 };
-                 dataPackage.Size = dataPackage.ToByteArray().Length;
-
-                 communication.Send(dataPackage);
-             }*/
+			if (_game.State.TurnStateProp == "GameFinished")
+				OnGameFinishedAction(communication, data);
         }
 
-        public void OnCloseGameAction(ICommunication communication, DataPackage data)
+		private void OnGameFinishedAction(ICommunication communication, DataPackage data)
+		{
+			_game.State.ExecuteStateAction("finished");
+			communication.Send(_dataPackageProvider.TurnInfo());
+		}
+
+		public void OnCloseGameAction(ICommunication communication, DataPackage data)
         {
+			_game.State.ExecuteStateAction("close");
             _disconnectionHandler.DisconnectClient();
 		}
 

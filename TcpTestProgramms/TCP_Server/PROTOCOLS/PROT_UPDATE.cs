@@ -9,5 +9,6 @@ namespace TCP_Server.PROTOCOLS
 		public string _commandList;
 		public int _diceResult;
 		public int _lastPlayer;
+		public string _turnstate;
     }
 }

@@ -130,22 +130,41 @@ namespace TCP_Server.Test
             };
             serverStartingGamePackage.Size = serverStartingGamePackage.ToByteArray().Length;
 
-            #endregion
+			var notyourTurnPackage = new DataPackage
+			{
+				Header = ProtocolActionEnum.UpdateView,
+				Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+				{
+					_infoOutput = "Not your Turn"
+				})
+			};
+			notyourTurnPackage.Size = notyourTurnPackage.ToByteArray().Length;
 
-            _dataPackages = new Dictionary<string, DataPackage>
+			var reactivationPackage = new DataPackage
+			{
+				Header = ProtocolActionEnum.Restart,
+				Payload = JsonConvert.SerializeObject(new PROT_RESTART { })
+			};
+			reactivationPackage.Size = reactivationPackage.ToByteArray().Length;
+
+			#endregion
+
+			_dataPackages = new Dictionary<string, DataPackage>
             {
-                {"AcceptedInfo" ,  accpetedInfoPackage },
-                {"DeclinedInfo" ,  declinedInfoPackage },
-                {"DeclineUpdate", declineUpdatePackage },
-                {"ValidationRequest", validationRequestPackage },
-                {"ValidationAccepted", validationAcceptedPackage },
-                {"PlayerData",playerDataPackage },
-                {"NotEnoughInfo",notEnoughDP },
-                {"OnlyMasterStartInfo",onlyMasterStartDP},
-                {"OnlyMasterRuleInfo",onlyMasterRuleDP},
-                {"LobbyCheckFailed", lobbyCheckFailedPackage },
-                {"LobbyCheckSuccessful", lobbyCheckSuccessfulPackage },
-                {"ServerStartingGame", serverStartingGamePackage }
+                {"AcceptedInfo" ,		accpetedInfoPackage },
+                {"DeclinedInfo" ,		declinedInfoPackage },
+                {"DeclineUpdate",		declineUpdatePackage },
+                {"ValidationRequest",	validationRequestPackage },
+                {"ValidationAccepted",	validationAcceptedPackage },
+                {"PlayerData",			playerDataPackage },
+                {"NotEnoughInfo",		notEnoughDP },
+                {"OnlyMasterStartInfo",	onlyMasterStartDP},
+                {"OnlyMasterRuleInfo",	onlyMasterRuleDP},
+                {"LobbyCheckFailed",	lobbyCheckFailedPackage },
+                {"LobbyCheckSuccessful",lobbyCheckSuccessfulPackage },
+                {"ServerStartingGame", serverStartingGamePackage },
+				{"NotYourTurn" , notyourTurnPackage },
+				{"Reactivation", reactivationPackage }
             };
         }
 
@@ -181,7 +200,8 @@ namespace TCP_Server.Test
 				Payload = JsonConvert.SerializeObject(new PROT_UPDATE
 				{
 					_diceResult = _game.Rules.DiceResult,
-					_lastPlayer = _game.State.LastPlayer
+					_lastPlayer = _game.State.LastPlayer,
+					_turnstate = _game.State.TurnStateProp
                 })
             };
             turninfoPackage.Size = turninfoPackage.ToByteArray().Length;

@@ -17,28 +17,16 @@ namespace EandE_ServerModel.EandE.States
         private readonly DataProvider _dataProvider;
 
         private bool _inMenu;
-
         private string _mainMenuOutput = string.Empty;
         public string Input { get; set; } = string.Empty;
         
-
         #region Properties
-        public string MainMenuOuput { get; set; } = string.Empty;
-        public string Lastinput { get; set; } = string.Empty;
-        public string Error { get; set; } = string.Empty;
-
-        public string GameInfoOuptput { get; set; } = string.Empty;
-        public string BoardOutput { get; set; } = string.Empty;
-        public string TurnInfoOutput { get; set; } = string.Empty;
-        public string AfterTurnOutput { get; set; } = string.Empty;
-        public string HelpOutput { get; set; } = string.Empty;
-        public string FinishInfo { get; set; } = string.Empty;
-        public string Finishskull1 { get; set; } = string.Empty;
-        public string Finishskull2 { get; set; } = string.Empty;
         public int CurrentPlayer { get; set; }
-        #endregion
+		public int LastPlayer { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public string TurnStateProp { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		#endregion
 
-        private Dictionary<string, Func<IGame,IConfigurationProvider, IRules>> _rulesFactory = new Dictionary<string, Func<IGame, IConfigurationProvider, IRules>>
+		private Dictionary<string, Func<IGame,IConfigurationProvider, IRules>> _rulesFactory = new Dictionary<string, Func<IGame, IConfigurationProvider, IRules>>
         {
             { "classic", (game,configP) => new ClassicRules(game,configP) },
         //    { "fancy", (g) => new FancyRules(g) },
@@ -82,6 +70,7 @@ namespace EandE_ServerModel.EandE.States
 
         public void OnClassicCommand()
         {
+			_rulesname = "/classic";
             CreateNewRulesInGame(_rulesname);
             _inMenu = false;
             StateFinished.Set();
@@ -109,11 +98,5 @@ namespace EandE_ServerModel.EandE.States
                 _game.SwitchRules(createdRule(_game, _configurationProvider));
             }
         }
-
-        public void SetInput(string input)
-        {
-            Input = input;
-        }
-
 	}
 }

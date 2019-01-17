@@ -5,6 +5,8 @@ namespace EandE_ServerModel.EandE.EandEContracts
     {
         void Execute();
 		void ExecuteStateAction(string input);
-		int LastPlayer { get;set; }
+		int LastPlayer { get; set; }
+		int CurrentPlayer { get; set; }
+		string TurnStateProp { get; set; }
 	}
 }
