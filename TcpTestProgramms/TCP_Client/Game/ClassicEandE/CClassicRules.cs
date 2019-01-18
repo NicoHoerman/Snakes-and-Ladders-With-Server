@@ -1,17 +1,17 @@
-﻿using EandE_ServerModel.EandE.XML_Config;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using TCP_Client.Game.EandEContracts;
+using TCP_Client.GameStuff.EandEContracts;
+using TCP_Client.GameStuff.XML_Config;
 
-namespace TCP_Client.Game.ClassicEandE
+namespace TCP_Client.GameStuff.ClassicEandE
 {
 
 	public class ClassicRules : IRules
     {
         private long _idCounter;
 
-        private readonly IGame _game;
+        private readonly Game _game;
         private readonly IConfigurationProvider _configurationProvider;
 
         private Dictionary<EntityType, Func<XElement, IEntity>> _entityFactory = new Dictionary<EntityType, Func<XElement, IEntity>>();
@@ -21,7 +21,7 @@ namespace TCP_Client.Game.ClassicEandE
         public int DiceResult { get; set; }
 
 
-        public ClassicRules(IGame game, IConfigurationProvider configurationProvider)
+        public ClassicRules(Game game, IConfigurationProvider configurationProvider)
         {
             _game = game;
             _configurationProvider = configurationProvider;
@@ -33,7 +33,7 @@ namespace TCP_Client.Game.ClassicEandE
             };
         }
 
-        public ClassicRules(IGame game)
+        public ClassicRules(Game game)
              : this(game, new ConfigurationProvider())
         { }
         
@@ -44,7 +44,6 @@ namespace TCP_Client.Game.ClassicEandE
 
             try
             {
-
                 var configurations = _configurationProvider.GetEntityConfigurations();
                 configurations.ForEach(config =>
                 {

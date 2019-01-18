@@ -1,6 +1,6 @@
-﻿using TCP_Client.Game.EandEContracts;
+﻿using TCP_Client.GameStuff.EandEContracts;
 
-namespace TCP_Client.Game.ClassicEandE
+namespace TCP_Client.GameStuff.ClassicEandE
 {
 
 	public class ClassicPawn : IPawn

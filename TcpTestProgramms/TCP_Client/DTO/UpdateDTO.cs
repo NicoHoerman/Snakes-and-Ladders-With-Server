@@ -10,5 +10,6 @@ namespace TCP_Client.DTO
 		public int _diceResult;
 		public int _lastPlayer;
 		public string _turnstate;
+		public int _yourpawn;
 	}
 }

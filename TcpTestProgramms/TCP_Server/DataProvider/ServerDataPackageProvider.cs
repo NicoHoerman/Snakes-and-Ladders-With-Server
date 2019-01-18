@@ -67,15 +67,26 @@ namespace TCP_Server.DataProvider
 
             var playerDataPackage = new DataPackage
             {
-                Header = ProtocolActionEnum.UpdateView,
+                Header = ProtocolActionEnum.ServerStartingGame,
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                 {
-                    _infoOutput = "Master is starting the Game"
+                    _infoOutput = "Master is starting the Game",
+					_yourpawn = 2
                 })
             };
             playerDataPackage.Size = playerDataPackage.ToByteArray().Length;
 
-            var notEnoughDP = new DataPackage
+			var serverStartingGamePackage = new DataPackage
+			{
+				Header = ProtocolActionEnum.ServerStartingGame,
+				Payload = JsonConvert.SerializeObject(new PROT_UPDATE
+				{
+					_yourpawn = 1
+				})
+			};
+			serverStartingGamePackage.Size = serverStartingGamePackage.ToByteArray().Length;
+
+			var notEnoughDP = new DataPackage
             {
                 Header = ProtocolActionEnum.UpdateView,
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE
@@ -120,13 +131,6 @@ namespace TCP_Server.DataProvider
             };
             lobbyCheckSuccessfulPackage.Size = lobbyCheckSuccessfulPackage.ToByteArray().Length;
 
-            var serverStartingGamePackage = new DataPackage
-            {
-                Header = ProtocolActionEnum.ServerStartingGame,
-                Payload = JsonConvert.SerializeObject(new PROT_UPDATE { })
-            };
-            serverStartingGamePackage.Size = serverStartingGamePackage.ToByteArray().Length;
-
 			var notyourTurnPackage = new DataPackage
 			{
 				Header = ProtocolActionEnum.UpdateView,
@@ -154,12 +158,12 @@ namespace TCP_Server.DataProvider
                 {"ValidationRequest",	validationRequestPackage },
                 {"ValidationAccepted",	validationAcceptedPackage },
                 {"PlayerData",			playerDataPackage },
+				{"ServerStartingGame", serverStartingGamePackage },
                 {"NotEnoughInfo",		notEnoughDP },
                 {"OnlyMasterStartInfo",	onlyMasterStartDP},
                 {"OnlyMasterRuleInfo",	onlyMasterRuleDP},
                 {"LobbyCheckFailed",	lobbyCheckFailedPackage },
                 {"LobbyCheckSuccessful",lobbyCheckSuccessfulPackage },
-                {"ServerStartingGame", serverStartingGamePackage },
 				{"NotYourTurn" , notyourTurnPackage },
 				{"Reactivation", reactivationPackage }
             };
@@ -204,6 +208,7 @@ namespace TCP_Server.DataProvider
             turninfoPackage.Size = turninfoPackage.ToByteArray().Length;
             return turninfoPackage;
         }
+
             #endregion
     }
 }

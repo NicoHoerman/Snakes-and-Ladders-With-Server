@@ -133,12 +133,6 @@ namespace TCP_Client.Actions
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
                 return;
             }
-			//if (input.Count != 2)
-			//{
-			//    _errorView.viewEnabled = true;
-			//    _errorView.SetContent(input, "Error: " + "Server id missing or too many parameters.");
-			//    return;
-			//}
 			int chosenServerId = Int32.Parse(input);
             if (_actionHandler._serverDictionary.Count >= chosenServerId)
             {
@@ -148,18 +142,12 @@ namespace TCP_Client.Actions
                 communication.SetNWStream();
                 _client.SwitchState(StateEnum.ClientStates.Connecting);
                 _isConnected = true;
-                //fertig 
-                //AfterConnectMsg = $"Server {chosenServerId} chosen";
-                //_infoOutputView.viewEnabled = true;
-                //_infoOutputView.SetUpdateContent(AfterConnectMsg +"\nYou established a connection with the server. Verifying Player Information...");
             }
             else
             {
                 _errorView.ViewEnabled = true;
                 _errorView.SetContent(input, "There is no server with this ID");
             }
-            //_inputView.SetInputLine("Type a command:", 16);
-            //_serverTableView.viewEnabled = false;
         }
 
         public void OnSearchAction(string input, ICommunication communication)

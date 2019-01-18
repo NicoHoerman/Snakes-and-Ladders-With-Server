@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Linq;
 using System.Linq;
-using EandE_ServerModel.EandE.EandEContracts;
+using TCP_Client.GameStuff.EandEContracts;
 
-namespace TCP_Client.Game.XML_Config
+namespace TCP_Client.GameStuff.XML_Config
 {
-    public class ConfigurationProvider : IConfigurationProvider
+	public class ConfigurationProvider : IConfigurationProvider
     {
         private readonly string _configurationFile;
 

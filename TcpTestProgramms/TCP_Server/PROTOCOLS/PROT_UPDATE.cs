@@ -10,5 +10,6 @@ namespace TCP_Server.PROTOCOLS
 		public int _diceResult;
 		public int _lastPlayer;
 		public string _turnstate;
+		public int _yourpawn;
     }
 }

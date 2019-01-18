@@ -1,5 +1,5 @@
 ﻿
-namespace TCP_Client.Game.EandEContracts
+namespace TCP_Client.GameStuff.EandEContracts
 {
 
     public interface IPawn

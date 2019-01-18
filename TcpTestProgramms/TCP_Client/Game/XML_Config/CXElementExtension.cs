@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace TCP_Client.Game.XML_Config
+namespace TCP_Client.GameStuff.XML_Config
 {
     public static class XElementExtension
     {

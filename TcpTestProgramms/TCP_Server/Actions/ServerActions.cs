@@ -61,8 +61,8 @@ namespace TCP_Server.Actions
                     {
                         if(!(_serverInfo._communications[i] == communication))
                             communication.Send(_dataPackageProvider.GetPackage("PlayerData"));
-                        communication.Send(_dataPackageProvider.GetPackage("ServerStartingGame"));
-                    }
+					}
+                    communication.Send(_dataPackageProvider.GetPackage("ServerStartingGame"));
                 }
                 else
                     communication.Send(_dataPackageProvider.GetPackage("NotEnoughInfo"));

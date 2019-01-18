@@ -9,21 +9,19 @@ using System.Text;
 using TCP_Client.DTO;
 using Wrapper.Implementation;
 using Wrapper.Contracts;
-using Wrapper.View;
 using Wrapper;
-using System.Threading;
 using Shared.Contract;
-using System.Linq;
+using TCP_Client.GameStuff;
 
 namespace TCP_Client.Actions
 {
-    public class ProtocolAction
+	public class ProtocolAction
     {
         public Dictionary<ProtocolActionEnum, Action<DataPackage,ICommunication>> _protocolActions;
         public Dictionary<int, BroadcastDTO> _serverDictionary = new Dictionary<int, BroadcastDTO>();
         private Dictionary<ClientView, IView> _views;
-        private ClientDataPackageProvider _clientDataPackageProvider;
-
+		private readonly Game _game;
+		private ClientDataPackageProvider _clientDataPackageProvider;
 
 		#region ahhhhhhhhhhh
 		private readonly IUpdateOutputView _serverTableView;
@@ -48,11 +46,12 @@ namespace TCP_Client.Actions
 
         private OutputWrapper _outputWrapper;
 
-        public ProtocolAction(Dictionary<ClientView, IView> views, Client client, ClientDataPackageProvider clientDataPackageProvider)
+        public ProtocolAction(Dictionary<ClientView, IView> views, Client client, ClientDataPackageProvider clientDataPackageProvider,Game game)
         {
             _clientDataPackageProvider = clientDataPackageProvider;
             _client = client;
             _views = views;
+			_game = game;
 			#region ahhhhhhhhhhhhhhhh2
 			_serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
             _commandListOutputView = views[ClientView.CommandList] as IUpdateOutputView;                   
@@ -159,15 +158,15 @@ namespace TCP_Client.Actions
             }
 			if (!CheckIfNullorEmpty(updatedData._turnstate))
 			{
-
+				_game.Turnstate = updatedData._turnstate;
 			}
 			if (!CheckIfZero(updatedData._diceResult))
 			{
-
+				_game.DiceResult = updatedData._diceResult;
 			}
 			if (!CheckIfZero(updatedData._lastPlayer))
 			{
-
+				_game.LastPlayer = updatedData._lastPlayer;
 			}
         }
 
@@ -265,7 +264,10 @@ namespace TCP_Client.Actions
 
         public void OnServerStartingGameAction(DataPackage data, ICommunication communication)
         {
-            _client.SwitchState(StateEnum.ClientStates.GameRunning);
+			var updatedData = MapProtocolToDto<UpdateDTO>(data);
+			_game.Yourpawn = updatedData._yourpawn;
+			//updatedData._infoOutput;
+			_client.SwitchState(StateEnum.ClientStates.GameRunning);
         }
 
         public void DisableViews()

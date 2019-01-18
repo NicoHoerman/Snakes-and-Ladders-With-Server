@@ -5,17 +5,15 @@ using Wrapper.Implementation;
 using Shared.Contract;
 using TCP_Client.Actions;
 using Shared.Communications;
-using System.Collections.Generic;
-using System.Linq;
 using Wrapper;
-using Wrapper.Contracts;
-using Wrapper.View;
 using TCP_Client.StateEnum;
+using TCP_Client.GameStuff;
+using TCP_Client.GameStuff.ClassicEandE;
 
 namespace TCP_Client
 {
 
-    public class Client
+	public class Client
     {
         public bool _isRunning;
 
@@ -27,22 +25,22 @@ namespace TCP_Client
         private ViewDictionary _viewDictionary;
         private readonly ClientDataPackageProvider _clientDataPackageProvider;
         string _input = string.Empty;
-
-        private  ClientStates State { get; set; }
+		private Game _game;
+		private  ClientStates State { get; set; }
 
         //<Constructors>
         public Client(ICommunication communication)
         {
+			_game = new Game();
             _clientDataPackageProvider = new ClientDataPackageProvider();
             _viewDictionary = new ViewDictionary();
             _communication = communication;
-            _actionHandler = new ProtocolAction(_viewDictionary._views, this, _clientDataPackageProvider);
+            _actionHandler = new ProtocolAction(_viewDictionary._views, this, _clientDataPackageProvider,_game);
             _inputHandler = new InputAction(_actionHandler, _viewDictionary._views, this, _clientDataPackageProvider);
             _outputWrapper = new OutputWrapper();
             _viewUpdater = new ViewUpdater(_viewDictionary._views);
             _actionHandler._enterToRefreshView.ViewEnabled = true;
             _actionHandler._enterToRefreshView.SetUpdateContent("Press enter to refresh\nafter you typed a command.");
-			_game = new CGame();
 		}
 
         public Client()
@@ -137,7 +135,8 @@ namespace TCP_Client
                         break;
 
                     case ClientStates.GameRunning:
-
+						_game.CreateRules();
+						_game.Rules.SetupEntitites();
 
 
 						_actionHandler._protocolActions.Clear();
