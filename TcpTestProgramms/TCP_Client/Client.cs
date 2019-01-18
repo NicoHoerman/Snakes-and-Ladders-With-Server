@@ -42,7 +42,8 @@ namespace TCP_Client
             _viewUpdater = new ViewUpdater(_viewDictionary._views);
             _actionHandler._enterToRefreshView.ViewEnabled = true;
             _actionHandler._enterToRefreshView.SetUpdateContent("Press enter to refresh\nafter you typed a command.");
-        }
+			_game = new CGame();
+		}
 
         public Client()
             : this(new TcpCommunication())
@@ -136,12 +137,13 @@ namespace TCP_Client
                         break;
 
                     case ClientStates.GameRunning:
-                        _actionHandler._protocolActions.Clear();
+
+
+
+						_actionHandler._protocolActions.Clear();
                         _inputHandler._inputActions.Clear();
                         _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView
                             ,_actionHandler.OnUpdateAction);
-                        _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.HelpText
-                            , _actionHandler.OnHelpTextAction);
                         _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.Restart
                             , _actionHandler.OnRestartAction);
 

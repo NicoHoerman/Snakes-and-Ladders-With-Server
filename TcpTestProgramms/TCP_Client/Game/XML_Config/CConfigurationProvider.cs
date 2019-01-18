@@ -3,7 +3,7 @@ using System.Xml.Linq;
 using System.Linq;
 using EandE_ServerModel.EandE.EandEContracts;
 
-namespace EandE_ServerModel.EandE.XML_Config
+namespace TCP_Client.Game.XML_Config
 {
     public class ConfigurationProvider : IConfigurationProvider
     {

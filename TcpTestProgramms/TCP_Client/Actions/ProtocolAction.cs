@@ -24,7 +24,9 @@ namespace TCP_Client.Actions
         private Dictionary<ClientView, IView> _views;
         private ClientDataPackageProvider _clientDataPackageProvider;
 
-        private readonly IUpdateOutputView _serverTableView;
+
+		#region ahhhhhhhhhhh
+		private readonly IUpdateOutputView _serverTableView;
         private readonly IUpdateOutputView _commandListOutputView;
         private readonly IUpdateOutputView _infoOutputView;
         private readonly IUpdateOutputView _boardOutputView;
@@ -39,8 +41,8 @@ namespace TCP_Client.Actions
         private readonly IUpdateOutputView _finishSkull2View;
         private readonly IUpdateOutputView _finishSkull3View;
         public readonly IUpdateOutputView _enterToRefreshView;
-
-        private readonly Client _client;
+		#endregion
+		private readonly Client _client;
 
         public string _serverTable =string.Empty;
 
@@ -51,7 +53,8 @@ namespace TCP_Client.Actions
             _clientDataPackageProvider = clientDataPackageProvider;
             _client = client;
             _views = views;
-            _serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
+			#region ahhhhhhhhhhhhhhhh2
+			_serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
             _commandListOutputView = views[ClientView.CommandList] as IUpdateOutputView;                   
             _boardOutputView = views[ClientView.Board] as IUpdateOutputView;
             _errorView = views[ClientView.Error] as IErrorView;
@@ -66,21 +69,11 @@ namespace TCP_Client.Actions
             _finishSkull3View = views[ClientView.FinishSkull3] as IUpdateOutputView;
             _finishSkull2View = views[ClientView.FinishSkull2] as IUpdateOutputView;
             _enterToRefreshView = views[ClientView.EnterToRefresh] as IUpdateOutputView;
+			#endregion
 
-            _protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage,ICommunication>>
+			_protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage,ICommunication>>
             {
-                { ProtocolActionEnum.HelpText, OnHelpTextAction},
-                //{ ProtocolActionEnum.UpdateView, OnUpdateAction},
-                //{ ProtocolActionEnum.Broadcast, OnBroadcastAction },
-                //{ ProtocolActionEnum.AcceptInfo, OnAcceptInfoAction },
-                //{ ProtocolActionEnum.DeclineInfo, OnDeclineInfoAction },
                 { ProtocolActionEnum.Restart, OnRestartAction },
-                //{ ProtocolActionEnum.ValidationRequest, OnValidationRequestAction },
-                //{ ProtocolActionEnum.ValidationAccepted, OnValidationAcceptedAction },
-                //{ ProtocolActionEnum.LobbyCheckFailed, OnLobbyCheckFailedAction },
-                //{ ProtocolActionEnum.LobbyCheckSuccessful, OnLobbyCheckSuccessfulAction },
-                //{ ProtocolActionEnum.ServerStartingGame, OnServerStartingGameAction }
-            
             };
             _outputWrapper = new OutputWrapper();
         }
@@ -95,47 +88,89 @@ namespace TCP_Client.Actions
 
         public BroadcastDTO GetServer(int key) => _serverDictionary[key];
 
-        #region Protocol actions
+		#region Protocol actions
 
-        public void OnHelpTextAction(DataPackage data, ICommunication communication)
+		//delegate bool StringAttributeCheck(string input);
+		//delegate bool IntAttributeCheck(int input);
+
+		private static bool CheckIfNullorEmpty(string input)
+		{
+			if (input == null || input.Length == 0)
+				return true;
+			else
+				return false;
+		}
+
+		private static bool CheckIfZero(int input)
+		{
+			if (input == 0)
+				return true;
+			else
+				return false;
+		}
+
+		public void OnUpdateAction(DataPackage data, ICommunication communication)
         {
-            var helpText = MapProtocolToDto<HelpTextDTO>(data);
-            //_helpOutputView.SetUpdateContent(helpText._HelpText);
-        }
+			//StringAttributeCheck _stringCheck = CheckIfNullorEmpty;
+			//IntAttributeCheck _intCheck = CheckIfZero;
 
-        public void OnUpdateAction(DataPackage data, ICommunication communication)
-        {
-            var updatedView = MapProtocolToDto<UpdateDTO>(data);
+			var updatedData = MapProtocolToDto<UpdateDTO>(data);
 
-			//updatedView._commandList;
-			//updatedView._diceResult;
-			//updatedView._infoOutput;
-			//updatedView._lastPlayer;
-			//updatedView._lobbyDisplay;
-			//updatedView._turnstate;
+			//string _lobbyDisplay = updatedData._lobbyDisplay;
+			//string _commandlist = updatedData._commandList;
+			//string _infoOutput = updatedData._infoOutput;
+			//string _turnstate = updatedData._turnstate;
+
+			//int _diceResult = updatedData._diceResult;
+			//int _lastpalyer = updatedData._lastPlayer;
+
+			//var _strings = new List<string>()
+			//{
+
+			//};
+
+			//for (var i = 0; i <= _strings.Count; i++)
+			//{
+			//	if (_stringCheck(_strings[i]))
+			//	{
+			//		switch (_strings[i])
+			//		{
+			//			case _lobbyDisplay:
+			//				break;
+			//		}
+			//	}
+			//}
 
 
-
-
-           
-            if (!(updatedView._lobbyDisplay == null || updatedView._lobbyDisplay.Length == 0))
+			if (!CheckIfNullorEmpty(updatedData._lobbyDisplay))
             {
                 _lobbyInfoDisplayView.ViewEnabled = true;
-                _lobbyInfoDisplayView.SetUpdateContent(updatedView._lobbyDisplay);
+                _lobbyInfoDisplayView.SetUpdateContent(updatedData._lobbyDisplay);
             }
-            if(!(updatedView._commandList == null || updatedView._commandList.Length == 0))
+            if(!CheckIfNullorEmpty(updatedData._commandList))
             {
                 _commandListOutputView.ViewEnabled = true;
-                _commandListOutputView.SetUpdateContent(updatedView._commandList);
+                _commandListOutputView.SetUpdateContent(updatedData._commandList);
             }
-            if(!(updatedView._infoOutput == null || updatedView._infoOutput.Length == 0))
+            if(!CheckIfNullorEmpty(updatedData._infoOutput))
             {
                 _infoOutputView.ViewEnabled = true;
-                _infoOutputView.SetUpdateContent(updatedView._infoOutput);
+                _infoOutputView.SetUpdateContent(updatedData._infoOutput);
             }
+			if (!CheckIfNullorEmpty(updatedData._turnstate))
+			{
 
+			}
+			if (!CheckIfZero(updatedData._diceResult))
+			{
 
+			}
+			if (!CheckIfZero(updatedData._lastPlayer))
+			{
+
+			}
         }
+
 
         private List<IPEndPoint> _serverEndpoints = new List<IPEndPoint>(); 
         private string[] _servernames = new string[100];

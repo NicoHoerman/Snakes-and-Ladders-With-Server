@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace EandE_ServerModel.EandE.EandEContracts
+namespace TCP_Client.Game.EandEContracts
 {
     public interface IBoard
     {

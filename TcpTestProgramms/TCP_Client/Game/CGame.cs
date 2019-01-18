@@ -1,6 +1,6 @@
 ﻿using EandE_ServerModel.EandE.EandEContracts;
 
-namespace EandE_ServerModel.EandE.GameAndLogic
+namespace TCP_Client.Game
 {
 	public class Game : IGame
 	{

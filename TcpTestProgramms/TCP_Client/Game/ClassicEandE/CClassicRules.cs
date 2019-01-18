@@ -1,13 +1,13 @@
-﻿using EandE_ServerModel.EandE.EandEContracts;
-using EandE_ServerModel.EandE.XML_Config;
+﻿using EandE_ServerModel.EandE.XML_Config;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using TCP_Client.Game.EandEContracts;
 
-namespace EandE_ServerModel.EandE.ClassicEandE
+namespace TCP_Client.Game.ClassicEandE
 {
 
-    public class ClassicRules : IRules
+	public class ClassicRules : IRules
     {
         private long _idCounter;
 

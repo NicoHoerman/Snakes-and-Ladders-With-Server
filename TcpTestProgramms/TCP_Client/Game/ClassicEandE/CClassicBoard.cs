@@ -1,12 +1,12 @@
-﻿using EandE_ServerModel.EandE.EandEContracts;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using TCP_Client.Game.EandEContracts;
 
-namespace EandE_ServerModel.EandE.ClassicEandE
+namespace TCP_Client.Game.ClassicEandE
 {
 
-    //Master
-    public class ClassicBoard : IBoard
+	//Master
+	public class ClassicBoard : IBoard
     {
         public int Size { get; } = 30;
         public int MaxWidth { get; } = 8;

@@ -1,9 +1,9 @@
-﻿using EandE_ServerModel.EandE.EandEContracts;
+﻿using TCP_Client.Game.EandEContracts;
 
-namespace EandE_ServerModel.EandE.ClassicEandE
+namespace TCP_Client.Game.ClassicEandE
 {
 
-    public class ClassicPawn : IPawn
+	public class ClassicPawn : IPawn
     {
         public int Location { get; set; }
         public int Color { get; set; }

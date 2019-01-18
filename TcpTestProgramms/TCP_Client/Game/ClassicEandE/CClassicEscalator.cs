@@ -1,9 +1,9 @@
-﻿using EandE_ServerModel.EandE.EandEContracts;
+﻿using TCP_Client.Game.EandEContracts;
 
-namespace EandE_ServerModel.EandE.ClassicEandE
+namespace TCP_Client.Game.ClassicEandE
 {
 
-    public class ClassicEscalator : IEntity
+	public class ClassicEscalator : IEntity
     {
         public int Top_location { get; set; }
         public int Bottom_location { get; set; }
