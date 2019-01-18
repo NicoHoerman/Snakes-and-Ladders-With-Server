@@ -17,5 +17,6 @@ namespace TCP_Client.GameStuff.EandEContracts
 
         void RollDice();
         void SetupEntitites();
-    }
+		void SetDiceResult(int input);
+	}
 }

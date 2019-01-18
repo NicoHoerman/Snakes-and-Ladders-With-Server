@@ -32,7 +32,8 @@ namespace Wrapper.View
 
         public void SetUpdateContent(string content)
         {
-            _content = content;
+			ViewEnabled = true;
+			_content = content;
         }
         public void Show()
         {

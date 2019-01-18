@@ -139,6 +139,5 @@ namespace TCP_Client.GameStuff
         };
 
         public string GetNumberLiteral(int value) => _numberLiterals[value];
-        
     }
 }

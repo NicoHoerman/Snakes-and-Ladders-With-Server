@@ -89,9 +89,6 @@ namespace TCP_Client.Actions
 
 		#region Protocol actions
 
-		//delegate bool StringAttributeCheck(string input);
-		//delegate bool IntAttributeCheck(int input);
-
 		private static bool CheckIfNullorEmpty(string input)
 		{
 			if (input == null || input.Length == 0)
@@ -110,66 +107,12 @@ namespace TCP_Client.Actions
 
 		public void OnUpdateAction(DataPackage data, ICommunication communication)
         {
-			//StringAttributeCheck _stringCheck = CheckIfNullorEmpty;
-			//IntAttributeCheck _intCheck = CheckIfZero;
-
 			var updatedData = MapProtocolToDto<UpdateDTO>(data);
 
-			//string _lobbyDisplay = updatedData._lobbyDisplay;
-			//string _commandlist = updatedData._commandList;
-			//string _infoOutput = updatedData._infoOutput;
-			//string _turnstate = updatedData._turnstate;
-
-			//int _diceResult = updatedData._diceResult;
-			//int _lastpalyer = updatedData._lastPlayer;
-
-			//var _strings = new List<string>()
-			//{
-
-			//};
-
-			//for (var i = 0; i <= _strings.Count; i++)
-			//{
-			//	if (_stringCheck(_strings[i]))
-			//	{
-			//		switch (_strings[i])
-			//		{
-			//			case _lobbyDisplay:
-			//				break;
-			//		}
-			//	}
-			//}
-
-
-			if (!CheckIfNullorEmpty(updatedData._lobbyDisplay))
-            {
-                _lobbyInfoDisplayView.ViewEnabled = true;
-                _lobbyInfoDisplayView.SetUpdateContent(updatedData._lobbyDisplay);
-            }
-            if(!CheckIfNullorEmpty(updatedData._commandList))
-            {
-                _commandListOutputView.ViewEnabled = true;
-                _commandListOutputView.SetUpdateContent(updatedData._commandList);
-            }
-            if(!CheckIfNullorEmpty(updatedData._infoOutput))
-            {
-                _infoOutputView.ViewEnabled = true;
-                _infoOutputView.SetUpdateContent(updatedData._infoOutput);
-            }
-			if (!CheckIfNullorEmpty(updatedData._turnstate))
-			{
-				_game.Turnstate = updatedData._turnstate;
-			}
-			if (!CheckIfZero(updatedData._diceResult))
-			{
-				_game.DiceResult = updatedData._diceResult;
-			}
-			if (!CheckIfZero(updatedData._lastPlayer))
-			{
-				_game.LastPlayer = updatedData._lastPlayer;
-			}
+			_lobbyInfoDisplayView.SetUpdateContent(updatedData._lobbyDisplay);
+            _commandListOutputView.SetUpdateContent(updatedData._commandList);
+            _infoOutputView.SetUpdateContent(updatedData._infoOutput);
         }
-
 
         private List<IPEndPoint> _serverEndpoints = new List<IPEndPoint>(); 
         private string[] _servernames = new string[100];
@@ -265,41 +208,55 @@ namespace TCP_Client.Actions
         public void OnServerStartingGameAction(DataPackage data, ICommunication communication)
         {
 			var updatedData = MapProtocolToDto<UpdateDTO>(data);
-			_game.Yourpawn = updatedData._yourpawn;
-			//updatedData._infoOutput;
+
+			_game.SetYourpawn(updatedData._yourpawn);
+			_infoOutputView.SetUpdateContent(updatedData._infoOutput);
+
 			_client.SwitchState(StateEnum.ClientStates.GameRunning);
         }
 
-        public void DisableViews()
-        {
-            _commandListOutputView.ViewEnabled = false;
-            _errorView.ViewEnabled = false;
-            _gameInfoOutputView.ViewEnabled = false;
-            _infoOutputView.ViewEnabled = false;
-            _mainMenuOutputView.ViewEnabled = false;
-            _boardOutputView.ViewEnabled = false;
-            _afterTurnOutputView.ViewEnabled = false;
-            _lobbyInfoDisplayView.ViewEnabled = false;
-            _turnInfoOutputView.ViewEnabled = false;
-            _enterToRefreshView.ViewEnabled = false;
-        }
+		public void OnTurnResultAction(DataPackage data, ICommunication communication)
+		{
+			var updatedData = MapProtocolToDto<UpdateDTO>(data);
 
-        public void EnableViews()
-        {
-            _commandListOutputView.ViewEnabled = true;
-            _enterToRefreshView.ViewEnabled = true;
+			_game.SetLastPlayer(updatedData._lastPlayer);
+			_game.Rules.SetDiceResult(updatedData._diceResult);
+			_game.SetTurnState(updatedData._turnstate);
 
-            _infoOutputView.ViewEnabled = true;
-            _mainMenuOutputView.ViewEnabled = true;
-            _lobbyInfoDisplayView.ViewEnabled = true;
+			_game.MakeTurn();
+		}
 
-            _errorView.ViewEnabled = true;
-        }
-        #endregion
 
-        #region Static helper functions
+		public void DisableViews()
+		{
+			_commandListOutputView.ViewEnabled = false;
+			_errorView.ViewEnabled = false;
+			_gameInfoOutputView.ViewEnabled = false;
+			_infoOutputView.ViewEnabled = false;
+			_mainMenuOutputView.ViewEnabled = false;
+			_boardOutputView.ViewEnabled = false;
+			_afterTurnOutputView.ViewEnabled = false;
+			_lobbyInfoDisplayView.ViewEnabled = false;
+			_turnInfoOutputView.ViewEnabled = false;
+			_enterToRefreshView.ViewEnabled = false;
+		}
 
-        private static T CreateProtocol<T>(DataPackage data) where T : IProtocol
+		public void EnableViews()
+		{
+			_commandListOutputView.ViewEnabled = true;
+			_enterToRefreshView.ViewEnabled = true;
+
+			_infoOutputView.ViewEnabled = true;
+			_mainMenuOutputView.ViewEnabled = true;
+			_lobbyInfoDisplayView.ViewEnabled = true;
+
+			_errorView.ViewEnabled = true;
+		}
+		#endregion
+
+		#region Static helper functions
+
+		private static T CreateProtocol<T>(DataPackage data) where T : IProtocol
         {
             //macht aus einem Objekt String ein wieder das urpsrüngliche Objekt Protokoll
             return JsonConvert.DeserializeObject<T>(data.Payload);

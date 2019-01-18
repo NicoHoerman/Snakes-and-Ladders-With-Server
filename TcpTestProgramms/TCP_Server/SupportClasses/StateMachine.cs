@@ -70,7 +70,7 @@ namespace TCP_Server.Support
             while (Core.State == StateEnum.LobbyState)
             { }
             Task.Run(() => _serverinfo._lobbylist[0].RunGame());
-			_game.State.ExecuteStateAction("classic");
+			
             _actionHandler._protocolActions.Clear();
         }
         private void ExecuteGameRunningState()

@@ -45,6 +45,7 @@ namespace EandE_ServerModel.EandE.States
 
         public void Execute()
         {
+			ExecuteStateAction("classic");
 			while (_inMenu)
 			{ }
         }

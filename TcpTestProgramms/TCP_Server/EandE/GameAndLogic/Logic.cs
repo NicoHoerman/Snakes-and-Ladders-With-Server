@@ -79,8 +79,6 @@ namespace EandE_ServerModel.EandE.GameAndLogic
                     NextPlayer();
                     return TurnState.PlayerExceedsBoard;
                 }
-                else
-                
                 //Entities check if the pawn is on them
                 //_game.Board.Entities.ForEach(entity =>
                 //{

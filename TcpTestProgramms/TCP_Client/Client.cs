@@ -143,7 +143,9 @@ namespace TCP_Client
                         _inputHandler._inputActions.Clear();
                         _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView
                             ,_actionHandler.OnUpdateAction);
-                        _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.Restart
+						_actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.TurnResult
+							, _actionHandler.OnTurnResultAction);
+						_actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.Restart
                             , _actionHandler.OnRestartAction);
 
                         _inputHandler._inputActions.Add("/rolldice", _inputHandler.OnInputRollDiceAction);

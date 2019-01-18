@@ -32,7 +32,11 @@ namespace Wrapper.View
 
         public void SetUpdateContent(string content)
         {
-            _content = content;
+			if (!(content == null || content.Length == 0))
+			{
+				ViewEnabled = true;
+				_content = content;
+			}
         }
         public void Show()
         {

@@ -19,7 +19,7 @@ namespace TCP_Client.GameStuff.XML_Config
         }
 
         public ConfigurationProvider()
-            : this(@".\EandE\XML_Config\Configurations.xml")
+            : this(@".\XML_Config\Configurations.xml")
         { }
 
 

@@ -38,7 +38,8 @@ namespace TCP_Server.Support
             _isRunning = true;
             while (_isRunning)
             {
-                _game.Init(); ;
+                _game.Init();
+
             }
         }
 

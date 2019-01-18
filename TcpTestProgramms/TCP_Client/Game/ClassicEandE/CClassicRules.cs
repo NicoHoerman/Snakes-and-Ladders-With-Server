@@ -36,9 +36,14 @@ namespace TCP_Client.GameStuff.ClassicEandE
         public ClassicRules(Game game)
              : this(game, new ConfigurationProvider())
         { }
-        
 
-        public void SetupEntitites()
+		public void SetDiceResult(int input)
+		{
+			if (!(input == 0))
+				DiceResult = input;
+		}
+
+		public void SetupEntitites()
         {
             _game.Board = CreateBoard();
 

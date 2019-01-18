@@ -197,7 +197,7 @@ namespace TCP_Server.DataProvider
         {
 			var turninfoPackage = new DataPackage
 			{
-				Header = ProtocolActionEnum.UpdateView,
+				Header = ProtocolActionEnum.TurnResult,
 				Payload = JsonConvert.SerializeObject(new PROT_UPDATE
 				{
 					_diceResult = _game.Rules.DiceResult,
