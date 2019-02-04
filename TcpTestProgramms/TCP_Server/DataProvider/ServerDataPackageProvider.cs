@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Shared.Communications;
 using Shared.Enums;
+using System;
 using System.Collections.Generic;
 using TCP_Server.PROTOCOLS;
 using TCP_Server.Support;
@@ -186,10 +187,11 @@ namespace TCP_Server.DataProvider
                 {
                     _lobbyDisplay = $"Current Lobby: {servername}. Players [{currentplayer} /{maxplayer}",
                     _commandList = "Commands: \n/search (only available when not connected to a server)" +
-                    " \n /startgame \n/closegame \n /rolldice \n /someCommand"
+                    "\n/startgame\n/closegame\n/rolldice\n "
                 })
             };
             lobbyDisplayPackage.Size = lobbyDisplayPackage.ToByteArray().Length;
+			//Console.WriteLine($"LobbyDisplay - Created package:\n{lobbyDisplayPackage.ToString()}");
             return lobbyDisplayPackage;
         }
 

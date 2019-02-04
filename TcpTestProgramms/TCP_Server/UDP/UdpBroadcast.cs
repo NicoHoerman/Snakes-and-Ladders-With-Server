@@ -15,7 +15,7 @@ namespace TCP_Server.UDP
     {
         private byte[] _lobbyInfo;
 
-        private const string SERVER_IP_WLAN_NICO = "172.22.21.132";
+        private const string SERVER_IP_Localhost = "127.0.0.1";
         private const string SERVER_IP_LAN_NICO = "172.22.23.88";
         private const string SERVER_IP_LAN_LEON = "172.22.23.87";
         private const string SERVER_IP_NETWORK = "194.205.205.2";
@@ -84,7 +84,7 @@ namespace TCP_Server.UDP
                 Header = ProtocolActionEnum.Broadcast,
                 Payload = JsonConvert.SerializeObject(new PROT_BROADCAST
                 {
-                    _server_ip = SERVER_IP_LAN_NICO,
+                    _server_ip = SERVER_IP_Localhost,
                     _server_name = serverInfo._lobbylist[0]._LobbyName,
                     _currentPlayerCount = serverInfo._lobbylist[0]._CurrentPlayerCount,
                     _maxPlayerCount = serverInfo._lobbylist[0]._MaxPlayerCount,
