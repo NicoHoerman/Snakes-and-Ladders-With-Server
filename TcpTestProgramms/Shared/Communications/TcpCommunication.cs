@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 /// <summary>
 /// Wir haben eine TcpCommunication eine klasse die die Verbindung zwischen Server und client regelt 
@@ -36,10 +37,11 @@ namespace Shared.Communications
 
         public TcpCommunication(TcpClient client)
         {
-            _client = client;
+			_client = client;
             _packageQueue = new List<DataPackage>();
+			_localBuffer = new MemoryStream();
 
-            _lock = new object();
+			_lock = new object();
 
             _backgroundWorker = new BackgroundWorker();
             _backgroundWorker.DoWork += (_, __) => CheckNWStreamUpdates();
@@ -67,7 +69,7 @@ namespace Shared.Communications
         public void SetNWStream()
         {
             _nwStream = _client.GetStream();
-        }
+		}
 
         public void AddPackage(DataPackage dataPackage)
         {
@@ -94,14 +96,12 @@ namespace Shared.Communications
         public void Send(DataPackage data)
         {
 			byte[] bytesToSend = data.ToByteArrayUTF();
-            _nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+			Debug.WriteLine($"Package send:{data.Header.ToString()} Payload:{data.Payload.ToString()}");
+			_nwStream.Write(bytesToSend, 0, bytesToSend.Length);
         }
 
         private void CheckNWStreamUpdates()
         {
-            //if (_NWStreamNotSet)
-            //    return;
-
             while (_isCommunicationRunning)
             {
                 try
@@ -112,7 +112,6 @@ namespace Shared.Communications
                         CheckForNewPackages();
                     }
                     else
-                        //wichtig sonst ript dein PC
                         Thread.Sleep(1);
                 }
                 catch
@@ -163,26 +162,27 @@ namespace Shared.Communications
 
             _localBuffer.Seek(0, SeekOrigin.Begin);
 
-            using (var reader = new BinaryReader(_localBuffer))
-            {
-                var package = new DataPackage
-                {
-                    Size = reader.ReadInt32(),
-                    Header = (ProtocolActionEnum)reader.ReadInt32()
-                };
-                if (package.Size <= _localBuffer.Length)
-                {
-                    _localBuffer.Position = 2 * sizeof(Int32);
-
+			var reader = new BinaryReader(_localBuffer);
+			while(_localBuffer.Length - _localBuffer.Position > 2* sizeof(Int32))
+			{
+				var package = new DataPackage
+				{
+					Size = reader.ReadInt32(),
+					Header = (ProtocolActionEnum)reader.ReadInt32()
+				};
+				if (package.Size - 8 <= _localBuffer.Length - _localBuffer.Position)
+				{
 					int sizeOfPayload = package.Size - 2 * sizeof(Int32);
 
 					byte[] bytesToRead = new byte[sizeOfPayload];
-                    _localBuffer.Read(bytesToRead, 0, sizeOfPayload);
-                    package.Payload = Encoding.UTF8.GetString(bytesToRead, 0, bytesToRead.Length);
+					_localBuffer.Read(bytesToRead, 0, sizeOfPayload);
+					package.Payload = Encoding.UTF8.GetString(bytesToRead, 0, bytesToRead.Length);
 
-                    lock (_lock)
-                        _packageQueue.Add(package);
-                }
+					lock (_lock)
+						_packageQueue.Add(package);
+				}
+				else
+					return;
             }
         }
 
@@ -193,11 +193,13 @@ namespace Shared.Communications
                 return;
 
 			byte[] bytesToRead = new byte[_client.ReceiveBufferSize];
-            _nwStream.Read(bytesToRead, 0, _client.ReceiveBufferSize);
+            var bytesRead = _nwStream.Read(bytesToRead, 0, _client.ReceiveBufferSize);
 
-            _localBuffer = new MemoryStream();
-            _localBuffer.Seek(0, SeekOrigin.End);
-            _localBuffer.Write(bytesToRead, 0, bytesToRead.Length);
+			// Reset stream and copy chunk of old stream into a new stream.
+			var localBuffer = new MemoryStream();
+			localBuffer.Write(_localBuffer.GetBuffer(),(int)_localBuffer.Position, (int)(_localBuffer.Length - _localBuffer.Position));
+			localBuffer.Write(bytesToRead, 0, bytesRead);
+			_localBuffer = localBuffer;
         }       
     }
 }

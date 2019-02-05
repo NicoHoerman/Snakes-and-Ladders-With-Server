@@ -9,6 +9,9 @@ using Wrapper;
 using TCP_Client.StateEnum;
 using TCP_Client.GameStuff;
 using TCP_Client.GameStuff.ClassicEandE;
+using System.Diagnostics;
+using TCP_Client.DTO;
+using System.Net;
 
 namespace TCP_Client
 {
@@ -28,8 +31,10 @@ namespace TCP_Client
 		private Game _game;
 		private  ClientStates State { get; set; }
 
-        //<Constructors>
-        public Client(ICommunication communication)
+		private object _metaData;
+
+		//<Constructors>
+		public Client(ICommunication communication)
         {
 			_game = new Game();
             _clientDataPackageProvider = new ClientDataPackageProvider();
@@ -54,7 +59,8 @@ namespace TCP_Client
                 if (_communication.IsDataAvailable())
                 {
 					DataPackage data = _communication.Receive();
-                    _actionHandler.ExecuteDataActionFor(data, _communication);
+					Debug.WriteLine($"Package received:{data.Header.ToString()} Payload:{data.Payload.ToString()}");
+					_actionHandler.ExecuteDataActionFor(data, _communication);
                 }
                 else
                     Thread.Sleep(1);
@@ -97,23 +103,32 @@ namespace TCP_Client
                         _inputHandler._inputActions.Add("/search", _inputHandler.OnSearchAction);
                         _inputHandler._inputActions.Add("/someInt", _inputHandler.OnServerConnectAction);
                         _inputHandler._inputActions.Add("/closegame", _inputHandler.OnCloseGameAction);
-                        _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView, _actionHandler.OnUpdateAction);
+                        //_actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView, _actionHandler.OnUpdateAction);
                         _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.Broadcast, _actionHandler.OnBroadcastAction);
                         while (State == ClientStates.NotConnected)
                         { }
+						Debug.WriteLine($"State switched: From: {State.ToString()}");
                         break;
 
                     case ClientStates.Connecting:
-                        _inputHandler._inputActions.Clear();
+						Debug.WriteLine($"State switched: From NotConnected To {State.ToString()}");
+						_inputHandler._inputActions.Clear();
                         _actionHandler._protocolActions.Clear();
                         _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.ValidationRequest, _actionHandler.OnValidationRequestAction);
                         _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.ValidationAccepted, _actionHandler.OnValidationAcceptedAction);
-                        while (State == ClientStates.Connecting)
+
+						//hier
+						BroadcastDTO current = _actionHandler.GetServer((int)_metaData - 1);
+						_communication._client.Connect(IPAddress.Parse(current._server_ip), current._server_Port);
+						_communication.SetNWStream();
+
+						while (State == ClientStates.Connecting)
                         { }
                         break;
 
-                    case ClientStates.WaitingForLobbyCheck:                      
-                        _inputHandler._inputActions.Add("/closegame", _inputHandler.OnCloseGameAction);
+                    case ClientStates.WaitingForLobbyCheck:
+						Debug.WriteLine($"State switched: From Connecting To {State.ToString()}");
+						_inputHandler._inputActions.Add("/closegame", _inputHandler.OnCloseGameAction);
                         _actionHandler._protocolActions.Clear();
                         _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.AcceptInfo, _actionHandler.OnAcceptInfoAction);
                         _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.DeclineInfo, _actionHandler.OnDeclineInfoAction);
@@ -125,7 +140,8 @@ namespace TCP_Client
                         break;
 
                     case ClientStates.Lobby:
-                        _actionHandler._protocolActions.Clear();
+						Debug.WriteLine($"State switched: From WaitingForLobbycheck To {State.ToString()}");
+						_actionHandler._protocolActions.Clear();
                         _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView, _actionHandler.OnUpdateAction);
                         _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.ServerStartingGame, _actionHandler.OnServerStartingGameAction);
                         _inputHandler._inputActions.Add("/startgame", _inputHandler.OnStartGameAction);
@@ -135,6 +151,7 @@ namespace TCP_Client
                         break;
 
                     case ClientStates.GameRunning:
+						Debug.WriteLine($"State switched: From Lobby To {State.ToString()}");
 						_game.CreateRules();
 						_game.Rules.SetupEntitites();
 
@@ -160,9 +177,10 @@ namespace TCP_Client
             }
         }
 
-        public void SwitchState(ClientStates newState)
+        public void SwitchState(ClientStates newState, object metaData = null)
         {
             State = newState;
+			_metaData = metaData;
         }
 
         public void CloseClient()

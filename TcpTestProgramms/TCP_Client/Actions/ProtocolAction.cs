@@ -12,6 +12,7 @@ using Wrapper.Contracts;
 using Wrapper;
 using Shared.Contract;
 using TCP_Client.GameStuff;
+using System.Diagnostics;
 
 namespace TCP_Client.Actions
 {
@@ -79,6 +80,8 @@ namespace TCP_Client.Actions
 
         public void ExecuteDataActionFor(DataPackage data,  ICommunication communication)
         {
+			if (data.Header == ProtocolActionEnum.UpdateView)
+				Debug.WriteLine($"Update erhalten: {data.Payload.ToString()}");
             if (_protocolActions.TryGetValue(data.Header, out var protocolAction) == false)
                 return;
 
@@ -158,7 +161,6 @@ namespace TCP_Client.Actions
         }
 
         public void OnAcceptInfoAction(DataPackage data, ICommunication communication)
-
         {
             var accept = MapProtocolToDto<AcceptDTO>(data);
             _infoOutputView.ViewEnabled = true;
@@ -168,7 +170,6 @@ namespace TCP_Client.Actions
         public void OnDeclineInfoAction(DataPackage data, ICommunication communication)
         {
             _client._inputHandler._declined = true;
-            _client._inputHandler._isConnected = false;
 
             var decline = MapProtocolToDto<DeclineDTO>(data);
             _infoOutputView.ViewEnabled = true;
@@ -203,6 +204,8 @@ namespace TCP_Client.Actions
         public void OnLobbyCheckSuccessfulAction(DataPackage data, ICommunication communication)
         {
             _client.SwitchState(StateEnum.ClientStates.Lobby);
+			_serverTableView.ViewEnabled = false;
+
         }
 
         public void OnServerStartingGameAction(DataPackage data, ICommunication communication)
@@ -222,6 +225,7 @@ namespace TCP_Client.Actions
 			_game.SetLastPlayer(updatedData._lastPlayer);
 			_game.Rules.SetDiceResult(updatedData._diceResult);
 			_game.SetTurnState(updatedData._turnstate);
+			_game.SetViews(_gameInfoOutputView,_turnInfoOutputView,_boardOutputView,_afterTurnOutputView);
 
 			_game.MakeTurn();
 		}

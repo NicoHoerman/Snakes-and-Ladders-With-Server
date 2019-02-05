@@ -19,7 +19,6 @@ namespace TCP_Client.Actions
 {
     public class InputAction
     {
-        public bool _isConnected = false;
         public bool _declined = false;
         private bool _searched = false;
 
@@ -96,12 +95,6 @@ namespace TCP_Client.Actions
 
         public void OnInputHelpAction(string input, ICommunication communication)
         {
-            if (!_isConnected)
-            {
-                _errorView.ViewEnabled = true;
-                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
-                return;
-            }
             if (_commandListOutputView.ViewEnabled)
             {
                 _commandListOutputView.ViewEnabled = false;
@@ -116,18 +109,12 @@ namespace TCP_Client.Actions
 
         public void OnInputRollDiceAction(string input, ICommunication communication)
         {
-            if (!_isConnected)
-            {
-                _errorView.ViewEnabled = true;
-                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
-                return;
-            }
             communication.Send(_clientDataPackageProvider.GetPackage("RollDice"));
         }
 
         public void OnServerConnectAction(string input, ICommunication communication)
         {
-            if (_isConnected | !_searched | _declined)
+            if (!_searched | _declined)
             {
                 _errorView.ViewEnabled = true;
                 _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
@@ -136,12 +123,7 @@ namespace TCP_Client.Actions
 			int chosenServerId = Int32.Parse(input);
             if (_actionHandler._serverDictionary.Count >= chosenServerId)
             {
-
-				BroadcastDTO current = _actionHandler.GetServer(chosenServerId-1);
-                communication._client.Connect(IPAddress.Parse(current._server_ip), current._server_Port);    
-                communication.SetNWStream();
-                _client.SwitchState(StateEnum.ClientStates.Connecting);
-                _isConnected = true;
+                _client.SwitchState(StateEnum.ClientStates.Connecting, chosenServerId);
             }
             else
             {
@@ -152,13 +134,6 @@ namespace TCP_Client.Actions
 
         public void OnSearchAction(string input, ICommunication communication)
         {
-            if (_isConnected)
-            {
-                _errorView.ViewEnabled = true;
-                _errorView.SetContent(input, "Error: " + "This command does not exist or isn't enabled at this time");
-                return;
-            }
-
             _outputWrapper.WriteOutput(0, 1, "Searching...", ConsoleColor.DarkGray);                                                                                   
 
             var stopwatch = new Stopwatch();
@@ -186,13 +161,6 @@ namespace TCP_Client.Actions
 
         public void OnCloseGameAction(string obj,ICommunication communication)
         {
-            if (!_isConnected)
-            {
-                Thread.Sleep(5000);
-                _client.CloseClient();
-                return;
-            }
-            
             communication.Send(_clientDataPackageProvider.GetPackage("CloseGame"));
             Thread.Sleep(5000);
             _client.CloseClient();
@@ -200,17 +168,13 @@ namespace TCP_Client.Actions
 
         public void OnStartGameAction(string arg1, ICommunication communication)
         {
-            if (_isConnected)
-                communication.Send(_clientDataPackageProvider.GetPackage("StartGame"));
+            communication.Send(_clientDataPackageProvider.GetPackage("StartGame"));
         }
 
         public void OnClassicAction(string input, ICommunication communication)
         {
-            if (_isConnected)
-            {
                 _mainMenuOutputView.ViewEnabled = false;
                 communication.Send(_clientDataPackageProvider.GetPackage("Classic"));
-            }
         }
         #endregion
     }

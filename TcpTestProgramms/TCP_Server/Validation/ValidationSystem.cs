@@ -89,12 +89,10 @@ namespace TCP_Server.Test
             _timer.AutoReset = false;
             _timer.Elapsed += TimerSetter;
 
-            while (!_isValidated && !_timerElapsed)
-            {
-                _serverInfo._communications.Last().Send(_dataPackageProvider.GetPackage("ValidationRequest"));
-                Thread.Sleep(1000);
-            }
-            if (_isValidated)
+            _serverInfo._communications.Last().Send(_dataPackageProvider.GetPackage("ValidationRequest"));
+			while (!_isValidated && !_timerElapsed)
+			{ }
+			if (_isValidated)
             {
                 _serverInfo._communications.Last().Send(_dataPackageProvider.GetPackage("ValidationAccepted"));
                 Thread.Sleep(3);

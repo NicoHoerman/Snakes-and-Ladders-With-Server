@@ -23,10 +23,10 @@ namespace TCP_Client.GameStuff
 
 		private ClientDataProvider _clientDataProvider;
 
-		private readonly IGameInfoOutput _gameInfoOutputView;
-		private readonly ITurnInfoOutputView _turnInfoOutputView;
-		private readonly IUpdateOutputView _boardOutputView;
-		private readonly IUpdateOutputView _afterTurnOutputView;
+		private IUpdateOutputView _gameInfoOutputView;
+		private IUpdateOutputView _turnInfoOutputView;
+		private IUpdateOutputView _boardOutputView;
+		private IUpdateOutputView _afterTurnOutputView;
 
 		public Game()
 		{
@@ -51,6 +51,16 @@ namespace TCP_Client.GameStuff
 		{
 			if (!(input == 0))
 				Yourpawn = input;
+		}
+
+		public void SetViews(IUpdateOutputView gameInfoOutputView, IUpdateOutputView turnInfoOutputView,
+			IUpdateOutputView boardOutputView, IUpdateOutputView afterTurnOutputView)
+
+		{
+			_afterTurnOutputView = afterTurnOutputView;
+			_boardOutputView = boardOutputView;
+			_gameInfoOutputView = gameInfoOutputView;
+			_turnInfoOutputView = turnInfoOutputView;
 		}
 		#endregion
 
