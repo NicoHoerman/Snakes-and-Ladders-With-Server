@@ -72,7 +72,6 @@ namespace TCP_Server.DataProvider
                 Payload = JsonConvert.SerializeObject(new PROT_UPDATE
                 {
                     _infoOutput = "Master is starting the Game",
-					_yourpawn = 2
                 })
             };
             playerDataPackage.Size = playerDataPackage.ToByteArray().Length;
@@ -82,7 +81,6 @@ namespace TCP_Server.DataProvider
 				Header = ProtocolActionEnum.ServerStartingGame,
 				Payload = JsonConvert.SerializeObject(new PROT_UPDATE
 				{
-					_yourpawn = 1
 				})
 			};
 			serverStartingGamePackage.Size = serverStartingGamePackage.ToByteArray().Length;
@@ -141,14 +139,6 @@ namespace TCP_Server.DataProvider
 				})
 			};
 			notyourTurnPackage.Size = notyourTurnPackage.ToByteArray().Length;
-
-			var reactivationPackage = new DataPackage
-			{
-				Header = ProtocolActionEnum.Restart,
-				Payload = JsonConvert.SerializeObject(new PROT_RESTART { })
-			};
-			reactivationPackage.Size = reactivationPackage.ToByteArray().Length;
-
 			#endregion
 
 			_dataPackages = new Dictionary<string, DataPackage>
@@ -166,7 +156,6 @@ namespace TCP_Server.DataProvider
                 {"LobbyCheckFailed",	lobbyCheckFailedPackage },
                 {"LobbyCheckSuccessful",lobbyCheckSuccessfulPackage },
 				{"NotYourTurn" , notyourTurnPackage },
-				{"Reactivation", reactivationPackage }
             };
         }
 
@@ -204,7 +193,10 @@ namespace TCP_Server.DataProvider
 				{
 					_diceResult = _game.Rules.DiceResult,
 					_lastPlayer = _game.State.LastPlayer,
-					_turnstate = _game.State.TurnStateProp
+					_currentplayer = _game.State.CurrentPlayer,
+					_turnstate = _game.State.TurnStateProp,
+					_pawn1loacation = _game.State.Pawn1Location,
+					_pawn2location = _game.State.Pawn2Location
                 })
             };
             turninfoPackage.Size = turninfoPackage.ToByteArray().Length;

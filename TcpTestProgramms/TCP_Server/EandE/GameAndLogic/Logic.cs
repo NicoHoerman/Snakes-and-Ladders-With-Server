@@ -33,15 +33,11 @@ namespace EandE_ServerModel.EandE.GameAndLogic
 
         public TurnState CheckIfGameFinished()
         {
-            if (_currentPawn.Location == _game.Board.Size)
-                _gameFinished = true;
-            else
-                _gameFinished = false;
-
-            if (_gameFinished == true)
-                return TurnState.GameFinished;
-            else
-                return TurnState.TurnFinished;
+			if (_currentPawn.Location == _game.Board.Size)
+				return TurnState.GameFinished;
+			else
+				return TurnState.TurnFinished;
+         
         }
 
         public void NextPlayer()
@@ -79,18 +75,20 @@ namespace EandE_ServerModel.EandE.GameAndLogic
                     NextPlayer();
                     return TurnState.PlayerExceedsBoard;
                 }
-                //Entities check if the pawn is on them
-                //_game.Board.Entities.ForEach(entity =>
-                //{
-                //    if (entity.OnSamePositionAs(_currentPawn))
-                //    {
-                //        entity.SetPawn(_currentPawn);
-                //    }
-                //});
-                NextPlayer();
-                var currentState = CheckIfGameFinished();
 
-                return currentState;
+				_currentPawn.MovePawn(_game.Rules.DiceResult);
+
+				//Entities check if the pawn is on them
+				_game.Board.Entities.ForEach(entity =>
+				{
+					if (entity.OnSamePositionAs(_currentPawn))
+					{
+						entity.SetPawn(_currentPawn);
+					}
+				});
+
+				NextPlayer();
+                return CheckIfGameFinished();
             }
             catch(Exception e)
             {

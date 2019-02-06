@@ -8,5 +8,7 @@ namespace EandE_ServerModel.EandE.EandEContracts
 		int LastPlayer { get; set; }
 		int CurrentPlayer { get; set; }
 		string TurnStateProp { get; set; }
+		int Pawn1Location { get; set; }
+		int Pawn2Location { get; set; }
 	}
 }

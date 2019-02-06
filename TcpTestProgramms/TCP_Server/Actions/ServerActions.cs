@@ -7,6 +7,7 @@ using Shared.Contracts;
 using Shared.Enums;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using TCP_Server.DataProvider;
 using TCP_Server.Enum;
@@ -84,20 +85,13 @@ namespace TCP_Server.Actions
             //if (_game.State.CurrentPlayer ==  currentCommunication)
             //{
 				_game.State.ExecuteStateAction("rolldice");
-
+			//An alle senden 
                 communication.Send(_dataPackageProvider.TurnInfo());
-            //}
-            //else
-            // communication.Send(_dataPackageProvider.GetPackage("NotYourTurn"));
-
+			//}
+			//else
+			// communication.Send(_dataPackageProvider.GetPackage("NotYourTurn"));
 			if (_game.State.TurnStateProp == "GameFinished")
-				OnGameFinishedAction(communication, data);
-        }
-
-		private void OnGameFinishedAction(ICommunication communication, DataPackage data)
-		{
-			_game.State.ExecuteStateAction("finished");
-			communication.Send(_dataPackageProvider.TurnInfo());
+				_game.State.ExecuteStateAction("finish");
 		}
 
 		public void OnCloseGameAction(ICommunication communication, DataPackage data)

@@ -13,6 +13,8 @@ namespace EandE_ServerModel.EandE.States
 		public int LastPlayer { get; set; }
 		public int CurrentPlayer { get; set; }
 		public string TurnStateProp { get; set; }
+		public int Pawn1Location { get; set; }
+		public int Pawn2Location { get; set; }
 		#endregion
 
 		public GameRunningState(IGame game, Logic logic)
@@ -36,6 +38,8 @@ namespace EandE_ServerModel.EandE.States
 			var turnstate = _logic.MakeTurn();
 			CurrentPlayer = _logic.CurrentPlayerID;
 			LastPlayer = _logic.LastPlayer();
+			Pawn1Location = _game.Board.Pawns.Find(x => x.PlayerID == 1).Location;
+			Pawn2Location = _game.Board.Pawns.Find(x => x.PlayerID == 2).Location;
 			switch (turnstate)
 			{
 				case TurnState.TurnFinished:

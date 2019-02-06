@@ -9,6 +9,8 @@ namespace EandE_ServerModel.EandE.States
         public int CurrentPlayer { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 		public int LastPlayer { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 		public string TurnStateProp { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+		public int Pawn1Location { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+		public int Pawn2Location { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 		#endregion
 		public GameStartingState(IGame game) 
         {

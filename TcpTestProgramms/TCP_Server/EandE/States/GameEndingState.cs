@@ -1,4 +1,5 @@
-﻿using EandE_ServerModel.EandE.EandEContracts;
+﻿using System.Diagnostics;
+using EandE_ServerModel.EandE.EandEContracts;
 
 namespace EandE_ServerModel.EandE.States
 {
@@ -14,10 +15,13 @@ namespace EandE_ServerModel.EandE.States
         public int CurrentPlayer { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 		public int LastPlayer { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 		public string TurnStateProp { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+		public int Pawn1Location { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+		public int Pawn2Location { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 		#endregion
 
-        public void Execute()
+		public void Execute()
         {
+			Debug.WriteLine("State gewechselt zu Game Ending");
             _game.ClosingGame();
         }
 

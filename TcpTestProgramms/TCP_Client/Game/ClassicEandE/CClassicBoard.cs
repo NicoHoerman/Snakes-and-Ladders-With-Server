@@ -83,10 +83,10 @@ namespace TCP_Client.GameStuff.ClassicEandE
 
                     Pawns.ForEach(pawn =>
                     {
-                    if (pawn.Location == counter & (firstPawnSpace.Length == 0 || firstPawnSpace == " "))
-                            firstPawnSpace = pawn.PlayerID.ToString();
-                        else if (pawn.Location == counter & (secondPawnSpace.Length == 0 || secondPawnSpace == " "))
-                            secondPawnSpace = pawn.PlayerID.ToString();
+						if (pawn.Location == counter & (firstPawnSpace.Length == 0 || firstPawnSpace == " "))
+								firstPawnSpace = pawn.PlayerID.ToString();
+							else if (pawn.Location == counter & (secondPawnSpace.Length == 0 || secondPawnSpace == " "))
+								secondPawnSpace = pawn.PlayerID.ToString();
                     });
 
                     if (firstPawnSpace.Length == 0)

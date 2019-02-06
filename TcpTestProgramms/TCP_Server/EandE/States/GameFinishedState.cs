@@ -13,6 +13,8 @@ namespace EandE_ServerModel.EandE.States
         public int CurrentPlayer { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 		public int LastPlayer { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 		public string TurnStateProp { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public int Pawn1Location { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public int Pawn2Location { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 		#endregion
 
 		public GameFinishedState(IGame game)
@@ -34,10 +36,9 @@ namespace EandE_ServerModel.EandE.States
                 }
             }
         }
-
         public void ExecuteStateAction(string input)
 		{
-			throw new NotImplementedException();
+			Debug.WriteLine("finish State Action gecalled");
 		}
 	}
 }

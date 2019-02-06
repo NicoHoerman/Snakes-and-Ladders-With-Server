@@ -154,7 +154,7 @@ namespace TCP_Client
 						Debug.WriteLine($"State switched: From Lobby To {State.ToString()}");
 						_game.CreateRules();
 						_game.Rules.SetupEntitites();
-
+						_game.MakeBoardView();
 
 						_actionHandler._protocolActions.Clear();
                         _inputHandler._inputActions.Clear();
@@ -171,8 +171,7 @@ namespace TCP_Client
 
                         while (State == ClientStates.GameRunning)
                         { }
-                        break;                  
-
+                        break;
                 }
             }
         }

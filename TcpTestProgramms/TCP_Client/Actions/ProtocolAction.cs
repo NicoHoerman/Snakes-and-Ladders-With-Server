@@ -185,7 +185,7 @@ namespace TCP_Client.Actions
                 _finishSkull1View.ViewEnabled = false;
                 _finishSkull2View.ViewEnabled = false;
                 _finishSkull3View.ViewEnabled = false;
-                EnableViews();
+                DisableEndScreen();
         }
 
         public void OnValidationRequestAction(DataPackage data, ICommunication communication)
@@ -215,20 +215,11 @@ namespace TCP_Client.Actions
         {
 			var updatedData = MapProtocolToDto<UpdateDTO>(data);
 
-			_game.SetYourpawn(updatedData._yourpawn);
 			_infoOutputView.SetUpdateContent(updatedData._infoOutput);
-
+			_game.SetCurrentPlayer(updatedData._currentplayer);
+			_game.SetPawnLocation(updatedData._pawn1loacation, updatedData._pawn2location);
+			_game.SetViews(_views);
 			_client.SwitchState(StateEnum.ClientStates.GameRunning);
-
-			_boardOutputView.SetUpdateContent(_game.Board.CreateOutput());
-			_turnInfoOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("afterboardinfo"),
-				_clientDataProvider.GetNumberLiteral(_game.CurrentPlayerID)));
-
-			_afterTurnOutputView.SetUpdateContent(string.Format(
-				_clientDataProvider.GetText("diceresultinfo"),
-					_clientDataProvider.GetNumberLiteral(_game.LastPlayer)));
-
-			_gameInfoOutputView.SetUpdateContent("gameinfo");
 		}
 
 		public void OnTurnResultAction(DataPackage data, ICommunication communication)
@@ -236,15 +227,27 @@ namespace TCP_Client.Actions
 			var updatedData = MapProtocolToDto<UpdateDTO>(data);
 
 			_game.SetLastPlayer(updatedData._lastPlayer);
+			_game.SetCurrentPlayer(updatedData._currentplayer);
 			_game.Rules.SetDiceResult(updatedData._diceResult);
 			_game.SetTurnState(updatedData._turnstate);
-			_game.SetViews(_gameInfoOutputView,_turnInfoOutputView,_boardOutputView,_afterTurnOutputView);
+			_game.SetPawnLocation(updatedData._pawn1loacation, updatedData._pawn2location);
+			_game.SetViews(_views);
 
-			_game.MakeTurn();
+			_game.UpdateGameOutput();
+			new System.Threading.ManualResetEvent(false).WaitOne(1000 *3);
+			if (updatedData._turnstate == "GameFinished")
+				EndScreen();
 		}
 
+		private void EndScreen()
+		{
+			ShowEndScreen();
+			new System.Threading.ManualResetEvent(false).WaitOne(1000*10);
+			DisableEndScreen();
+			_client.SwitchState(StateEnum.ClientStates.Lobby);
+		}
 
-		public void DisableViews()
+		public void ShowEndScreen()
 		{
 			_commandListOutputView.ViewEnabled = false;
 			_errorView.ViewEnabled = false;
@@ -256,10 +259,20 @@ namespace TCP_Client.Actions
 			_lobbyInfoDisplayView.ViewEnabled = false;
 			_turnInfoOutputView.ViewEnabled = false;
 			_enterToRefreshView.ViewEnabled = false;
+
+			_finishInfoView.ViewEnabled = true;
+			_finishSkull1View.ViewEnabled = true;
+			_finishSkull2View.ViewEnabled = true;
+			_finishSkull3View.ViewEnabled = true;
 		}
 
-		public void EnableViews()
+		public void DisableEndScreen()
 		{
+			_finishInfoView.ViewEnabled = false;
+			_finishSkull1View.ViewEnabled = false;
+			_finishSkull2View.ViewEnabled = false;
+			_finishSkull3View.ViewEnabled = false;
+
 			_commandListOutputView.ViewEnabled = true;
 			_enterToRefreshView.ViewEnabled = true;
 

@@ -20,6 +20,8 @@ namespace EandE_ServerModel.EandE.States
         public int CurrentPlayer { get; set; }
 		public int LastPlayer { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 		public string TurnStateProp { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public int Pawn1Location { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public int Pawn2Location { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 		#endregion
 
 		private Dictionary<string, Func<IGame,IConfigurationProvider, IRules>> _rulesFactory = new Dictionary<string, Func<IGame, IConfigurationProvider, IRules>>

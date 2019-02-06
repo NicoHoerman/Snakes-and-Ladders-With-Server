@@ -1,32 +1,42 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TCP_Client.GameStuff.ClassicEandE;
 using TCP_Client.GameStuff.EandEContracts;
 using TCP_Client.GameStuff.XML_Config;
+using Wrapper;
 using Wrapper.Contracts;
 
 namespace TCP_Client.GameStuff
 {
 	public class Game : IGame
 	{
-		public int Yourpawn { get; set; }
 		public int LastPlayer { get; set; }
 		public string Turnstate { get; set; }
-		public int CurrentPlayerID { get; set; } = 1;
+		public int CurrentPlayerID { get; set; } 
 
 		public int _numberOfPlayers;
+		private bool _isNotFirstTurn = false;
 
 		public IBoard Board { get; set; }
 		public IRules Rules { get; private set; }
+		public int Pawn2 { get; private set; }
+		public int Pawn1 { get; private set; }
 
 		private IConfigurationProvider _configurationProvider;
 
 		private ClientDataProvider _clientDataProvider;
-
+		
+		#region ahhhhhhhhhhhhhhhhhhh3
 		private IUpdateOutputView _gameInfoOutputView;
 		private IUpdateOutputView _turnInfoOutputView;
 		private IUpdateOutputView _boardOutputView;
 		private IUpdateOutputView _afterTurnOutputView;
+		private IUpdateOutputView _finishOutputView;
+		private IUpdateOutputView _finishskull1;
+		private IUpdateOutputView _finishskull2;
+		private IUpdateOutputView _finishskull3;
+		#endregion
 
 		public Game()
 		{
@@ -46,41 +56,43 @@ namespace TCP_Client.GameStuff
 			if (!(input == 0))
 				LastPlayer = input;
 		}
-
-		public void SetYourpawn(int input)
+		public void SetCurrentPlayer(int input)
 		{
 			if (!(input == 0))
-				Yourpawn = input;
+				CurrentPlayerID = input;
+		}
+		public void SetPawnLocation(int pawn1,int pawn2)
+		{
+			if (!(pawn1 == 0))
+				Pawn1 = pawn1;
+			if (!(pawn2 == 0))
+				Pawn2 = pawn2;
 		}
 
-		public void SetViews(IUpdateOutputView gameInfoOutputView, IUpdateOutputView turnInfoOutputView,
-			IUpdateOutputView boardOutputView, IUpdateOutputView afterTurnOutputView)
-
+		public void SetViews(Dictionary<ClientView, IView> _views)
 		{
-			_afterTurnOutputView = afterTurnOutputView;
-			_boardOutputView = boardOutputView;
-			_gameInfoOutputView = gameInfoOutputView;
-			_turnInfoOutputView = turnInfoOutputView;
+			_afterTurnOutputView = _afterTurnOutputView = _views[ClientView.AfterTurnOutput] as IUpdateOutputView;
+			_boardOutputView = _views[ClientView.Board] as IUpdateOutputView;
+			_gameInfoOutputView = _views[ClientView.GameInfo] as IUpdateOutputView;
+			_turnInfoOutputView = _turnInfoOutputView = _views[ClientView.TurnInfo] as IUpdateOutputView;
+			_finishOutputView = _views[ClientView.FinishInfo] as IUpdateOutputView;
+			_finishskull1 = _views[ClientView.FinishSkull1] as IUpdateOutputView;
+			_finishskull2 = _views[ClientView.FinishSkull3] as IUpdateOutputView;
+			_finishskull3 = _views[ClientView.FinishSkull2] as IUpdateOutputView;
 		}
 		#endregion
 
 		public void CreateRules() => Rules = new ClassicRules(this, _configurationProvider);
 
-		private void NextPlayer()
+		public void MakeBoardView()
 		{
-			var orderedPlayers = Board.Pawns.OrderBy(x => x.PlayerID).ToList();
-
-			if (_numberOfPlayers == 0)
-				_numberOfPlayers = orderedPlayers[orderedPlayers.Count - 1].PlayerID;
-
-			var nextPlayer = orderedPlayers.Where(x => x.PlayerID == CurrentPlayerID + 1).FirstOrDefault();
-			if (nextPlayer == null)
-				CurrentPlayerID = orderedPlayers.First().PlayerID;
-			else
-				CurrentPlayerID = nextPlayer.PlayerID;
+			_boardOutputView.SetUpdateContent(Board.CreateOutput());
+			_turnInfoOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("afterboardinfo"),
+				_clientDataProvider.GetNumberLiteral(CurrentPlayerID)));
+			_gameInfoOutputView.SetUpdateContent(_clientDataProvider.GetText("gameinfo"));
 		}
 
-		public void MakeTurn()
+		public void UpdateGameOutput()
 		{
 			switch (Turnstate)
 			{
@@ -90,19 +102,23 @@ namespace TCP_Client.GameStuff
 					_boardOutputView.SetUpdateContent(Board.CreateOutput());
 					_turnInfoOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("afterboardinfo"),
 						_clientDataProvider.GetNumberLiteral(CurrentPlayerID)));
-
-					_afterTurnOutputView.SetUpdateContent(string.Format(
-						_clientDataProvider.GetText("diceresultinfo"),
-							_clientDataProvider.GetNumberLiteral(LastPlayer)));
-
-					_gameInfoOutputView.SetUpdateContent("gameinfo");
+					if(_isNotFirstTurn)
+					{
+						_afterTurnOutputView.SetUpdateContent(string.Format(
+							_clientDataProvider.GetText("diceresultinfo"),
+								Rules.DiceResult,_clientDataProvider.GetNumberLiteral(LastPlayer)));
+					}
+					_isNotFirstTurn = true;
+					_gameInfoOutputView.SetUpdateContent(_clientDataProvider.GetText("gameinfo"));
 					//Views mit DataProvider und Properties füllen
 					break;
 				case "PlayerExceedsBoard":
+					_turnInfoOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("afterboardinfo"),
+						_clientDataProvider.GetNumberLiteral(CurrentPlayerID)));
 
 					_afterTurnOutputView.SetUpdateContent(string.Format(
-						_clientDataProvider.GetText("diceresultinfo"),
-							_clientDataProvider.GetNumberLiteral(LastPlayer)) 
+						_clientDataProvider.GetText("diceresultinfo"), 
+							Rules.DiceResult,_clientDataProvider.GetNumberLiteral(LastPlayer)) 
 							+ "\n"
 								 + string.Format(
 									_clientDataProvider.GetText("playerexceedsboardinfo"),
@@ -111,37 +127,33 @@ namespace TCP_Client.GameStuff
 					//Views mit DataProvider und Properties füllen
 					break;
 				case "GameFinished":
-					//Views mit DataProvider und Properties füllen
+					UpdateLocations();
+
+					_boardOutputView.SetUpdateContent(Board.CreateOutput());
+					_turnInfoOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("afterboardinfo"),
+						_clientDataProvider.GetNumberLiteral(CurrentPlayerID)));
+
+					_afterTurnOutputView.SetUpdateContent(string.Format(
+						_clientDataProvider.GetText("diceresultinfo"),
+							Rules.DiceResult, _clientDataProvider.GetNumberLiteral(LastPlayer)));
+
+					_gameInfoOutputView.SetUpdateContent(_clientDataProvider.GetText("gameinfo"));
+
+					_finishOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("playerwins"),
+						_clientDataProvider.GetNumberLiteral(LastPlayer)));
+					_finishskull1.SetUpdateContent(_clientDataProvider.GetText("finishskull1"));
+					_finishskull2.SetUpdateContent(_clientDataProvider.GetText("finishskull1"));
+					_finishskull3.SetUpdateContent(_clientDataProvider.GetText("finishskull2"));
 					break;
 			}
-			NextPlayer();
 		}
 
 		private void UpdateLocations()
 		{
-			var _currentPawn = Board.Pawns.Find(x => x.PlayerID.Equals(CurrentPlayerID));
-			if (Yourpawn == CurrentPlayerID)
-			{
-				_currentPawn.MovePawn(Rules.DiceResult);
-				Board.Entities.ForEach(entity =>
-				{
-					if (entity.OnSamePositionAs(_currentPawn))
-					{
-						entity.SetPawn(_currentPawn);
-					}
-				});
-			}
-			else
-				_currentPawn.Location = Rules.DiceResult;
-		}
-
-		public void DisableViews()
-		{
-			//_errorView.ViewEnabled = false;
-			_gameInfoOutputView.ViewEnabled = false;
-			_boardOutputView.ViewEnabled = false;
-			_afterTurnOutputView.ViewEnabled = false;
-			_turnInfoOutputView.ViewEnabled = false;
+			var _Pawn1 = Board.Pawns.Find(x => x.PlayerID.Equals(1));
+			var _Pawn2 = Board.Pawns.Find(x => x.PlayerID.Equals(2));
+			_Pawn1.Location = Pawn1;
+			_Pawn2.Location = Pawn2;
 		}
 	}
 }   

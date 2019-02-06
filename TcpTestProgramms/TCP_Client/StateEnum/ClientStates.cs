@@ -12,6 +12,7 @@ namespace TCP_Client.StateEnum
         WaitingForLobbyCheck,
         Lobby,
         GameRunning,
-        ClientClosing
+        ClientClosing,
+		GameFinished
     }
 }

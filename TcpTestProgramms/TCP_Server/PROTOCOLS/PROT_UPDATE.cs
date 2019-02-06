@@ -9,7 +9,9 @@ namespace TCP_Server.PROTOCOLS
 		public string _commandList;
 		public int _diceResult;
 		public int _lastPlayer;
+		public int _currentplayer;
 		public string _turnstate;
-		public int _yourpawn;
+		public int _pawn1loacation;
+		public int _pawn2location;
     }
 }
