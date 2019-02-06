@@ -169,12 +169,16 @@ namespace TCP_Client.Actions
         public void OnStartGameAction(string arg1, ICommunication communication)
         {
             communication.Send(_clientDataPackageProvider.GetPackage("StartGame"));
-        }
+			_mainMenuOutputView.ViewEnabled = false;
+			
+
+		}
 
         public void OnClassicAction(string input, ICommunication communication)
         {
-                _mainMenuOutputView.ViewEnabled = false;
-                communication.Send(_clientDataPackageProvider.GetPackage("Classic"));
+            communication.Send(_clientDataPackageProvider.GetPackage("Classic"));
+            _mainMenuOutputView.ViewEnabled = false;
+			_infoOutputView.SetUpdateContent("You can now start the game");
         }
         #endregion
     }

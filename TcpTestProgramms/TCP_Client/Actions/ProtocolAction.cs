@@ -23,6 +23,7 @@ namespace TCP_Client.Actions
         private Dictionary<ClientView, IView> _views;
 		private readonly Game _game;
 		private ClientDataPackageProvider _clientDataPackageProvider;
+		private ClientDataProvider _clientDataProvider;
 
 		#region ahhhhhhhhhhh
 		private readonly IUpdateOutputView _serverTableView;
@@ -50,6 +51,7 @@ namespace TCP_Client.Actions
         public ProtocolAction(Dictionary<ClientView, IView> views, Client client, ClientDataPackageProvider clientDataPackageProvider,Game game)
         {
             _clientDataPackageProvider = clientDataPackageProvider;
+			_clientDataProvider = new ClientDataProvider();
             _client = client;
             _views = views;
 			_game = game;
@@ -80,8 +82,8 @@ namespace TCP_Client.Actions
 
         public void ExecuteDataActionFor(DataPackage data,  ICommunication communication)
         {
-			if (data.Header == ProtocolActionEnum.UpdateView)
-				Debug.WriteLine($"Update erhalten: {data.Payload.ToString()}");
+			if (data.Header == ProtocolActionEnum.AcceptInfo)
+				Debug.WriteLine($"Accept erhalten: {data.Payload.ToString()}");
             if (_protocolActions.TryGetValue(data.Header, out var protocolAction) == false)
                 return;
 
@@ -205,7 +207,8 @@ namespace TCP_Client.Actions
         {
             _client.SwitchState(StateEnum.ClientStates.Lobby);
 			_serverTableView.ViewEnabled = false;
-
+			_mainMenuOutputView.ViewEnabled = true;
+			_mainMenuOutputView.SetUpdateContent("Set a Rule");
         }
 
         public void OnServerStartingGameAction(DataPackage data, ICommunication communication)
@@ -216,7 +219,17 @@ namespace TCP_Client.Actions
 			_infoOutputView.SetUpdateContent(updatedData._infoOutput);
 
 			_client.SwitchState(StateEnum.ClientStates.GameRunning);
-        }
+
+			_boardOutputView.SetUpdateContent(_game.Board.CreateOutput());
+			_turnInfoOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("afterboardinfo"),
+				_clientDataProvider.GetNumberLiteral(_game.CurrentPlayerID)));
+
+			_afterTurnOutputView.SetUpdateContent(string.Format(
+				_clientDataProvider.GetText("diceresultinfo"),
+					_clientDataProvider.GetNumberLiteral(_game.LastPlayer)));
+
+			_gameInfoOutputView.SetUpdateContent("gameinfo");
+		}
 
 		public void OnTurnResultAction(DataPackage data, ICommunication communication)
 		{

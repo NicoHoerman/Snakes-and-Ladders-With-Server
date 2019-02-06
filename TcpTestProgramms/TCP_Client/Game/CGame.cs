@@ -12,7 +12,7 @@ namespace TCP_Client.GameStuff
 		public int Yourpawn { get; set; }
 		public int LastPlayer { get; set; }
 		public string Turnstate { get; set; }
-		private int CurrentPlayerID { get; set; } = 1;
+		public int CurrentPlayerID { get; set; } = 1;
 
 		public int _numberOfPlayers;
 
@@ -88,12 +88,25 @@ namespace TCP_Client.GameStuff
 					UpdateLocations();
 
 					_boardOutputView.SetUpdateContent(Board.CreateOutput());
-					_turnInfoOutputView.SetUpdateContent(_clientDataProvider.GetText("afterboardinfo"));
-					_afterTurnOutputView.SetUpdateContent("diceresultinfo");
+					_turnInfoOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("afterboardinfo"),
+						_clientDataProvider.GetNumberLiteral(CurrentPlayerID)));
+
+					_afterTurnOutputView.SetUpdateContent(string.Format(
+						_clientDataProvider.GetText("diceresultinfo"),
+							_clientDataProvider.GetNumberLiteral(LastPlayer)));
+
 					_gameInfoOutputView.SetUpdateContent("gameinfo");
 					//Views mit DataProvider und Properties füllen
 					break;
 				case "PlayerExceedsBoard":
+
+					_afterTurnOutputView.SetUpdateContent(string.Format(
+						_clientDataProvider.GetText("diceresultinfo"),
+							_clientDataProvider.GetNumberLiteral(LastPlayer)) 
+							+ "\n"
+								 + string.Format(
+									_clientDataProvider.GetText("playerexceedsboardinfo"),
+										_clientDataProvider.GetNumberLiteral(LastPlayer)));
 
 					//Views mit DataProvider und Properties füllen
 					break;
