@@ -162,9 +162,6 @@ namespace TCP_Client
                             ,_actionHandler.OnUpdateAction);
 						_actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.TurnResult
 							, _actionHandler.OnTurnResultAction);
-						_actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.Restart
-                            , _actionHandler.OnRestartAction);
-
                         _inputHandler._inputActions.Add("/rolldice", _inputHandler.OnInputRollDiceAction);
                         _inputHandler._inputActions.Add("/help", _inputHandler.OnInputHelpAction);
                         _inputHandler._inputActions.Add("/closegame", _inputHandler.OnCloseGameAction);

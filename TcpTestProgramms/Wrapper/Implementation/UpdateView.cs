@@ -29,21 +29,20 @@ namespace Wrapper.Implementation
                 }
             });
         }
+        //private bool CheckForOutputchanges()
+        //{
+        //    return true;
+        //}
+        //public void RunUpdater()
+        //{
+        //    _isViewRunning = true;
+        //    while (_isViewRunning)
+        //    {
+        //        if (CheckForOutputchanges())
+        //            UpdateView();
 
-        private bool CheckForOutputchanges()
-        {
-            return true;
-        }
-        public void RunUpdater()
-        {
-            _isViewRunning = true;
-            while (_isViewRunning)
-            {
-                if (CheckForOutputchanges())
-                    UpdateView();
-
-                Thread.Sleep(5000);
-            }
-        }
+        //        Thread.Sleep(5000);
+        //    }
+        //}
     }
 }

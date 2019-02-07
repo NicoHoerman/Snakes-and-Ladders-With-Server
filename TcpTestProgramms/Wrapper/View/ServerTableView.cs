@@ -12,7 +12,7 @@ namespace Wrapper.View
 		public const string DEFAULT_STRING = "";
 
         private readonly IOutputWrapper _outputWrapper;       
-        private string _serverTable;
+        //private string _serverTable;
         private string _memory;
         private int _posX;
         private int _posY;

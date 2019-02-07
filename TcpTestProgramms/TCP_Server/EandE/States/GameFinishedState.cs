@@ -10,11 +10,11 @@ namespace EandE_ServerModel.EandE.States
         public bool _isFinished;
 
         #region Properties
-        public int CurrentPlayer { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-		public int LastPlayer { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-		public string TurnStateProp { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-		public int Pawn1Location { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-		public int Pawn2Location { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int CurrentPlayer { get; set; }
+		public int LastPlayer { get; set; }
+		public string TurnStateProp { get; set; }
+		public int Pawn1Location { get; set; }
+		public int Pawn2Location { get; set; }
 		#endregion
 
 		public GameFinishedState(IGame game)

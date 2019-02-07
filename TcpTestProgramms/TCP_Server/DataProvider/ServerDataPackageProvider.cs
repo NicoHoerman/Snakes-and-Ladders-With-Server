@@ -158,7 +158,6 @@ namespace TCP_Server.DataProvider
 				{"NotYourTurn" , notyourTurnPackage },
             };
         }
-
         public DataPackage GetPackage(string key) => _dataPackages[key];
 
         #region DataPackages

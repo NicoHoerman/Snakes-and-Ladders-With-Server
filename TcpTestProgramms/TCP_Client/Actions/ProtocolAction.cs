@@ -74,10 +74,8 @@ namespace TCP_Client.Actions
 			#endregion
 
 			_protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage,ICommunication>>
-            {
-                { ProtocolActionEnum.Restart, OnRestartAction },
-            };
-            _outputWrapper = new OutputWrapper();
+            { };
+			_outputWrapper = new OutputWrapper();
         }
 
         public void ExecuteDataActionFor(DataPackage data,  ICommunication communication)
@@ -176,19 +174,9 @@ namespace TCP_Client.Actions
             var decline = MapProtocolToDto<DeclineDTO>(data);
             _infoOutputView.ViewEnabled = true;
             _infoOutputView.SetUpdateContent(decline._smallUpdate);
-   
         }
 
-        public void OnRestartAction(DataPackage obj, ICommunication communication)
-        {
-                _finishInfoView.ViewEnabled = false;
-                _finishSkull1View.ViewEnabled = false;
-                _finishSkull2View.ViewEnabled = false;
-                _finishSkull3View.ViewEnabled = false;
-                DisableEndScreen();
-        }
-
-        public void OnValidationRequestAction(DataPackage data, ICommunication communication)
+		public void OnValidationRequestAction(DataPackage data, ICommunication communication)
         {
             communication.Send(_clientDataPackageProvider.GetPackage("ValidationAnswer"));
         }
@@ -234,7 +222,7 @@ namespace TCP_Client.Actions
 			_game.SetViews(_views);
 
 			_game.UpdateGameOutput();
-			new System.Threading.ManualResetEvent(false).WaitOne(1000 *3);
+			new System.Threading.ManualResetEvent(false).WaitOne(1000 *2);
 			if (updatedData._turnstate == "GameFinished")
 				EndScreen();
 		}
@@ -242,7 +230,7 @@ namespace TCP_Client.Actions
 		private void EndScreen()
 		{
 			ShowEndScreen();
-			new System.Threading.ManualResetEvent(false).WaitOne(1000*10);
+			new System.Threading.ManualResetEvent(false).WaitOne(1000*6);
 			DisableEndScreen();
 			_client.SwitchState(StateEnum.ClientStates.Lobby);
 		}

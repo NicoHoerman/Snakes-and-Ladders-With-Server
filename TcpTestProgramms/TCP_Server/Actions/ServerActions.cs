@@ -82,16 +82,21 @@ namespace TCP_Server.Actions
         public void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
 			int currentCommunication = _serverInfo._communications.FindIndex(x => x == communication)+1;
-            //if (_game.State.CurrentPlayer ==  currentCommunication)
-            //{
+			//if (_game.State.CurrentPlayer ==  currentCommunication &
+			//	_game.State.ToString() == "GameFinishedState")
+			//{
 				_game.State.ExecuteStateAction("rolldice");
-			//An alle senden 
-                communication.Send(_dataPackageProvider.TurnInfo());
+				for (int i = 0; i < _serverInfo._communications.Count; i++)
+					communication.Send(_dataPackageProvider.TurnInfo());
 			//}
-			//else
+			////else
 			// communication.Send(_dataPackageProvider.GetPackage("NotYourTurn"));
 			if (_game.State.TurnStateProp == "GameFinished")
+			{
 				_game.State.ExecuteStateAction("finish");
+				_ruleSet = false;
+				Core.State = StateEnum.LobbyState;
+			}
 		}
 
 		public void OnCloseGameAction(ICommunication communication, DataPackage data)
@@ -105,7 +110,6 @@ namespace TCP_Server.Actions
             ValidationSystem._isValidated = true;
             Core.State = StateEnum.LobbyState;
         }
-
         #endregion
 
         #region Static helper functions
