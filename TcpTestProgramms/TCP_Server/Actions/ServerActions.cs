@@ -58,10 +58,10 @@ namespace TCP_Server.Actions
                 {
                     _gameStarted = true;
                     Core.State = StateEnum.GameRunningState;
-                    for (int i = 0; i <= _serverInfo._communications.Count  -1; i++)
+                    for (int i=0;i<_serverInfo._communications.Count; i++)
                     {
                         if(!(_serverInfo._communications[i] == communication))
-                            communication.Send(_dataPackageProvider.GetPackage("PlayerData"));
+							_serverInfo._communications[i].Send(_dataPackageProvider.GetPackage("PlayerData"));
 					}
                     communication.Send(_dataPackageProvider.GetPackage("ServerStartingGame"));
                 }
@@ -86,8 +86,8 @@ namespace TCP_Server.Actions
 				_game.State.ToString() == "GameFinishedState")
 			{
 				_game.State.ExecuteStateAction("rolldice");
-				for (int i = 0; i < _serverInfo._communications.Count; i++)
-					communication.Send(_dataPackageProvider.TurnInfo());
+
+				_serverInfo._communications.ForEach(x=> x.Send(_dataPackageProvider.TurnInfo()));
 			}
 			else
 			communication.Send(_dataPackageProvider.GetPackage("NotYourTurn"));
