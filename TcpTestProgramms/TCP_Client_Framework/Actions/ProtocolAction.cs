@@ -159,22 +159,6 @@ namespace TCP_Client.Actions
             _serverTableView.ViewEnabled = true;
         }
 
-        public void OnAcceptInfoAction(DataPackage data, ICommunication communication)
-        {
-            var accept = MapProtocolToDto<AcceptDTO>(data);
-            _infoOutputView.ViewEnabled = true;
-            _infoOutputView.SetUpdateContent(accept._smallUpdate);
-        }
-
-        public void OnDeclineInfoAction(DataPackage data, ICommunication communication)
-        {
-            _client._inputHandler._declined = true;
-
-            var decline = MapProtocolToDto<DeclineDTO>(data);
-            _infoOutputView.ViewEnabled = true;
-            _infoOutputView.SetUpdateContent(decline._smallUpdate);
-        }
-
 		public void OnValidationRequestAction(DataPackage data, ICommunication communication)
         {
             communication.Send(_clientDataPackageProvider.GetPackage("ValidationAnswer"));
@@ -192,10 +176,24 @@ namespace TCP_Client.Actions
 
         public void OnLobbyCheckSuccessfulAction(DataPackage data, ICommunication communication)
         {
-            _client.SwitchState(StateEnum.ClientStates.Lobby);
+			_client.SwitchState(StateEnum.ClientStates.Lobby);
+        }
+
+        public void OnAcceptInfoAction(DataPackage data, ICommunication communication)
+        {
 			_serverTableView.ViewEnabled = false;
-			_mainMenuOutputView.ViewEnabled = true;
+            var accept = MapProtocolToDto<AcceptDTO>(data);
 			_mainMenuOutputView.SetUpdateContent("Set a Rule");
+            _infoOutputView.SetUpdateContent(accept._smallUpdate);
+		}
+
+        public void OnDeclineInfoAction(DataPackage data, ICommunication communication)
+        {
+            _client._inputHandler._declined = true;
+
+            var decline = MapProtocolToDto<DeclineDTO>(data);
+            _infoOutputView.ViewEnabled = true;
+            _infoOutputView.SetUpdateContent(decline._smallUpdate);
         }
 
         public void OnServerStartingGameAction(DataPackage data, ICommunication communication)

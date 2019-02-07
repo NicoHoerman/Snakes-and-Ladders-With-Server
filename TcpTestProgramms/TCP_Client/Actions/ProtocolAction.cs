@@ -192,10 +192,11 @@ namespace TCP_Client.Actions
 
         public void OnLobbyCheckSuccessfulAction(DataPackage data, ICommunication communication)
         {
-            _client.SwitchState(StateEnum.ClientStates.Lobby);
 			_serverTableView.ViewEnabled = false;
 			_mainMenuOutputView.ViewEnabled = true;
 			_mainMenuOutputView.SetUpdateContent("Set a Rule");
+			Thread.Sleep(20);
+            _client.SwitchState(StateEnum.ClientStates.Lobby);
         }
 
         public void OnServerStartingGameAction(DataPackage data, ICommunication communication)

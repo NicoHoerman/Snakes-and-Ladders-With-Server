@@ -83,7 +83,7 @@ namespace TCP_Server.Actions
         {
 			int currentCommunication = _serverInfo._communications.FindIndex(x => x == communication)+1;
 			if (_game.State.CurrentPlayer == currentCommunication &
-				_game.State.ToString() == "GameFinishedState")
+				!(_game.State.ToString() == "GameFinishedState"))
 			{
 				_game.State.ExecuteStateAction("rolldice");
 

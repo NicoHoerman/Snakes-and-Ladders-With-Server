@@ -11,7 +11,7 @@ namespace EandE_ServerModel.EandE.States
 
 		#region Properties
 		public int LastPlayer { get; set; }
-		public int CurrentPlayer { get; set; }
+		public int CurrentPlayer { get; set; } = 1;
 		public string TurnStateProp { get; set; }
 		public int Pawn1Location { get; set; }
 		public int Pawn2Location { get; set; }
@@ -36,6 +36,8 @@ namespace EandE_ServerModel.EandE.States
 		private void OnRollDiceCommand()
 		{
 			var turnstate = _logic.MakeTurn();
+			if (_logic.CurrentPlayerID == 0)
+				CurrentPlayer = 1;
 			CurrentPlayer = _logic.CurrentPlayerID;
 			LastPlayer = _logic.LastPlayer();
 			Pawn1Location = _game.Board.Pawns.Find(x => x.PlayerID == 1).Location;
