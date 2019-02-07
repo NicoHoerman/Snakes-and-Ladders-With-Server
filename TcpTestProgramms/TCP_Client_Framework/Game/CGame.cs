@@ -88,7 +88,7 @@ namespace TCP_Client.GameStuff
 		public void MakeBoardView()
 		{
 			_boardOutputView.SetUpdateContent(Board.CreateOutput());
-			_turnInfoOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("afterboardinfo"),
+			_turnInfoOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("RollTheDice"),
 				_clientDataProvider.GetNumberLiteral(CurrentPlayerID)));
 			_gameInfoOutputView.SetUpdateContent(_clientDataProvider.GetText("gameinfo"));
 		}
@@ -101,20 +101,18 @@ namespace TCP_Client.GameStuff
 					UpdateLocations();
 
 					_boardOutputView.SetUpdateContent(Board.CreateOutput());
-					_turnInfoOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("afterboardinfo"),
+					_turnInfoOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("RollTheDice"),
 						_clientDataProvider.GetNumberLiteral(CurrentPlayerID)));
-					if(_isNotFirstTurn)
-					{
-						_afterTurnOutputView.SetUpdateContent(string.Format(
+
+					_afterTurnOutputView.SetUpdateContent(string.Format(
 							_clientDataProvider.GetText("diceresultinfo"),
 								Rules.DiceResult,_clientDataProvider.GetNumberLiteral(LastPlayer)));
-					}
 					_isNotFirstTurn = true;
 					_gameInfoOutputView.SetUpdateContent(_clientDataProvider.GetText("gameinfo"));
 					//Views mit DataProvider und Properties füllen
 					break;
 				case "PlayerExceedsBoard":
-					_turnInfoOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("afterboardinfo"),
+					_turnInfoOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("RollTheDice"),
 						_clientDataProvider.GetNumberLiteral(CurrentPlayerID)));
 
 					_afterTurnOutputView.SetUpdateContent(string.Format(
@@ -131,7 +129,7 @@ namespace TCP_Client.GameStuff
 					UpdateLocations();
 
 					_boardOutputView.SetUpdateContent(Board.CreateOutput());
-					_turnInfoOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("afterboardinfo"),
+					_turnInfoOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("RollTheDice"),
 						_clientDataProvider.GetNumberLiteral(CurrentPlayerID)));
 
 					_afterTurnOutputView.SetUpdateContent(string.Format(

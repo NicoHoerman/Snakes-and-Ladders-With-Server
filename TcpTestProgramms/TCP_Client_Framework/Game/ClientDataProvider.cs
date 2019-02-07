@@ -35,7 +35,7 @@ namespace TCP_Client.GameStuff
                 "e Bottom of an Escalator"
             },
             {
-                "afterboardinfo",
+                "RollTheDice",
                 "Player {0} Turn \n" +
                 "Roll the dice!"
             },

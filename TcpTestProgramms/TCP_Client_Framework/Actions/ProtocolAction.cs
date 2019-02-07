@@ -200,7 +200,11 @@ namespace TCP_Client.Actions
         {
 			var updatedData = MapProtocolToDto<UpdateDTO>(data);
 
-			_infoOutputView.SetUpdateContent(updatedData._infoOutput);
+			if (!communication.IsMaster)
+			{
+				_infoOutputView.SetUpdateContent(updatedData._infoOutput);
+				_mainMenuOutputView.ViewEnabled = false;
+			}
 			_game.SetCurrentPlayer(updatedData._currentplayer);
 			_game.SetPawnLocation(updatedData._pawn1loacation, updatedData._pawn2location);
 			_game.SetViews(_views);
@@ -209,6 +213,7 @@ namespace TCP_Client.Actions
 
 		public void OnTurnResultAction(DataPackage data, ICommunication communication)
 		{
+			_infoOutputView.SetUpdateContent("Game Running");
 			var updatedData = MapProtocolToDto<UpdateDTO>(data);
 
 			_game.SetLastPlayer(updatedData._lastPlayer);
