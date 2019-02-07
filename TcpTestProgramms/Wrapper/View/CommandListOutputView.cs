@@ -18,7 +18,7 @@ namespace Wrapper.View
         private int _posX;
         private int _posY;
 
-        public bool viewEnabled { get; set; } = false;
+        public bool ViewEnabled { get; set; } = false;
 
         public CommandListOutputView(IOutputWrapper outputWrapper, int posX, int posY)
         {
@@ -33,8 +33,11 @@ namespace Wrapper.View
 
         public void SetUpdateContent(string content)
         {
-            _content = content;
-            //set
+			if (!(content == null || content.Length == 0))
+			{
+				ViewEnabled = true;
+				_content = content;
+			}
         }
 
         public void Show()

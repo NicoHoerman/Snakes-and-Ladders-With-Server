@@ -36,7 +36,6 @@ namespace EandE_ServerModel.EandE.ClassicEandE
         public ClassicRules(IGame game)
              : this(game, new ConfigurationProvider())
         { }
-        
 
         public void SetupEntitites()
         {
@@ -44,7 +43,6 @@ namespace EandE_ServerModel.EandE.ClassicEandE
 
             try
             {
-
                 var configurations = _configurationProvider.GetEntityConfigurations();
                 configurations.ForEach(config =>
                 {
@@ -73,9 +71,9 @@ namespace EandE_ServerModel.EandE.ClassicEandE
 
             return new ClassicPawn
             {
-                color = configuration.Get("color", Convert.ToInt32),
-                location = configuration.Get("location", Convert.ToInt32),
-                playerID = configuration.Get("playerid", Convert.ToInt32),
+                Color = configuration.Get("color", Convert.ToInt32),
+                Location = configuration.Get("location", Convert.ToInt32),
+                PlayerID = configuration.Get("playerid", Convert.ToInt32),
                 Id = NextId(),
             };
             }
@@ -92,8 +90,8 @@ namespace EandE_ServerModel.EandE.ClassicEandE
 
             return new ClassicEel
             {
-                top_location = configuration.Get("toplocation", Convert.ToInt32),
-                bottom_location = configuration.Get("bottomlocation", Convert.ToInt32),
+                Top_location = configuration.Get("toplocation", Convert.ToInt32),
+                Bottom_location = configuration.Get("bottomlocation", Convert.ToInt32),
                 Id = NextId(),
             };
             }
@@ -110,8 +108,8 @@ namespace EandE_ServerModel.EandE.ClassicEandE
 
             return new ClassicEscalator
             {
-                top_location = configuration.Get("toplocation", Convert.ToInt32),
-                bottom_location = configuration.Get("bottomlocation", Convert.ToInt32),
+                Top_location = configuration.Get("toplocation", Convert.ToInt32),
+                Bottom_location = configuration.Get("bottomlocation", Convert.ToInt32),
                 Id = NextId(),
             };
             }

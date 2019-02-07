@@ -6,21 +6,13 @@ namespace EandE_ServerModel.EandE.States
     {
         private readonly IGame _game;
         #region Properties
-        public string MainMenuOuput { get; set; } = string.Empty;
-        public string Lastinput { get; set; } = string.Empty;
-        public string Error { get; set; } = string.Empty;
-        public string GameInfoOuptput { get; set; } = string.Empty;
-        public string BoardOutput { get; set; } = string.Empty;
-        public string TurnInfoOutput { get; set; } = string.Empty;
-        public string AfterTurnOutput { get; set; } = string.Empty;
-        public string HelpOutput { get; set; } = string.Empty;
-        public string FinishInfo { get; set; } = string.Empty;
-        public string Finishskull1 { get; set; } = string.Empty;
-        public string Finishskull2 { get; set; } = string.Empty;
-        public string Input { get; set; } = string.Empty;
         public int CurrentPlayer { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        #endregion
-        public GameStartingState(IGame game) 
+		public int LastPlayer { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+		public string TurnStateProp { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+		public int Pawn1Location { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+		public int Pawn2Location { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+		#endregion
+		public GameStartingState(IGame game) 
         {
             _game = game;
         }
@@ -33,12 +25,9 @@ namespace EandE_ServerModel.EandE.States
             _game.SwitchState(new GameRunningState(_game));
         }
 
-        public void ClearProperties()
-        {
-        }
-
-        public void SetInput(string input)
-        {
-        }
-    }
+		public void ExecuteStateAction(string input)
+		{
+			throw new System.NotImplementedException();
+		}
+	}
 }

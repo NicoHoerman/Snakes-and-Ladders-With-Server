@@ -8,8 +8,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-
-
+using System.Diagnostics;
 
 /// <summary>
 /// Wir haben eine TcpCommunication eine klasse die die Verbindung zwischen Server und client regelt 
@@ -20,7 +19,7 @@ namespace Shared.Communications
     {
         public TcpClient _client { get; set; }
         private NetworkStream _nwStream;
-        private bool _NWStreamNotSet = true;
+        private bool _nwStreamNotSet = true;
         public bool IsMaster { get; set; } = false;
        
         private MemoryStream _localBuffer;
@@ -30,7 +29,7 @@ namespace Shared.Communications
         private BackgroundWorker _backgroundWorker;
         private BackgroundWorker _backgroundWorker2;
 
-        private bool IsCommunicationRunning = true;
+        private bool _isCommunicationRunning = true;
 
         public TcpCommunication()
             : this(new TcpClient())
@@ -38,29 +37,28 @@ namespace Shared.Communications
 
         public TcpCommunication(TcpClient client)
         {
-            _client = client;
+			_client = client;
             _packageQueue = new List<DataPackage>();
+			_localBuffer = new MemoryStream();
 
-            _lock = new object();
+			_lock = new object();
 
             _backgroundWorker = new BackgroundWorker();
             _backgroundWorker.DoWork += (_, __) => CheckNWStreamUpdates();
             _backgroundWorker.RunWorkerAsync();
 
             _backgroundWorker2 = new BackgroundWorker();
-            _backgroundWorker2.DoWork += (_, __) => GetStream();
+            _backgroundWorker2.DoWork += (_, __) => GetStreamWithStyle();
             _backgroundWorker2.RunWorkerAsync();
-
-
         }
 
-        private void GetStream()
+        private void GetStreamWithStyle()
         {
-            while (_NWStreamNotSet)
+            while (_nwStreamNotSet)
                 try
                 {
                     _nwStream = _client.GetStream();
-                    _NWStreamNotSet = false;
+                    _nwStreamNotSet = false;
                 }
                 catch
                 {
@@ -71,8 +69,7 @@ namespace Shared.Communications
         public void SetNWStream()
         {
             _nwStream = _client.GetStream();
-        }
-
+		}
 
         public void AddPackage(DataPackage dataPackage)
         {
@@ -80,62 +77,33 @@ namespace Shared.Communications
                 _packageQueue.Add(dataPackage);
         }
 
-
-
-        //schaut ob Pakete da sind
         public bool IsDataAvailable()
         {
             lock (_lock)
                 return _packageQueue.Count != 0;
         }
 
-        //holt die Pakete 
         public DataPackage Receive()
         {
             lock (_lock)
             {
-                //nimm des erste package au sder liste und return es 
-                var element = _packageQueue.First();
+				DataPackage element = _packageQueue.First();
                 _packageQueue.RemoveAt(0);
                 return element;
             }
         }
 
-
-        //eine Bessere Variante aber kompleziert hab es nicht verstanden deswegen IsDataAvailable und Recieve
-        public void ReceiveCallback(Action<DataPackage> receiveCallback)
-        {
-            throw new NotImplementedException();
-        }
-
-        //Sendet Datenpackete
         public void Send(DataPackage data)
         {
-            try
-            {
-                    var bytesToSend = data.ToByteArrayUTF();
-                    _nwStream.Write(bytesToSend, 0, bytesToSend.Length);
-            }
-
-            catch
-            {
-                throw new Exception();
-            }
-
+			byte[] bytesToSend = data.ToByteArrayUTF();
+			Debug.WriteLine($"Package send:{data.Header.ToString()} Payload:{data.Payload.ToString()}");
+			_nwStream.Write(bytesToSend, 0, bytesToSend.Length);
         }
 
-       
-
-        //läuft die ganze Zeit im Hintergrund
         private void CheckNWStreamUpdates()
         {
-            //if (_NWStreamNotSet)
-            //    return;
-
-            while (IsCommunicationRunning)
+            while (_isCommunicationRunning)
             {
-                // prüft ob daten auf dem NetworkStream sind 
-                //nicht sicher ob des schon so funktioniert wie es soll
                 try
                 {
                     if (_nwStream != null && _nwStream.DataAvailable)
@@ -144,7 +112,6 @@ namespace Shared.Communications
                         CheckForNewPackages();
                     }
                     else
-                        //wichtig sonst ript dein PC
                         Thread.Sleep(1);
                 }
                 catch
@@ -160,10 +127,10 @@ namespace Shared.Communications
             {
                 try
                 {
-                    var client = _client.Client;
+					Socket client = _client.Client;
                     if (client.Poll(0, SelectMode.SelectRead))
                     {
-                        byte[] buff = new byte[1];
+						byte[] buff = new byte[1];
                         if (client.Receive(buff, SocketFlags.Peek) == 0)
                         {
                             return false;
@@ -180,7 +147,7 @@ namespace Shared.Communications
 
         public void Stop()
         {
-            IsCommunicationRunning = false;
+            _isCommunicationRunning = false;
             _client.Close();
             //_nwStream.Close();
         }
@@ -189,46 +156,33 @@ namespace Shared.Communications
         {
             if (_nwStream == null)
                 return;
-            //unser Data package besteht aus einem Header einem Payload und einer Size 
-            //Size ist und soll ein Int32 nicht vereinfachen weil es müssen 4 bit sein
-            //die Zeile schaut ob der MeomryStream schon 8bit groß ist das wäre dann die Size und der Header
 
             if (_localBuffer.Length < 2 * sizeof(Int32))
                 return;
 
             _localBuffer.Seek(0, SeekOrigin.Begin);
 
-            using (var reader = new BinaryReader(_localBuffer))
-            {
-                var package = new DataPackage();
-                //schreibt die size in unser package 
-                package.Size = reader.ReadInt32();
-                //schreibt den Header in unser package 
-                //ProtocolAction ist ein Enum weil wir ja eigentlich Strings wollten des ist aber kacke 
-                //des wegen ein Enum mit int und Sprechenden Namen
-                package.Header = (ProtocolActionEnum)reader.ReadInt32();
-                // wenn size z.B. 100 <= MeomryStream Size ist z.B. 101
-                // enthält der Stream ja ein Paket
-                if (package.Size <= _localBuffer.Length)
-                {
-                    // da wir genau wissen das 8 bit size und header sind legen wir die Position auf danach
-                    _localBuffer.Position = 2 * sizeof(Int32);
+			var reader = new BinaryReader(_localBuffer);
+			while(_localBuffer.Length - _localBuffer.Position > 2* sizeof(Int32))
+			{
+				var package = new DataPackage
+				{
+					Size = reader.ReadInt32(),
+					Header = (ProtocolActionEnum)reader.ReadInt32()
+				};
+				if (package.Size - 8 <= _localBuffer.Length - _localBuffer.Position)
+				{
+					int sizeOfPayload = package.Size - 2 * sizeof(Int32);
 
-                    //absolut keine Ahnung hat was mit den Daten zu tun er hatte beim ausprobieren 
-                    //glaub 4 Zeichen zu wenig und des war der fix 
-                    var sizeOfPayload = package.Size - 2 * sizeof(Int32);
+					byte[] bytesToRead = new byte[sizeOfPayload];
+					_localBuffer.Read(bytesToRead, 0, sizeOfPayload);
+					package.Payload = Encoding.UTF8.GetString(bytesToRead, 0, bytesToRead.Length);
 
-                    //Byte Array mit in der Größe des Payloads
-                    var bytesToRead = new byte[sizeOfPayload];
-                    //wird aus dem MemoryStream rausgelesen
-                    _localBuffer.Read(bytesToRead, 0, sizeOfPayload);
-                    //aus byte mach String
-                    package.Payload = Encoding.UTF8.GetString(bytesToRead, 0, bytesToRead.Length);
-
-                    lock (_lock)
-                        //fertiges package wird an die Queue gehängt
-                        _packageQueue.Add(package);
-                }
+					lock (_lock)
+						_packageQueue.Add(package);
+				}
+				else
+					return;
             }
         }
 
@@ -238,22 +192,14 @@ namespace Shared.Communications
             if (_nwStream == null)
                 return;
 
-            //die Größe der Daten
-            var bytesToRead = new byte[_client.ReceiveBufferSize];
-            //empfangen der Daten           
-            _nwStream.Read(bytesToRead, 0, _client.ReceiveBufferSize);
+			byte[] bytesToRead = new byte[_client.ReceiveBufferSize];
+            var bytesRead = _nwStream.Read(bytesToRead, 0, _client.ReceiveBufferSize);
 
-            //fix of following problem: A player couldn't execute 2 or more commands 
-            //because the TcpConnection tried to use the same MemoryStream. 
-            //But every MemoryStream that was used will be disposed of, 
-            //because of the  "using" statement in the "CheckForNewPackages" Method. 
-            //using is the same as a try block followed by a finally block with "my_memory_stream.Dispose();" in it.
-            _localBuffer = new MemoryStream();
-            //immer am Anfang anfagen Willst ja "Hallo" und nicht "allo"
-            _localBuffer.Seek(0, SeekOrigin.End);
-            //schreibt die Daten in ein MemoryStream unsere warteschlange so zu sagen
-            _localBuffer.Write(bytesToRead, 0, bytesToRead.Length);
+			// Reset stream and copy chunk of old stream into a new stream.
+			var localBuffer = new MemoryStream();
+			localBuffer.Write(_localBuffer.GetBuffer(),(int)_localBuffer.Position, (int)(_localBuffer.Length - _localBuffer.Position));
+			localBuffer.Write(bytesToRead, 0, bytesRead);
+			_localBuffer = localBuffer;
         }       
-
     }
 }

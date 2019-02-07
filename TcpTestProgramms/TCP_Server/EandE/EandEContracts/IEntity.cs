@@ -10,9 +10,9 @@ namespace EandE_ServerModel.EandE.EandEContracts
     
     public interface IEntity
     {
-        int top_location { get; set; }
-        int bottom_location{ get; set; }
-        EntityType type { get; }
+        int Top_location { get; set; }
+        int Bottom_location{ get; set; }
+        EntityType Type { get; }
         long Id { get; }
 
         void SetPawn(IPawn pawn);

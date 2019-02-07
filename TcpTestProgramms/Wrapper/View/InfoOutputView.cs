@@ -18,7 +18,7 @@ namespace Wrapper.View
         private int _posY;
         private string _info;
 
-        public bool viewEnabled { get; set; }
+        public bool ViewEnabled { get; set; }
 
         public InfoOutputView(IOutputWrapper outputWrapper, int posX, int posY)
         {
@@ -34,9 +34,11 @@ namespace Wrapper.View
 
         public void SetUpdateContent(string content)
         {
-
-            _info = content;
-            //set
+			if (!(content == null || content.Length == 0))
+			{
+				ViewEnabled = true;
+				_info = content;
+			}
         }
 
         public void Show()

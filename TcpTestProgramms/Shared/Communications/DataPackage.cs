@@ -15,7 +15,7 @@ namespace Shared.Communications
         //ASCII
         public byte[] ToByteArray()
         {
-            var bytes = Encoding.ASCII.GetBytes(Payload);
+			byte[] bytes = Encoding.ASCII.GetBytes(Payload);
             Size = bytes.Length + 2 * sizeof(Int32);
             return BitConverter.GetBytes(Size)
                 .Concat(BitConverter.GetBytes((Int32)Header)
@@ -24,7 +24,7 @@ namespace Shared.Communications
 
         public byte[] ToByteArrayUTF()
         {
-            var bytes = Encoding.UTF8.GetBytes(Payload);
+			byte[] bytes = Encoding.UTF8.GetBytes(Payload);
             Size = bytes.Length + 2 * sizeof(Int32);
             return BitConverter.GetBytes(Size)
                 .Concat(BitConverter.GetBytes((Int32)Header)

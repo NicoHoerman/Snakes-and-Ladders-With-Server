@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using TCP_Server.Test;
 using TCP_Server.UDP;
 
 namespace TCP_Server
@@ -9,22 +10,9 @@ namespace TCP_Server
     
         static void Main(string[] args)
         {
-            var serverInfo = new ServerInfo("Server_NICO",1,8080);
-
-            Console.WriteLine("Listening for Clients...");
-            var udpserver = new UdpBroadcast(serverInfo);
+            Core core = new Core();
+            core.Start();
             
-
-            var backgroundworker = new BackgroundWorker();
-
-            backgroundworker.DoWork += (obj, ea) => udpserver.RunUdpServer();
-            backgroundworker.RunWorkerAsync();
-
-
-
-            Console.WriteLine("Waiting for players ");
-            var server = new Server(serverInfo,udpserver);
-            server.Run();
         }
     }
 }

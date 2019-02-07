@@ -17,7 +17,7 @@ namespace Wrapper.View
         private int _posX;
         private int _posY;
         public int _xCursorPosition { get; set; }
-        public bool viewEnabled { get; set; } = true;
+        public bool ViewEnabled { get; set; } = true;
 
         private string _inputLine;
 
