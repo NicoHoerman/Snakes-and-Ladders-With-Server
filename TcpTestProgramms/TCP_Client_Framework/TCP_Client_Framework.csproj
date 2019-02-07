@@ -43,10 +43,56 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\InputAction.cs" />
+    <Compile Include="Actions\ProtocolAction.cs" />
+    <Compile Include="Client.cs" />
+    <Compile Include="ClientDataPackageProvider.cs" />
+    <Compile Include="DTO\AcceptDTO.cs" />
+    <Compile Include="DTO\Broadcast.cs" />
+    <Compile Include="DTO\DeclineDTO.cs" />
+    <Compile Include="DTO\HelpText.cs" />
+    <Compile Include="DTO\RestartDTO.cs" />
+    <Compile Include="DTO\UpdateDTO.cs" />
+    <Compile Include="Game\CGame.cs" />
+    <Compile Include="Game\ClassicEandE\CClassicBoard.cs" />
+    <Compile Include="Game\ClassicEandE\CClassicEel.cs" />
+    <Compile Include="Game\ClassicEandE\CClassicEscalator.cs" />
+    <Compile Include="Game\ClassicEandE\CClassicPawn.cs" />
+    <Compile Include="Game\ClassicEandE\CClassicRules.cs" />
+    <Compile Include="Game\ClientDataProvider.cs" />
+    <Compile Include="Game\EandEContracts\IBoardC.cs" />
+    <Compile Include="Game\EandEContracts\IConfigurationProviderC.cs" />
+    <Compile Include="Game\EandEContracts\IEntityC.cs" />
+    <Compile Include="Game\EandEContracts\IGameC.cs" />
+    <Compile Include="Game\EandEContracts\IPawnC.cs" />
+    <Compile Include="Game\EandEContracts\IRulesC.cs" />
+    <Compile Include="Game\XML_Config\CConfigurationProvider.cs" />
+    <Compile Include="Game\XML_Config\CXElementExtension.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PROTOCOLS\PROT_CLOSEGAME.cs" />
+    <Compile Include="PROTOCOLS\PROT_CONNECTION.cs" />
+    <Compile Include="PROTOCOLS\PROT_HELP.cs" />
+    <Compile Include="PROTOCOLS\PROT_ROLLDICE.cs" />
+    <Compile Include="PROTOCOLS\PROT_STARTGAME.cs" />
+    <Compile Include="StateEnum\ClientStates.cs" />
+    <Compile Include="UDP\UdpClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Game\XML_Config\Configurations.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj">
+      <Project>{756d09a9-dc55-4f94-b05b-c3756f55036f}</Project>
+      <Name>Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Wrapper\Wrapper.csproj">
+      <Project>{bb376ce1-3b8e-46af-98d7-29b8fd060503}</Project>
+      <Name>Wrapper</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
