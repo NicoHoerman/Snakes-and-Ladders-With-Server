@@ -32,7 +32,7 @@ namespace TCP_Server.Support
             while (_isRunning)
             {
 				Shared.Contract.IPackage package = _queue.WaitForNextPackage();
-                Console.WriteLine($"Processing package number {package.Id}");
+                //Console.WriteLine($"Processing package number {package.Id}");
                 _actionHandler.ExecuteDataActionFor(package.Communication,package.Data);
             }
         }

@@ -7,7 +7,7 @@ namespace EandE_ServerModel.DataProvider
         private Dictionary<string, string> _text = new Dictionary<string, string>
         {
             {
-                "mainmenuinfo",
+				"mainmenuinfo",
                 "Welcome at Eels and Escalators\n" +
                 "You are in the MainMenu\n\nCommandlist\n"+
                 "/startgame\n" +

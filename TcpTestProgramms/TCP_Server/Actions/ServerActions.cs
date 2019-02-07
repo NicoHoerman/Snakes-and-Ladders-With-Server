@@ -82,15 +82,15 @@ namespace TCP_Server.Actions
         public void OnRollDiceAction(ICommunication communication, DataPackage data)
         {
 			int currentCommunication = _serverInfo._communications.FindIndex(x => x == communication)+1;
-			//if (_game.State.CurrentPlayer ==  currentCommunication &
-			//	_game.State.ToString() == "GameFinishedState")
-			//{
+			if (_game.State.CurrentPlayer == currentCommunication &
+				_game.State.ToString() == "GameFinishedState")
+			{
 				_game.State.ExecuteStateAction("rolldice");
 				for (int i = 0; i < _serverInfo._communications.Count; i++)
 					communication.Send(_dataPackageProvider.TurnInfo());
-			//}
-			////else
-			// communication.Send(_dataPackageProvider.GetPackage("NotYourTurn"));
+			}
+			else
+			communication.Send(_dataPackageProvider.GetPackage("NotYourTurn"));
 			if (_game.State.TurnStateProp == "GameFinished")
 			{
 				_game.State.ExecuteStateAction("finish");

@@ -8,7 +8,7 @@ namespace EandE_ServerModel.EandE.GameAndLogic
     public class Logic
     {
         public IPawn _currentPawn;
-        private bool _gameFinished;
+        //private bool _gameFinished;
         public int _numberOfPlayers;
         public int CurrentPlayerID { get; set; } = 1;
 

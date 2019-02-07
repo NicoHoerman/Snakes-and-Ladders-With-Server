@@ -22,7 +22,7 @@ namespace TCP_Server.Support
         {
             lock (_lock)
             {
-                Console.WriteLine($"Enqueueing package number {package.Id}");
+                //Console.WriteLine($"Enqueueing package number {package.Id}");
                 _queue.Enqueue(package);
             }
             _semaphore.Release();
@@ -34,7 +34,7 @@ namespace TCP_Server.Support
             lock (_lock)
             {
                 var package = _queue.Dequeue();
-                Console.WriteLine($"Dequeueing package number {package.Id}");
+                //Console.WriteLine($"Dequeueing package number {package.Id}");
                 return package;
             }
         }

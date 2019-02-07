@@ -15,8 +15,8 @@ namespace TCP_Server
 {
     public class Server
     {
-        private const string SERVER_IP_WLAN_NICO = "";
-        private const string SERVER_IP_LAN_NICO = "127.0.0.01";
+        private const string SERVER_IP_LOCAL = "127.0.0.01";
+        private const string SERVER_IP_LAN_NICO = "172.22.20.242";
         private const string SERVER_IP_LAN_LEON = "172.22.23.87";
         private const string SERVER_IP_NETWORK = "194.205.205.2";
         

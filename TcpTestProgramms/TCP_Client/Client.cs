@@ -130,7 +130,8 @@ namespace TCP_Client
 						Debug.WriteLine($"State switched: From Connecting To {State.ToString()}");
 						_inputHandler._inputActions.Add("/closegame", _inputHandler.OnCloseGameAction);
                         _actionHandler._protocolActions.Clear();
-                        _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.DeclineInfo, _actionHandler.OnDeclineInfoAction);
+						_actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.AcceptInfo, _actionHandler.OnAcceptInfoAction);
+						_actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.DeclineInfo, _actionHandler.OnDeclineInfoAction);
                         _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.LobbyCheckFailed, _actionHandler.OnLobbyCheckFailedAction);
                         _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.LobbyCheckSuccessful, _actionHandler.OnLobbyCheckSuccessfulAction);
                         _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView, _actionHandler.OnUpdateAction);

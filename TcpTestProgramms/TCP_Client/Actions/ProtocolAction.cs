@@ -80,8 +80,6 @@ namespace TCP_Client.Actions
 
         public void ExecuteDataActionFor(DataPackage data,  ICommunication communication)
         {
-			if (data.Header == ProtocolActionEnum.AcceptInfo)
-				Debug.WriteLine($"Accept erhalten: {data.Payload.ToString()}");
             if (_protocolActions.TryGetValue(data.Header, out var protocolAction) == false)
                 return;
 
