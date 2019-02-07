@@ -58,6 +58,7 @@ namespace TCP_Client.GameStuff
 		}
 		public void SetCurrentPlayer(int input)
 		{
+			CurrentPlayerID = 1;
 			if (!(input == 0))
 				CurrentPlayerID = input;
 		}
