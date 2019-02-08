@@ -22,7 +22,7 @@ namespace TCP_Client.Actions
         public Dictionary<ProtocolActionEnum, Action<DataPackage,ICommunication>> _protocolActions;
         public Dictionary<int, BroadcastDTO> _serverDictionary = new Dictionary<int, BroadcastDTO>();
         private Dictionary<ClientView, IView> _views;
-		private readonly Game _game;
+		private readonly GameOutput _game;
 		private ClientDataPackageProvider _clientDataPackageProvider;
 		private ClientDataProvider _clientDataProvider;
 
@@ -49,7 +49,7 @@ namespace TCP_Client.Actions
 
         private OutputWrapper _outputWrapper;
 
-        public ProtocolAction(Dictionary<ClientView, IView> views, Client client, ClientDataPackageProvider clientDataPackageProvider,Game game)
+        public ProtocolAction(Dictionary<ClientView, IView> views, Client client, ClientDataPackageProvider clientDataPackageProvider,GameOutput game)
         {
             _clientDataPackageProvider = clientDataPackageProvider;
 			_clientDataProvider = new ClientDataProvider();

@@ -56,7 +56,7 @@
     <Compile Include="DTO\HelpText.cs" />
     <Compile Include="DTO\RestartDTO.cs" />
     <Compile Include="DTO\UpdateDTO.cs" />
-    <Compile Include="Game\CGame.cs" />
+    <Compile Include="Game\GameOutput.cs" />
     <Compile Include="Game\ClassicEandE\CClassicBoard.cs" />
     <Compile Include="Game\ClassicEandE\CClassicEel.cs" />
     <Compile Include="Game\ClassicEandE\CClassicEscalator.cs" />

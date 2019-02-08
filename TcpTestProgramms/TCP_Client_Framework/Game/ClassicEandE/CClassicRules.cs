@@ -11,7 +11,7 @@ namespace TCP_Client.GameStuff.ClassicEandE
     {
         private long _idCounter;
 
-        private readonly Game _game;
+        private readonly GameOutput _game;
         private readonly IConfigurationProvider _configurationProvider;
 
         private Dictionary<EntityType, Func<XElement, IEntity>> _entityFactory = new Dictionary<EntityType, Func<XElement, IEntity>>();
@@ -21,7 +21,7 @@ namespace TCP_Client.GameStuff.ClassicEandE
         public int DiceResult { get; set; }
 
 
-        public ClassicRules(Game game, IConfigurationProvider configurationProvider)
+        public ClassicRules(GameOutput game, IConfigurationProvider configurationProvider)
         {
             _game = game;
             _configurationProvider = configurationProvider;
@@ -33,7 +33,7 @@ namespace TCP_Client.GameStuff.ClassicEandE
             };
         }
 
-        public ClassicRules(Game game)
+        public ClassicRules(GameOutput game)
              : this(game, new ConfigurationProvider())
         { }
 

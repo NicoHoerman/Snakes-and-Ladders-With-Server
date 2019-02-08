@@ -9,7 +9,7 @@ using Wrapper.Contracts;
 
 namespace TCP_Client.GameStuff
 {
-	public class Game : IGame
+	public class GameOutput : IGame
 	{
 		public int LastPlayer { get; set; }
 		public string Turnstate { get; set; }
@@ -38,7 +38,7 @@ namespace TCP_Client.GameStuff
 		private IUpdateOutputView _finishskull3;
 		#endregion
 
-		public Game()
+		public GameOutput()
 		{
 			_configurationProvider = new ConfigurationProvider();
 			_clientDataProvider = new ClientDataProvider();
