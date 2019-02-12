@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B0A425FE-3857-4F67-963E-7DD7D7D79AB7}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>TCP_Client_Framework</RootNamespace>
+    <AssemblyName>TCP_Client_Framework</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Actions\InputAction.cs" />
+    <Compile Include="Actions\ProtocolAction.cs" />
+    <Compile Include="Client.cs" />
+    <Compile Include="ClientDataPackageProvider.cs" />
+    <Compile Include="DTO\AcceptDTO.cs" />
+    <Compile Include="DTO\Broadcast.cs" />
+    <Compile Include="DTO\DeclineDTO.cs" />
+    <Compile Include="DTO\HelpText.cs" />
+    <Compile Include="DTO\RestartDTO.cs" />
+    <Compile Include="DTO\UpdateDTO.cs" />
+    <Compile Include="Game\GameOutput.cs" />
+    <Compile Include="Game\ClassicEandE\CClassicBoard.cs" />
+    <Compile Include="Game\ClassicEandE\CClassicEel.cs" />
+    <Compile Include="Game\ClassicEandE\CClassicEscalator.cs" />
+    <Compile Include="Game\ClassicEandE\CClassicPawn.cs" />
+    <Compile Include="Game\ClassicEandE\CClassicRules.cs" />
+    <Compile Include="Game\ClientDataProvider.cs" />
+    <Compile Include="Game\EandEContracts\IBoardC.cs" />
+    <Compile Include="Game\EandEContracts\IConfigurationProviderC.cs" />
+    <Compile Include="Game\EandEContracts\IEntityC.cs" />
+    <Compile Include="Game\EandEContracts\IGameC.cs" />
+    <Compile Include="Game\EandEContracts\IPawnC.cs" />
+    <Compile Include="Game\EandEContracts\IRulesC.cs" />
+    <Compile Include="Game\XML_Config\CConfigurationProvider.cs" />
+    <Compile Include="Game\XML_Config\CXElementExtension.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PROTOCOLS\PROT_CLOSEGAME.cs" />
+    <Compile Include="PROTOCOLS\PROT_CONNECTION.cs" />
+    <Compile Include="PROTOCOLS\PROT_HELP.cs" />
+    <Compile Include="PROTOCOLS\PROT_ROLLDICE.cs" />
+    <Compile Include="PROTOCOLS\PROT_STARTGAME.cs" />
+    <Compile Include="StateEnum\ClientStates.cs" />
+    <Compile Include="UDP\UdpClient.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Game\XML_Config\Configurations.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj">
+      <Project>{756d09a9-dc55-4f94-b05b-c3756f55036f}</Project>
+      <Name>Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Wrapper\Wrapper.csproj">
+      <Project>{bb376ce1-3b8e-46af-98d7-29b8fd060503}</Project>
+      <Name>Wrapper</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

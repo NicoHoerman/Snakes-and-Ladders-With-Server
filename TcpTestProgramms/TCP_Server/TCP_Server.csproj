@@ -57,7 +57,6 @@
     <Compile Include="EandE\EandEContracts\IGame.cs" />
     <Compile Include="EandE\EandEContracts\IPawn.cs" />
     <Compile Include="EandE\EandEContracts\IRules.cs" />
-    <Compile Include="EandE\EandEContracts\ISourceWrapper.cs" />
     <Compile Include="EandE\EandEContracts\IState.cs" />
     <Compile Include="EandE\GameAndLogic\Game.cs" />
     <Compile Include="EandE\GameAndLogic\Logic.cs" />
@@ -67,25 +66,29 @@
     <Compile Include="EandE\States\GameRunningState.cs" />
     <Compile Include="EandE\States\GameStartingState.cs" />
     <Compile Include="EandE\States\MainMenuState.cs" />
-    <Compile Include="EandE\StuffFromEandE\DataProvider.cs" />
-    <Compile Include="EandE\StuffFromEandE\Parse.cs" />
-    <Compile Include="EandE\StuffFromEandE\SourceWrapper.cs" />
     <Compile Include="EandE\XML_Config\ConfigurationProvider.cs" />
     <Compile Include="EandE\XML_Config\XElementExtension.cs" />
-    <Compile Include="Enum\ClientConnectionAttempt.cs" />
-    <Compile Include="PackageProcessing.cs" />
-    <Compile Include="PackageQueue.cs" />
+    <Compile Include="Enum\ClientConnectionStatus.cs" />
+    <Compile Include="SupportClasses\PackageProcessing.cs" />
+    <Compile Include="SupportClasses\PackageQueue.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PROTOCOLS\PROT_ACCEPT.cs" />
     <Compile Include="PROTOCOLS\PROT_BROADCAST.cs" />
     <Compile Include="PROTOCOLS\PROT_DECLINE.cs" />
-    <Compile Include="PROTOCOLS\PROT_HELPTEXT.cs" />
     <Compile Include="PROTOCOLS\PROT_RESTART.cs" />
     <Compile Include="PROTOCOLS\PROT_UPDATE.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Actions\ServerActions.cs" />
-    <Compile Include="ServerInfo.cs" />
+    <Compile Include="SupportClasses\ServerInfo.cs" />
+    <Compile Include="Validation\ClientDisconnection.cs" />
+    <Compile Include="Core.cs" />
+    <Compile Include="DataProvider\ServerDataPackageProvider.cs" />
+    <Compile Include="SupportClasses\Lobby.cs" />
+    <Compile Include="Enum\StateEnum.cs" />
+    <Compile Include="SupportClasses\StateMachine.cs" />
+    <Compile Include="Enum\ValidationEnum.cs" />
+    <Compile Include="Validation\ValidationSystem.cs" />
     <Compile Include="UDP\UdpBroadcast.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +109,7 @@
     <Content Include="EandE\XML_Config\Configurations.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Compile Include="Validation\ClientConnection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

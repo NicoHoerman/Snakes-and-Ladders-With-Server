@@ -7,38 +7,38 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using TCP_Server.PROTOCOLS;
+using TCP_Server.Support;
 
 namespace TCP_Server.UDP
 {
     public class UdpBroadcast
     {
-        private byte[] _ServerInfo;
+        private byte[] _lobbyInfo;
 
-        private const string SERVER_IP_WLAN_NICO = "172.22.21.132";
-        private const string SERVER_IP_LAN_NICO = "172.22.23.88";
+        private const string SERVER_IP_LOCAL = "127.0.0.1";
+        private const string SERVER_IP_LAN_NICO = " 172.22.20.242";
         private const string SERVER_IP_LAN_LEON = "172.22.23.87";
         private const string SERVER_IP_NETWORK = "194.205.205.2";
 
         private bool _closed = false;
-        private bool isRunning;
+        private bool _isRunning;
 
 
         private static ManualResetEvent _MessageReceived = new ManualResetEvent(true);
-        UdpClient _udpServer;
-        IPAddress ClientIP;
-        ServerInfo _serverInfo;
+        private UdpClient _udpServer;
+        private IPAddress _clientIP;
+		private ServerInfo _serverInfo;
 
         public UdpBroadcast(ServerInfo serverInfo)
         {
             _udpServer = new UdpClient(7070);
             _serverInfo = serverInfo;
-            SetBroadcastMsg(_serverInfo);
         }
 
         public void RunUdpServer()
         {
-            isRunning = true;
-            while (isRunning)
+            _isRunning = true;
+            while (_isRunning)
             {
                 _MessageReceived.WaitOne();
                 _MessageReceived.Reset();
@@ -47,18 +47,16 @@ namespace TCP_Server.UDP
         }
         public void Broadcast(string clientIp)
         {
-            ClientIP = IPAddress.Parse(clientIp);
-            IPEndPoint _ipEndPoint = new IPEndPoint(ClientIP, 7075);
-            _udpServer.Send(_ServerInfo, _ServerInfo.Length, _ipEndPoint);
+            _clientIP = IPAddress.Parse(clientIp);
+            IPEndPoint _ipEndPoint = new IPEndPoint(_clientIP, 7075);
+            _udpServer.Send(_lobbyInfo, _lobbyInfo.Length, _ipEndPoint);
             Thread.Sleep(5000);
-            
         }
 
         public void StartListening()
         {
             if (_udpServer.Client != null)
                 _udpServer.BeginReceive(Receive, new object());
-
         }
 
         public void Receive(IAsyncResult ar)
@@ -69,10 +67,10 @@ namespace TCP_Server.UDP
                 byte[] bytes = _udpServer.EndReceive(ar, ref _recieverEndPoint);
                 string recievedMessage = Encoding.ASCII.GetString(bytes);
                 if(recievedMessage == "is there a Server")
-                Broadcast(_recieverEndPoint.Address.ToString());
-                
-                //_udpServer.Dispose();
-                //_udpServer.Close();
+                {
+                    SetBroadcastMsg(_serverInfo);
+                    Broadcast(_recieverEndPoint.Address.ToString());
+                }
             }
             Thread.Sleep(1);
             _MessageReceived.Set();
@@ -80,25 +78,24 @@ namespace TCP_Server.UDP
 
         public void SetBroadcastMsg(ServerInfo serverInfo)
         {
-            
             Random random = new Random();
             DataPackage dataPackage = new DataPackage
             {
                 Header = ProtocolActionEnum.Broadcast,
                 Payload = JsonConvert.SerializeObject(new PROT_BROADCAST
                 {
-                    _Server_ip = SERVER_IP_LAN_LEON,
-                    _Server_name = serverInfo._LobbyName,
-                    _CurrentPlayerCount = serverInfo._CurrentPlayerCount,
-                    _MaxPlayerCount = serverInfo._MaxPlayerCount,
-                    _Server_Port = serverInfo._ServerPort
+                    _server_ip = serverInfo.ServerIPAdress.ToString(),
+                    _server_name = serverInfo._lobbylist[0]._LobbyName,
+                    _currentPlayerCount = serverInfo._lobbylist[0]._CurrentPlayerCount,
+                    _maxPlayerCount = serverInfo._lobbylist[0]._MaxPlayerCount,
+                    _server_Port = serverInfo._lobbylist[0]._ServerPort
                     
                 })
             };
             dataPackage.Size = dataPackage.ToByteArray().Length;
-            _ServerInfo = dataPackage.ToByteArray();
+            _lobbyInfo = dataPackage.ToByteArray();
         }
-    }
+	}
 }
 
 

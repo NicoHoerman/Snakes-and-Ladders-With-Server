@@ -5,7 +5,7 @@ namespace EandE_ServerModel.EandE.GameAndLogic
 {
     public class Game : IGame
     {
-        public bool isRunning { get; set; }
+        public bool _isRunning { get; set; }
         public IBoard Board { get; set; }
         public IRules Rules { get; private set; }
         public IState State { get; private set; }
@@ -18,8 +18,8 @@ namespace EandE_ServerModel.EandE.GameAndLogic
 
         public void Run()
         {
-            isRunning = true;
-            while (isRunning)
+            _isRunning = true;
+            while (_isRunning)
             {
                 State.Execute();
             }
@@ -41,7 +41,7 @@ namespace EandE_ServerModel.EandE.GameAndLogic
 
         public void ClosingGame()
         {
-            isRunning = false;
+            _isRunning = false;
         }
 
     }

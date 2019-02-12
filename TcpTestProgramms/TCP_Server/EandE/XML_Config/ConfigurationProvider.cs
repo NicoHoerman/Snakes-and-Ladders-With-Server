@@ -19,11 +19,11 @@ namespace EandE_ServerModel.EandE.XML_Config
         }
 
         public ConfigurationProvider()
-            : this(@".\EandE\XML_Config\Configurations.xml")
+			: this(@".\EandE\XML_Config\Configurations.xml")
         { }
 
-
-        private void ReadConfigurationFile()
+		
+		private void ReadConfigurationFile()
         {
             var doc = XDocument.Load(_configurationFile);
             _configurations = doc.Root.Elements().ToList();

@@ -9,20 +9,25 @@ using System.Text;
 using TCP_Client.DTO;
 using Wrapper.Implementation;
 using Wrapper.Contracts;
-using Wrapper.View;
 using Wrapper;
+using Shared.Contract;
+using TCP_Client.GameStuff;
+using System.Diagnostics;
 using System.Threading;
-
 
 namespace TCP_Client.Actions
 {
-    public class ProtocolAction
+	public class ProtocolAction
     {
-        public Dictionary<ProtocolActionEnum, Action<DataPackage>> _protocolActions;
+        public Dictionary<ProtocolActionEnum, Action<DataPackage,ICommunication>> _protocolActions;
         public Dictionary<int, BroadcastDTO> _serverDictionary = new Dictionary<int, BroadcastDTO>();
         private Dictionary<ClientView, IView> _views;
+		private readonly Game _game;
+		private ClientDataPackageProvider _clientDataPackageProvider;
+		private ClientDataProvider _clientDataProvider;
 
-        private readonly IUpdateOutputView _serverTableView;
+		#region ahhhhhhhhhhh
+		private readonly IUpdateOutputView _serverTableView;
         private readonly IUpdateOutputView _commandListOutputView;
         private readonly IUpdateOutputView _infoOutputView;
         private readonly IUpdateOutputView _boardOutputView;
@@ -37,19 +42,22 @@ namespace TCP_Client.Actions
         private readonly IUpdateOutputView _finishSkull2View;
         private readonly IUpdateOutputView _finishSkull3View;
         public readonly IUpdateOutputView _enterToRefreshView;
-        
-
-        private readonly Client _client;
+		#endregion
+		private readonly Client _client;
 
         public string _serverTable =string.Empty;
 
-        private OutputWrapper outputWrapper;
+        private OutputWrapper _outputWrapper;
 
-        public ProtocolAction(Dictionary<ClientView, IView> views, Client client)
+        public ProtocolAction(Dictionary<ClientView, IView> views, Client client, ClientDataPackageProvider clientDataPackageProvider,Game game)
         {
+            _clientDataPackageProvider = clientDataPackageProvider;
+			_clientDataProvider = new ClientDataProvider();
             _client = client;
             _views = views;
-            _serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
+			_game = game;
+			#region ahhhhhhhhhhhhhhhh2
+			_serverTableView = views[ClientView.ServerTable] as IUpdateOutputView;
             _commandListOutputView = views[ClientView.CommandList] as IUpdateOutputView;                   
             _boardOutputView = views[ClientView.Board] as IUpdateOutputView;
             _errorView = views[ClientView.Error] as IErrorView;
@@ -64,227 +72,209 @@ namespace TCP_Client.Actions
             _finishSkull3View = views[ClientView.FinishSkull3] as IUpdateOutputView;
             _finishSkull2View = views[ClientView.FinishSkull2] as IUpdateOutputView;
             _enterToRefreshView = views[ClientView.EnterToRefresh] as IUpdateOutputView;
+			#endregion
 
-            _protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage>>
-            {
-                { ProtocolActionEnum.HelpText, OnHelpTextAction},
-                { ProtocolActionEnum.UpdateView, OnUpdateAction},
-                { ProtocolActionEnum.Broadcast, OnBroadcastAction },
-                { ProtocolActionEnum.Accept, OnAcceptAction },
-                { ProtocolActionEnum.Decline, OnDeclineAction },
-                { ProtocolActionEnum.Restart, OnRestartAction }
-            
-            };
-
-            outputWrapper = new OutputWrapper();
+			_protocolActions = new Dictionary<ProtocolActionEnum, Action<DataPackage,ICommunication>>
+            { };
+			_outputWrapper = new OutputWrapper();
         }
 
-        
-
-        public void ExecuteDataActionFor(DataPackage data)
+        public void ExecuteDataActionFor(DataPackage data,  ICommunication communication)
         {
-            //weißt dem packet die richtige funktion zu
             if (_protocolActions.TryGetValue(data.Header, out var protocolAction) == false)
-                throw new InvalidOperationException("Invalid communication");
-            //führt die bekommene methode mit dem datapackage aus
-            protocolAction(data);
+                return;
+
+            protocolAction(data, communication);
         }
 
         public BroadcastDTO GetServer(int key) => _serverDictionary[key];
 
-        #region Protocol actions
+		#region Protocol actions
 
+		private static bool CheckIfNullorEmpty(string input)
+		{
+			if (input == null || input.Length == 0)
+				return true;
+			else
+				return false;
+		}
 
-        private void OnHelpTextAction(DataPackage data)
+		private static bool CheckIfZero(int input)
+		{
+			if (input == 0)
+				return true;
+			else
+				return false;
+		}
+
+		public void OnUpdateAction(DataPackage data, ICommunication communication)
         {
-            var helpText = MapProtocolToDto<HelpTextDTO>(data);
-            
-            
-            //_helpOutputView.SetUpdateContent(helpText._HelpText);
-            
+			var updatedData = MapProtocolToDto<UpdateDTO>(data);
+
+			_lobbyInfoDisplayView.SetUpdateContent(updatedData._lobbyDisplay);
+            _commandListOutputView.SetUpdateContent(updatedData._commandList);
+            _infoOutputView.SetUpdateContent(updatedData._infoOutput);
         }
 
-        private void OnUpdateAction(DataPackage data)
-        {
-            var updatedView = MapProtocolToDto<UpdateDTO>(data);
-           
-            if(!(updatedView._mainMenuOutput == null || updatedView._mainMenuOutput.Length == 0))
-            {
-                _mainMenuOutputView.viewEnabled = true;
-                _mainMenuOutputView.SetUpdateContent(updatedView._mainMenuOutput);
-            }
+        private List<IPEndPoint> _serverEndpoints = new List<IPEndPoint>(); 
+        private string[] _servernames = new string[100];
+        private int[] _maxPlayerCount = new int[100];
+        private int[] _currentPlayerCount = new int[100];
+        private int _keyIndex = 0;
 
-            //_lobbyInfoDisplayView.viewEnabled = updatedView._lobbyDisplay != null && updatedView._lobbyDisplay.Length != 0; ;
-            //_lobbyInfoDisplayView.SetUpdateContent(updatedView._lobbyDisplay);
-            if (!(updatedView._lobbyDisplay == null || updatedView._lobbyDisplay.Length == 0))
-            {
-                _lobbyInfoDisplayView.viewEnabled = true;
-                _lobbyInfoDisplayView.SetUpdateContent(updatedView._lobbyDisplay);
-            }
-
-            if (!(updatedView._boardOutput == null || updatedView._boardOutput.Length == 0))
-            {
-                _boardOutputView.viewEnabled = true;
-                _boardOutputView.SetUpdateContent(updatedView._boardOutput);
-            }      
-            if(!(updatedView._error == null || updatedView._error.Length == 0))
-            {
-                _errorView.viewEnabled = true;
-                _errorView.SetContent(updatedView._lastinput, updatedView._error);
-            }
-            if(!(updatedView._gameInfoOutput == null || updatedView._gameInfoOutput.Length == 0))
-            {
-                _gameInfoOutputView.viewEnabled = true;
-                _gameInfoOutputView.SetUpdateContent(updatedView._gameInfoOutput);
-            }
-            if(!(updatedView._turnInfoOutput == null || updatedView._turnInfoOutput.Length == 0))
-            {
-                _turnInfoOutputView.viewEnabled = true;
-                _turnInfoOutputView.SetUpdateContent(updatedView._turnInfoOutput);
-            }
-            if(!(updatedView._afterTurnOutput == null || updatedView._afterTurnOutput.Length == 0))
-            {
-                _afterTurnOutputView.viewEnabled = true;
-                _afterTurnOutputView.SetUpdateContent(updatedView._afterTurnOutput);
-            }
-            if(!(updatedView._commandList == null || updatedView._commandList.Length == 0))
-            {
-                _commandListOutputView.viewEnabled = true;
-                _commandListOutputView.SetUpdateContent(updatedView._commandList);
-            }
-            if(!(updatedView._infoOutput == null || updatedView._infoOutput.Length == 0))
-            {
-                _infoOutputView.viewEnabled = true;
-                _infoOutputView.SetUpdateContent(updatedView._infoOutput);
-            }
-            if(!(updatedView._finishinfo == null || updatedView._finishinfo.Length == 0))
-            {
-                DisableViews(); 
-                
-                _finishInfoView.viewEnabled = true;
-                _finishInfoView.SetUpdateContent(updatedView._finishinfo);
-            }
-            if(!(updatedView._finishskull1 == null || updatedView._finishskull1.Length == 0))
-            {
-                _finishSkull1View.viewEnabled = true;
-                _finishSkull3View.viewEnabled = true;
-                _finishSkull1View.SetUpdateContent(updatedView._finishskull1);
-                _finishSkull3View.SetUpdateContent(updatedView._finishskull1);
-            }
-            if(!(updatedView._finishskull2 == null || updatedView._finishskull2.Length == 0))
-            {
-                _finishSkull2View.viewEnabled = true;
-                _finishSkull2View.SetUpdateContent(updatedView._finishskull2);
-            }
-        }
-
-        private List<IPEndPoint> _ServerEndpoints = new List<IPEndPoint>(); 
-        private string[] _Servernames = new string[100];
-        private int[] _MaxPlayerCount = new int[100];
-        private int[] _CurrentPlayerCount = new int[100];
-        private int keyIndex = 0;
-
-
-        private void OnBroadcastAction(DataPackage data)
+        public void OnBroadcastAction(DataPackage data, ICommunication communication)
         {
             var broadcast = MapProtocolToDto<BroadcastDTO>(data);
 
-            var currentIPEndPoint = new IPEndPoint(IPAddress.Parse(broadcast._Server_ip),broadcast._Server_Port);
+            var currentIPEndPoint = new IPEndPoint(IPAddress.Parse(broadcast._server_ip),broadcast._server_Port);
 
-            if (_ServerEndpoints.Contains(currentIPEndPoint))
+            if (_serverEndpoints.Contains(currentIPEndPoint))
             {
-                var servernumber = _ServerEndpoints.IndexOf(currentIPEndPoint);
-                _Servernames[servernumber] = broadcast._Server_name;
-                _MaxPlayerCount[servernumber] = broadcast._MaxPlayerCount;
-                _CurrentPlayerCount[servernumber] = broadcast._CurrentPlayerCount;
+                var servernumber = _serverEndpoints.IndexOf(currentIPEndPoint);
+                _servernames[servernumber] = broadcast._server_name;
+                _maxPlayerCount[servernumber] = broadcast._maxPlayerCount;
+                _currentPlayerCount[servernumber] = broadcast._currentPlayerCount;
             }
             else
             {
-                _ServerEndpoints.Add(currentIPEndPoint);
+                _serverEndpoints.Add(currentIPEndPoint);
 
-                _serverDictionary.Add(keyIndex, broadcast);
+                _serverDictionary.Add(_keyIndex, broadcast);
 
-                _Servernames[keyIndex] = broadcast._Server_name;
-                _MaxPlayerCount[keyIndex] = broadcast._MaxPlayerCount;
-                _CurrentPlayerCount[keyIndex] = broadcast._CurrentPlayerCount;
-                keyIndex++;
+                _servernames[_keyIndex] = broadcast._server_name;
+                _maxPlayerCount[_keyIndex] = broadcast._maxPlayerCount;
+                _currentPlayerCount[_keyIndex] = broadcast._currentPlayerCount;
+                _keyIndex++;
             }
 
             var outputFormat = new StringBuilder();
 
             for (int index = 0; index < _serverDictionary.Count; index++)
-                outputFormat.Append(string.Format("{3,2}  [{0,1}/{1,1}]   {2,20}\n", _CurrentPlayerCount[index],
-                    _MaxPlayerCount[index], _Servernames[index].PadRight(20),(index+1)));
+                outputFormat.Append(string.Format("{3,2}  [{0,1}/{1,1}]   {2,20}\n", _currentPlayerCount[index],
+                    _maxPlayerCount[index], _servernames[index].PadRight(20),(index+1)));
 
             _serverTable = outputFormat.ToString();
             _serverTableView.SetUpdateContent(_serverTable);
             _serverTable = string.Empty;
-            _serverTableView.viewEnabled = true;
-            // Key Player Server 
-            //
-            //  1  [0/4]  XD
-            //  2  [1/2]  LuL
+            _serverTableView.ViewEnabled = true;
         }
 
-        private void OnAcceptAction(DataPackage data)
-
+        public void OnAcceptInfoAction(DataPackage data, ICommunication communication)
         {
             var accept = MapProtocolToDto<AcceptDTO>(data);
-            _infoOutputView.viewEnabled = true;
-            _infoOutputView.SetUpdateContent(accept._SmallUpdate);
+            _infoOutputView.ViewEnabled = true;
+            _infoOutputView.SetUpdateContent(accept._smallUpdate);
         }
 
-        private void OnDeclineAction(DataPackage data)
+        public void OnDeclineInfoAction(DataPackage data, ICommunication communication)
         {
-            _client._InputHandler.Declined = true;
-            _client._InputHandler.isConnected = false;
+            _client._inputHandler._declined = true;
 
             var decline = MapProtocolToDto<DeclineDTO>(data);
-            _infoOutputView.viewEnabled = true;
-            _infoOutputView.SetUpdateContent(decline._SmallUpdate);
-   
+            _infoOutputView.ViewEnabled = true;
+            _infoOutputView.SetUpdateContent(decline._smallUpdate);
         }
 
-        private void OnRestartAction(DataPackage obj)
+		public void OnValidationRequestAction(DataPackage data, ICommunication communication)
         {
-                _finishInfoView.viewEnabled = false;
-                _finishSkull1View.viewEnabled = false;
-                _finishSkull2View.viewEnabled = false;
-                _finishSkull3View.viewEnabled = false;
-                EnableViews();
+            communication.Send(_clientDataPackageProvider.GetPackage("ValidationAnswer"));
         }
 
-        public void DisableViews()
+        public void OnValidationAcceptedAction(DataPackage data, ICommunication communication)
         {
-            
-            _commandListOutputView.viewEnabled = false;
-            _errorView.viewEnabled = false;
-            _gameInfoOutputView.viewEnabled = false;
-            _infoOutputView.viewEnabled = false;
-            _mainMenuOutputView.viewEnabled = false;
-            _boardOutputView.viewEnabled = false;
-            _afterTurnOutputView.viewEnabled = false;
-            _lobbyInfoDisplayView.viewEnabled = false;
-            _turnInfoOutputView.viewEnabled = false;
-            _enterToRefreshView.viewEnabled = false;
+            _client.SwitchState(StateEnum.ClientStates.WaitingForLobbyCheck);
         }
 
-        public void EnableViews()
+        public void OnLobbyCheckFailedAction(DataPackage data, ICommunication communication)
         {
-            _commandListOutputView.viewEnabled = true;
-            _enterToRefreshView.viewEnabled = true;
-
-            _infoOutputView.viewEnabled = true;
-            _mainMenuOutputView.viewEnabled = true;
-            _lobbyInfoDisplayView.viewEnabled = true;
-
-            _errorView.viewEnabled = true;
+            _client.SwitchState(StateEnum.ClientStates.NotConnected);
         }
-        #endregion
 
-        #region Static helper functions
+        public void OnLobbyCheckSuccessfulAction(DataPackage data, ICommunication communication)
+        {
+			_serverTableView.ViewEnabled = false;
+			_mainMenuOutputView.ViewEnabled = true;
+			_mainMenuOutputView.SetUpdateContent("Set a Rule");
+			Thread.Sleep(20);
+            _client.SwitchState(StateEnum.ClientStates.Lobby);
+        }
 
-        private static T CreateProtocol<T>(DataPackage data) where T : IProtocol
+        public void OnServerStartingGameAction(DataPackage data, ICommunication communication)
+        {
+			var updatedData = MapProtocolToDto<UpdateDTO>(data);
+
+			_infoOutputView.SetUpdateContent(updatedData._infoOutput);
+			_game.SetCurrentPlayer(updatedData._currentplayer);
+			_game.SetPawnLocation(updatedData._pawn1loacation, updatedData._pawn2location);
+			_game.SetViews(_views);
+			_client.SwitchState(StateEnum.ClientStates.GameRunning);
+		}
+
+		public void OnTurnResultAction(DataPackage data, ICommunication communication)
+		{
+			var updatedData = MapProtocolToDto<UpdateDTO>(data);
+
+			_game.SetLastPlayer(updatedData._lastPlayer);
+			_game.SetCurrentPlayer(updatedData._currentplayer);
+			_game.Rules.SetDiceResult(updatedData._diceResult);
+			_game.SetTurnState(updatedData._turnstate);
+			_game.SetPawnLocation(updatedData._pawn1loacation, updatedData._pawn2location);
+			_game.SetViews(_views);
+
+			_game.UpdateGameOutput();
+			new System.Threading.ManualResetEvent(false).WaitOne(1000 *2);
+			if (updatedData._turnstate == "GameFinished")
+				EndScreen();
+		}
+
+		private void EndScreen()
+		{
+			ShowEndScreen();
+			new System.Threading.ManualResetEvent(false).WaitOne(1000*6);
+			DisableEndScreen();
+			_client.SwitchState(StateEnum.ClientStates.Lobby);
+		}
+
+		public void ShowEndScreen()
+		{
+			_commandListOutputView.ViewEnabled = false;
+			_errorView.ViewEnabled = false;
+			_gameInfoOutputView.ViewEnabled = false;
+			_infoOutputView.ViewEnabled = false;
+			_mainMenuOutputView.ViewEnabled = false;
+			_boardOutputView.ViewEnabled = false;
+			_afterTurnOutputView.ViewEnabled = false;
+			_lobbyInfoDisplayView.ViewEnabled = false;
+			_turnInfoOutputView.ViewEnabled = false;
+			_enterToRefreshView.ViewEnabled = false;
+
+			_finishInfoView.ViewEnabled = true;
+			_finishSkull1View.ViewEnabled = true;
+			_finishSkull2View.ViewEnabled = true;
+			_finishSkull3View.ViewEnabled = true;
+		}
+
+		public void DisableEndScreen()
+		{
+			_finishInfoView.ViewEnabled = false;
+			_finishSkull1View.ViewEnabled = false;
+			_finishSkull2View.ViewEnabled = false;
+			_finishSkull3View.ViewEnabled = false;
+
+			_commandListOutputView.ViewEnabled = true;
+			_enterToRefreshView.ViewEnabled = true;
+
+			_infoOutputView.ViewEnabled = true;
+			_mainMenuOutputView.ViewEnabled = true;
+			_lobbyInfoDisplayView.ViewEnabled = true;
+
+			_errorView.ViewEnabled = true;
+		}
+		#endregion
+
+		#region Static helper functions
+
+		private static T CreateProtocol<T>(DataPackage data) where T : IProtocol
         {
             //macht aus einem Objekt String ein wieder das urpsrüngliche Objekt Protokoll
             return JsonConvert.DeserializeObject<T>(data.Payload);

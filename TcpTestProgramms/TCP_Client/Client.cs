@@ -5,55 +5,62 @@ using Wrapper.Implementation;
 using Shared.Contract;
 using TCP_Client.Actions;
 using Shared.Communications;
-using System.Collections.Generic;
-using System.Linq;
 using Wrapper;
-using Wrapper.Contracts;
-using Wrapper.View;
+using TCP_Client.StateEnum;
+using TCP_Client.GameStuff;
+using TCP_Client.GameStuff.ClassicEandE;
+using System.Diagnostics;
+using TCP_Client.DTO;
+using System.Net;
 
 namespace TCP_Client
 {
 
-    public class Client
+	public class Client
     {
-        public bool isRunning;
+        public bool _isRunning;
 
         private ICommunication _communication;
-        private ProtocolAction _ActionHandler;
-        public InputAction _InputHandler;
-        private OutputWrapper _OutputWrapper;
-        private ViewUpdater _ViewUpdater;
+        private ProtocolAction _actionHandler;
+        public InputAction _inputHandler;
+        private OutputWrapper _outputWrapper;
+        private ViewUpdater _viewUpdater;
         private ViewDictionary _viewDictionary;
-        
+        private readonly ClientDataPackageProvider _clientDataPackageProvider;
+        string _input = string.Empty;
+		private Game _game;
+		private  ClientStates State { get; set; }
 
-        //<Constructors>
-        public Client(ICommunication communication)
+		private object _metaData;
+
+		//<Constructors>
+		public Client(ICommunication communication)
         {
+			_game = new Game();
+            _clientDataPackageProvider = new ClientDataPackageProvider();
             _viewDictionary = new ViewDictionary();
             _communication = communication;
-            _ActionHandler = new ProtocolAction(_viewDictionary._views, this);
-            _InputHandler = new InputAction(_ActionHandler, _viewDictionary._views,this);
-            _OutputWrapper = new OutputWrapper();
-            _ViewUpdater = new ViewUpdater(_viewDictionary._views);
-            _ActionHandler._enterToRefreshView.viewEnabled = true;
-            _ActionHandler._enterToRefreshView.SetUpdateContent("Press enter to refresh\nafter you typed a command.");
-
-        }
+            _actionHandler = new ProtocolAction(_viewDictionary._views, this, _clientDataPackageProvider,_game);
+            _inputHandler = new InputAction(_actionHandler, _viewDictionary._views, this, _clientDataPackageProvider);
+            _outputWrapper = new OutputWrapper();
+            _viewUpdater = new ViewUpdater(_viewDictionary._views);
+            _actionHandler._enterToRefreshView.ViewEnabled = true;
+            _actionHandler._enterToRefreshView.SetUpdateContent("Press enter to refresh\nafter you typed a command.");
+		}
 
         public Client()
             : this(new TcpCommunication())
         { }
 
-        //<Methods>
-
         private void CheckTCPUpdates()
         {
-            while (isRunning)
+            while (_isRunning)
             {
                 if (_communication.IsDataAvailable())
                 {
-                    var data = _communication.Receive();
-                    _ActionHandler.ExecuteDataActionFor(data);
+					DataPackage data = _communication.Receive();
+					Debug.WriteLine($"Package received:{data.Header.ToString()} Payload:{data.Payload.ToString()}");
+					_actionHandler.ExecuteDataActionFor(data, _communication);
                 }
                 else
                     Thread.Sleep(1);
@@ -67,39 +74,117 @@ namespace TCP_Client
             backgroundworker.DoWork += (obj, ea) => CheckTCPUpdates();
             backgroundworker.RunWorkerAsync();
 
-            var backgroundworker2 = new BackgroundWorker();
+            var backgroundworker3 = new BackgroundWorker();
 
-            backgroundworker2.DoWork += (obj, ea) => _ViewUpdater.RunUpdater();
-            //backgroundworker2.RunWorkerAsync();
+            backgroundworker3.DoWork += (obj, ea) => StateMachine();
+            backgroundworker3.RunWorkerAsync();
 
-            string input = string.Empty;
-            isRunning = true;
+            _isRunning = true;
 
-            while (isRunning)
+            while (_isRunning)
             {
-                _ViewUpdater.UpdateView();
-                Console.SetCursorPosition(_InputHandler._inputView._xCursorPosition, 0);
-                input = _OutputWrapper.ReadInput();
-                _OutputWrapper.Clear();
-                _InputHandler.ParseAndExecuteCommand(input, _communication);
+                _viewUpdater.UpdateView();
+                Console.SetCursorPosition(_inputHandler._inputView._xCursorPosition, 0);
+                _input = _outputWrapper.ReadInput();
+                _outputWrapper.Clear();
+                _inputHandler.ParseAndExecuteCommand(_input, _communication);
             }
-        }    
-        
-        public void CloseCommunication()
+        }
+
+        public void StateMachine()
         {
-            _communication.Stop();
-           
+            State = ClientStates.NotConnected;
+
+            while (_isRunning)
+            {
+                switch (State)
+                {
+                    case ClientStates.NotConnected:
+                        _inputHandler._inputActions.Add("/search", _inputHandler.OnSearchAction);
+                        _inputHandler._inputActions.Add("/someInt", _inputHandler.OnServerConnectAction);
+                        _inputHandler._inputActions.Add("/closegame", _inputHandler.OnCloseGameAction);
+                        //_actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView, _actionHandler.OnUpdateAction);
+                        _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.Broadcast, _actionHandler.OnBroadcastAction);
+                        while (State == ClientStates.NotConnected)
+                        { }
+						Debug.WriteLine($"State switched: From: {State.ToString()}");
+                        break;
+
+                    case ClientStates.Connecting:
+						Debug.WriteLine($"State switched: From NotConnected To {State.ToString()}");
+						_inputHandler._inputActions.Clear();
+                        _actionHandler._protocolActions.Clear();
+                        _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.ValidationRequest, _actionHandler.OnValidationRequestAction);
+                        _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.ValidationAccepted, _actionHandler.OnValidationAcceptedAction);
+
+						//hier
+						BroadcastDTO current = _actionHandler.GetServer((int)_metaData - 1);
+						_communication._client.Connect(IPAddress.Parse(current._server_ip), current._server_Port);
+						_communication.SetNWStream();
+
+						while (State == ClientStates.Connecting)
+                        { }
+                        break;
+
+                    case ClientStates.WaitingForLobbyCheck:
+						Debug.WriteLine($"State switched: From Connecting To {State.ToString()}");
+						_inputHandler._inputActions.Add("/closegame", _inputHandler.OnCloseGameAction);
+                        _actionHandler._protocolActions.Clear();
+						_actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.AcceptInfo, _actionHandler.OnAcceptInfoAction);
+						_actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.DeclineInfo, _actionHandler.OnDeclineInfoAction);
+                        _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.LobbyCheckFailed, _actionHandler.OnLobbyCheckFailedAction);
+                        _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.LobbyCheckSuccessful, _actionHandler.OnLobbyCheckSuccessfulAction);
+                        _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView, _actionHandler.OnUpdateAction);
+                        while (State == ClientStates.WaitingForLobbyCheck)
+                        { }
+                        break;
+
+                    case ClientStates.Lobby:
+						Debug.WriteLine($"State switched: From WaitingForLobbycheck To {State.ToString()}");
+						_actionHandler._protocolActions.Clear();
+                        _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.AcceptInfo, _actionHandler.OnAcceptInfoAction);
+                        _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView, _actionHandler.OnUpdateAction);
+                        _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.ServerStartingGame, _actionHandler.OnServerStartingGameAction);
+                        _inputHandler._inputActions.Add("/startgame", _inputHandler.OnStartGameAction);
+                        _inputHandler._inputActions.Add("/classic", _inputHandler.OnClassicAction);
+                        while (State == ClientStates.Lobby)
+                        { }
+                        break;
+
+                    case ClientStates.GameRunning:
+						Debug.WriteLine($"State switched: From Lobby To {State.ToString()}");
+						_game.CreateRules();
+						_game.Rules.SetupEntitites();
+						_game.MakeBoardView();
+
+						_actionHandler._protocolActions.Clear();
+                        _inputHandler._inputActions.Clear();
+                        _actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.UpdateView
+                            ,_actionHandler.OnUpdateAction);
+						_actionHandler._protocolActions.Add(Shared.Enums.ProtocolActionEnum.TurnResult
+							, _actionHandler.OnTurnResultAction);
+                        _inputHandler._inputActions.Add("/rolldice", _inputHandler.OnInputRollDiceAction);
+                        _inputHandler._inputActions.Add("/help", _inputHandler.OnInputHelpAction);
+                        _inputHandler._inputActions.Add("/closegame", _inputHandler.OnCloseGameAction);
+
+                        while (State == ClientStates.GameRunning)
+                        { }
+                        break;
+                }
+            }
+        }
+
+        public void SwitchState(ClientStates newState, object metaData = null)
+        {
+            State = newState;
+			_metaData = metaData;
         }
 
         public void CloseClient()
-        {
-            
-            _ViewUpdater.isViewRunning = false;
+        {          
+            _viewUpdater._isViewRunning = false;
             _communication.Stop();
-            isRunning = false;
+            _isRunning = false;
         }
-
-        
     }
 }
-

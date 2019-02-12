@@ -19,7 +19,7 @@ namespace Wrapper.View
         private int _posY;
         private string _gameInfo;
 
-        public bool viewEnabled { get ; set ; }
+        public bool ViewEnabled { get ; set ; }
 
         public GameView(IOutputWrapper outputWrapper, int posX, int posY)
         {
