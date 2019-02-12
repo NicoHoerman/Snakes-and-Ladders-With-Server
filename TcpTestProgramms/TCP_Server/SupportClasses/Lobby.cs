@@ -9,7 +9,7 @@ namespace TCP_Server.Support
         private bool _isRunning;
 
         public int _MaxPlayerCount { get; set; }
-        public int _CurrentPlayerCount { get; set; } = 0;
+        public int _CurrentPlayerCount { get; set; } = 1;
         public string _LobbyName { get; set; }
         public int _ServerPort { get; set; }
 

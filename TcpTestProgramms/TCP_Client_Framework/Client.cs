@@ -28,7 +28,7 @@ namespace TCP_Client
         private ViewDictionary _viewDictionary;
         private readonly ClientDataPackageProvider _clientDataPackageProvider;
         string _input = string.Empty;
-		private Game _game;
+		private GameOutput _game;
 		private  ClientStates State { get; set; }
 
 		private object _metaData;
@@ -36,7 +36,7 @@ namespace TCP_Client
 		//<Constructors>
 		public Client(ICommunication communication)
         {
-			_game = new Game();
+			_game = new GameOutput();
             _clientDataPackageProvider = new ClientDataPackageProvider();
             _viewDictionary = new ViewDictionary();
             _communication = communication;

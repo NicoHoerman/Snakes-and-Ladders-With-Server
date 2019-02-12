@@ -67,18 +67,13 @@ namespace EandE_ServerModel.EandE.GameAndLogic
             try
             {
                 GetPawn();
-
 				_game.Rules.RollDice();
-
                 if (_currentPawn.Location + _game.Rules.DiceResult > _game.Board.Size)
                 {
                     NextPlayer();
                     return TurnState.PlayerExceedsBoard;
                 }
-
 				_currentPawn.MovePawn(_game.Rules.DiceResult);
-
-				//Entities check if the pawn is on them
 				_game.Board.Entities.ForEach(entity =>
 				{
 					if (entity.OnSamePositionAs(_currentPawn))
@@ -86,7 +81,6 @@ namespace EandE_ServerModel.EandE.GameAndLogic
 						entity.SetPawn(_currentPawn);
 					}
 				});
-
 				NextPlayer();
                 return CheckIfGameFinished();
             }

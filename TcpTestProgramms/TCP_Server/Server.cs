@@ -134,9 +134,6 @@ namespace TCP_Server
                         var data = communication.Receive();
                         var communicationPackage = new CommunicationPackage(communication,data);
                         _queue.Push(communicationPackage);
-
-                        // Old Method
-                        //Task.Run(() => _ActionsHandler.ExecuteDataActionFor(communication, data));
                     }
                 });
 
