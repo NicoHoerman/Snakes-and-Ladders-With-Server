@@ -16,7 +16,6 @@ namespace TCP_Client.GameStuff
 		public int CurrentPlayerID { get; set; } 
 
 		public int _numberOfPlayers;
-		private bool _isNotFirstTurn = false;
 
 		public IBoard Board { get; set; }
 		public IRules Rules { get; private set; }
@@ -107,9 +106,7 @@ namespace TCP_Client.GameStuff
 					_afterTurnOutputView.SetUpdateContent(string.Format(
 							_clientDataProvider.GetText("diceresultinfo"),
 								Rules.DiceResult,_clientDataProvider.GetNumberLiteral(LastPlayer)));
-					_isNotFirstTurn = true;
 					_gameInfoOutputView.SetUpdateContent(_clientDataProvider.GetText("gameinfo"));
-					//Views mit DataProvider und Properties füllen
 					break;
 				case "PlayerExceedsBoard":
 					_turnInfoOutputView.SetUpdateContent(string.Format(_clientDataProvider.GetText("RollTheDice"),
@@ -122,8 +119,6 @@ namespace TCP_Client.GameStuff
 								 + string.Format(
 									_clientDataProvider.GetText("playerexceedsboardinfo"),
 										_clientDataProvider.GetNumberLiteral(LastPlayer)));
-
-					//Views mit DataProvider und Properties füllen
 					break;
 				case "GameFinished":
 					UpdateLocations();
